@@ -1,19 +1,28 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 using UnityEngine;
 
 namespace AutoInority
 {
-    class Log
+    internal class Log
     {
-        public static void Warning(string message)
+        public static void Error(string message)
         {
-            File.AppendAllText(Application.dataPath + "/BaseMods/info.txt", message + "\n");
+            File.AppendAllText(Application.dataPath + "/BaseMods/Error.txt", message + "\n");
         }
 
-        public static void Info(string message)
+        public static void Error(Exception e)
         {
-            File.AppendAllText(Application.dataPath + "/BaseMods/info.txt", message + "\n");
+            Error(e.Message);
+            Error(e.StackTrace);
+        }
+
+        public static void Info(string message) => Info("info", message);
+
+        public static void Info(string file, string message)
+        {
+            File.AppendAllText($"{Application.dataPath}/BaseMods/{file}.txt", message + "\n");
         }
     }
 }

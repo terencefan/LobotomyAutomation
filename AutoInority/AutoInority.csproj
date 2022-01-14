@@ -9,10 +9,13 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AutoInority</RootNamespace>
     <AssemblyName>AutoInority</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,18 +37,44 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Candidate.cs" />
+    <Compile Include="CenterBrain.cs" />
+    <Compile Include="Creature\BaseCreatureExt.cs" />
+    <Compile Include="Creature\BeautyBeastExt.cs" />
+    <Compile Include="Creature\BigBirdExt.cs" />
+    <Compile Include="Creature\BlackSwanExt.cs" />
+    <Compile Include="Creature\ButterflyExt.cs" />
+    <Compile Include="Creature\CensoredExt.cs" />
+    <Compile Include="Creature\DontTouchMeExt.cs" />
+    <Compile Include="Creature\CloudedMonkExt.cs" />
+    <Compile Include="Creature\FireBirdExt.cs" />
+    <Compile Include="Creature\GoodNormalExt.cs" />
+    <Compile Include="Creature\HappyTeddyExt.cs" />
+    <Compile Include="Creature\ICreatureExtension.cs" />
+    <Compile Include="Creature\JudgementBirdExt.cs" />
+    <Compile Include="Creature\LaetitiaExt.cs" />
+    <Compile Include="Creature\HatredQueen.cs" />
+    <Compile Include="Creature\NakedNestExt.cs" />
+    <Compile Include="Creature\NothingExt.cs" />
+    <Compile Include="Creature\QueenBeeExt.cs" />
+    <Compile Include="Creature\RedShoesExt.cs" />
+    <Compile Include="Creature\ShyLook.cs" />
+    <Compile Include="Creature\SingingMachineExt.cs" />
+    <Compile Include="Creature\SnowWhiteExt.cs" />
+    <Compile Include="Creature\LittlePrince.cs" />
     <Compile Include="Extentions\AgentModelExtensions.cs" />
     <Compile Include="Angela.cs" />
     <Compile Include="Automaton.cs" />
-    <Compile Include="Common.cs" />
     <Compile Include="Extentions\CreatureModelExtensions.cs" />
     <Compile Include="Extentions\EquipmentTypeInfoExtensions.cs" />
+    <Compile Include="Extentions\SefiraExtensions.cs" />
     <Compile Include="Extentions\SkillTypeInfoExtensions.cs" />
     <Compile Include="Harmony_Patch.cs" />
     <Compile Include="Log.cs" />
-    <Compile Include="CenterBrain.cs" />
-    <Compile Include="MacroBurf.cs" />
+    <Compile Include="AutomatonBuf.cs" />
+    <Compile Include="Ordeal\CircusDawn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Confidence.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -65,6 +94,5 @@
       <HintPath>lib\UnityEngine.ImageConversionModule.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

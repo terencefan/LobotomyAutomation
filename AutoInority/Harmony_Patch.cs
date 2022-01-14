@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
+
+using AutoInority.Extentions;
 
 using BinahBoss;
 
@@ -13,28 +16,33 @@ namespace AutoInority
     {
         public const string ModName = "Lobotomy.terencefan.AutoInority";
 
-        private static Dictionary<long, DateTime> _limiter = new Dictionary<long, DateTime>();
+        private const BindingFlags FlagsAll = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.SetField | BindingFlags.GetProperty | BindingFlags.SetProperty;
+
+        private static Dictionary<string, DateTime> _limiter = new Dictionary<string, DateTime>();
 
         public Harmony_Patch()
         {
-            try
+            Invoke(() =>
             {
                 HarmonyInstance mod = HarmonyInstance.Create(ModName);
+
                 // all these methods have to be public.
                 PatchGameManager(mod);
                 PatchUnitMouseEventManager(mod);
-                PatchUseSkill(mod);
                 PatchCommandWindow(mod);
+
+                // PatchAgentModel(mod);
                 PatchCreatureModel(mod);
-                PatchWaveOverload(mod);
+
+                PatchOrdealManager(mod);
+                PatchUseSkill(mod);
+
+                PatchSefira(mod);
                 Log.Info("patch success");
-            }
-            catch (Exception ex)
-            {
-                Log.Warning(ex.Message);
-                Log.Warning(ex.StackTrace);
-            }
+            });
         }
+
+        public static void AgentModel_TakeDamage_Postfix(AgentModel __instance, DamageInfo dmg) => Invoke(() => Automaton.Instance.AgentTakeDamage(__instance, dmg));
 
         public static void CommandWindow_OnClick_Prefix(CommandWindow.CommandWindow __instance, AgentModel actor)
         {
@@ -49,92 +57,63 @@ namespace AutoInority
                     if (__instance.CurrentTarget is CreatureModel creature)
                     {
                         var skill = SkillTypeList.instance.GetData(__instance.SelectedWork);
-                        var spirit = __instance.GetWorkSprite((RwbpType)__instance.SelectedWork);
-
-                        if (actor.CanWorkWith(creature, skill))
-                        {
-                            if (Input.GetKey(KeyCode.LeftShift))
-                            {
-                                Automaton.Instance.Register(actor, creature, skill, spirit);
-                            }
-                            else if (Input.GetKey(KeyCode.LeftControl))
-                            {
-                                if (actor.HasEGOGift(creature, out var gift))
-                                {
-                                    Angela.Say(string.Format(Angela.HasEGOGift, actor.name, gift.equipTypeInfo.Name));
-                                    return;
-                                }
-                                else if (actor.Equipment.gifts.GetLockState(gift.equipTypeInfo))
-                                {
-                                    Angela.Say(string.Format(Angela.SpaceLocked, actor.name, gift.equipTypeInfo.Name));
-                                    return;
-                                }
-                                Automaton.Instance.Register(actor, creature, skill, spirit, aimForEGOGift: true);
-                            }
-                        }
+                        Invoke(() => ManagementCreature(actor, creature, skill));
                     }
                     return;
+
                 default:
+
                     // TODO
                     return;
             }
         }
 
+        public static void CreatureModel_OnFixedUpdate_Postfix(CreatureModel __instance) => Invoke(() => Automaton.Instance.Creature(__instance), __instance.metaInfo.name, TimeSpan.FromSeconds(1));
+
         public static void FinishWorkSuccessfully_Postfix(UseSkill __instance)
         {
-            try
-            {
-                CenterBrain.AddRecord(__instance.agent, __instance.targetCreature, __instance.skillTypeInfo);
-                Automaton.Instance.Invoke(__instance);
-            }
-            catch (Exception e)
-            {
-                Log.Warning(e.Message);
-                Log.Warning(e.StackTrace);
-            }
+            Invoke(() => CenterBrain.AddRecord(__instance.agent, __instance.targetCreature, __instance.skillTypeInfo));
+            Invoke(() => Automaton.Instance.FinishWork(__instance));
         }
 
         public static void GameManager_EndGame()
         {
-            Automaton.Reset();
-            Log.Info("Automaton has been reset");
+            Invoke(Automaton.Reset);
         }
 
-        public static void OnFixedUpdate_Postfix(CreatureModel __instance)
+        public static void OrdealManager_OnFixedUpdated_Postfix(OrdealManager __instance) => Invoke(() => Automaton.Instance.OrdealManager(__instance), nameof(OrdealManager), TimeSpan.FromSeconds(1));
+
+        public static void PatchCastOverload_Prefix()
         {
-            var id = __instance.metaInfo.id;
-            if (_limiter.TryGetValue(id, out var last))
-            {
-                if (DateTime.UtcNow - last < TimeSpan.FromSeconds(1))
-                {
-                    return;
-                }
-            }
-            Automaton.Instance.Apply(__instance);
-            _limiter[id] = DateTime.UtcNow;
+            Invoke(Automaton.IncreaseOverloadLevel);
         }
 
-        public static void PatchBinahOverload_CastOverload()
-        {
-            Automaton.IncreaseOverloadLevel();
-        }
+        public static void SefiraModel_OnFixedUpdate_Prefix(Sefira __instance) => Invoke(() => Automaton.Instance.Sefira(__instance), __instance.name, TimeSpan.FromSeconds(1));
 
         public static void UnitMouseEventManager_Update(UnitMouseEventManager __instance)
         {
             if (Input.GetKeyDown(KeyCode.P))
             {
-                Automaton.Instance.Toggle();
+                Invoke(Automaton.Instance.Toggle);
+            }
+            else if (Input.GetKeyDown(KeyCode.O))
+            {
+                Invoke(Automaton.Instance.ToggleAll);
             }
             else if (Input.GetKeyDown(KeyCode.LeftShift) && __instance.GetSelectedAgents().Count > 0)
             {
                 foreach (var agent in __instance.GetSelectedAgents())
                 {
-                    Automaton.Instance.Remove(agent);
+                    Invoke(() => Automaton.Instance.Remove(agent));
                 }
             }
             else if (Input.GetKeyDown(KeyCode.V))
             {
-                Automaton.Instance.Clear();
+                Invoke(Automaton.Instance.Clear);
+            }
+            else if (Input.GetKeyDown(KeyCode.H))
+            {
+                SefiraManager.instance.sefiraList.ForEach(x => x.ReturnAgentsToSefira());
             }
         }
 
@@ -167,64 +146,104 @@ namespace AutoInority
                 Time.timeScale = 0f;
             }
         }
-        public void PatchCommandWindow(HarmonyInstance mod)
+
+        public void PatchAgentModel(HarmonyInstance mod)
         {
-            var prefix = typeof(Harmony_Patch).GetMethod(nameof(CommandWindow_OnClick_Prefix));
-            mod.Patch(typeof(CommandWindow.CommandWindow).GetMethod("OnClick"), new HarmonyMethod(prefix), null, null);
-            Log.Info(nameof(PatchCommandWindow) + " succcess");
+            var postfix = typeof(Harmony_Patch).GetMethod(nameof(AgentModel_TakeDamage_Postfix));
+            mod.Patch(typeof(AgentModel).GetMethod(nameof(AgentModel.TakeDamage), new[] { typeof(DamageInfo) }), null, new HarmonyMethod(postfix));
+            Log.Info($"patch AgentModel.TakeDamage success");
         }
 
-        public void PatchCreatureModel(HarmonyInstance mod)
-        {
-            var postfix = typeof(Harmony_Patch).GetMethod(nameof(OnFixedUpdate_Postfix));
-            mod.Patch(typeof(CreatureModel).GetMethod("OnFixedUpdate"),
-                      null,
-                      new HarmonyMethod(postfix),
-                      null);
-            Log.Info(nameof(CreatureModel) + " succcess");
-        }
+        public void PatchCommandWindow(HarmonyInstance mod) => PatchPrefix(mod, typeof(CommandWindow.CommandWindow), nameof(CommandWindow.CommandWindow.OnClick), nameof(CommandWindow_OnClick_Prefix));
+
+        public void PatchCreatureModel(HarmonyInstance mod) => PatchPostfix(mod, typeof(CreatureModel), nameof(CreatureModel.OnFixedUpdate), nameof(CreatureModel_OnFixedUpdate_Postfix));
 
         public void PatchGameManager(HarmonyInstance mod)
         {
-            var type = typeof(GameManager);
-
-            // patch gamespeed
-            var method1 = typeof(Harmony_Patch).GetMethod(nameof(UpdateGameSpeed_Postfix));
-            mod.Patch(type.GetMethod("UpdateGameSpeed", AccessTools.all),
-                      null,
-                      new HarmonyMethod(method1));
-
-            // patch endgame
-            var method2 = typeof(Harmony_Patch).GetMethod(nameof(GameManager_EndGame));
-            mod.Patch(type.GetMethod("EndGame"),
-                      new HarmonyMethod(method2),
-                      null);
-
-            Log.Info(nameof(PatchGameManager) + " succcess");
+            PatchPrefix(mod, typeof(GameManager), nameof(GameManager.EndGame), nameof(GameManager_EndGame));
+            PatchPostfix(mod, typeof(GameManager), "UpdateGameSpeed", nameof(UpdateGameSpeed_Postfix));
         }
 
-        public void PatchUnitMouseEventManager(HarmonyInstance mod)
+        public void PatchOrdealManager(HarmonyInstance mod) => PatchPostfix(mod, typeof(OrdealManager), nameof(OrdealManager.OnFixedUpdate), nameof(OrdealManager_OnFixedUpdated_Postfix));
+
+        public void PatchSefira(HarmonyInstance mod) => PatchPrefix(mod, typeof(Sefira), nameof(Sefira.OnFixedUpdate), nameof(SefiraModel_OnFixedUpdate_Prefix));
+
+        public void PatchUnitMouseEventManager(HarmonyInstance mod) => PatchPostfix(mod, typeof(UnitMouseEventManager), "Update", nameof(UnitMouseEventManager_Update));
+
+        public void PatchUseSkill(HarmonyInstance mod) => PatchPostfix(mod, typeof(UseSkill), "FinishWorkSuccessfully", nameof(FinishWorkSuccessfully_Postfix));
+
+        public void PatchWaveOverload(HarmonyInstance mod) => PatchPrefix(mod, typeof(WaveOverload), nameof(WaveOverload.CastOverload), nameof(PatchCastOverload_Prefix));
+
+        private static void Invoke(Action action)
         {
-            var method = typeof(Harmony_Patch).GetMethod(nameof(UnitMouseEventManager_Update));
-            mod.Patch(typeof(UnitMouseEventManager).GetMethod("Update", AccessTools.all),
-                      null,
-                      new HarmonyMethod(method),
-                      null);
-            Log.Info(nameof(PatchUnitMouseEventManager) + " succcess");
+            try
+            {
+                action();
+            }
+            catch (Exception e)
+            {
+                Log.Error(e.Message);
+                Log.Error(e.StackTrace);
+            }
         }
 
-        public void PatchUseSkill(HarmonyInstance mod)
+        private static void Invoke(Action action, string k, TimeSpan span)
         {
-            var postfix = typeof(Harmony_Patch).GetMethod(nameof(FinishWorkSuccessfully_Postfix));
-            mod.Patch(typeof(UseSkill).GetMethod("FinishWorkSuccessfully", AccessTools.all), null, new HarmonyMethod(postfix));
-            Log.Info(nameof(PatchUseSkill) + " succcess");
+            if (_limiter.TryGetValue(k, out var last))
+            {
+                if (DateTime.UtcNow - last < span)
+                {
+                    return;
+                }
+                Invoke(action);
+            }
+            _limiter[k] = DateTime.UtcNow + TimeSpan.FromMilliseconds(new System.Random().Next(500));
         }
 
-        public void PatchWaveOverload(HarmonyInstance mod)
+        private static void ManagementCreature(AgentModel actor, CreatureModel creature, SkillTypeInfo skill)
         {
-            var method = typeof(Automaton).GetMethod(nameof(PatchBinahOverload_CastOverload));
-            mod.Patch(typeof(WaveOverload).GetMethod("CastOverload", AccessTools.all), new HarmonyMethod(method), null);
-            Log.Info(nameof(PatchWaveOverload) + " succcess");
+            if (!creature.GetCreatureExtension().CanWorkWith(actor, skill, out var message))
+            {
+                Angela.Say(message);
+            }
+
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                Automaton.Instance.Register(actor, creature, skill);
+            }
+            else if (Input.GetKey(KeyCode.LeftControl))
+            {
+                if (actor.HasEGOGift(creature, out var gift))
+                {
+                    Angela.Say(string.Format(Angela.HasEGOGift, actor.name, gift.equipTypeInfo.Name));
+                    return;
+                }
+                else if (actor.Equipment.gifts.GetLockState(gift.equipTypeInfo))
+                {
+                    var slotName = UnitEGOgiftSpace.GetRegionName(UnitEGOgiftSpace.GetRegionId(gift.equipTypeInfo));
+                    Angela.Say(string.Format(Angela.SlotLocked, actor.name, slotName));
+                    return;
+                }
+                Automaton.Instance.Register(actor, creature, skill, forGift: true);
+            }
+            else if (Input.GetKey(KeyCode.LeftAlt))
+            {
+                Automaton.Instance.Register(actor, creature, skill, forExp: true);
+            }
+        }
+
+        private void PatchPostfix(HarmonyInstance instance, Type type, string method, string patch, BindingFlags flags = FlagsAll)
+        {
+            var postfix = typeof(Harmony_Patch).GetMethod(patch);
+            instance.Patch(type.GetMethod(method, flags), null, new HarmonyMethod(postfix));
+            Log.Info($"patch {type.Name}.{method} success");
+        }
+
+        private void PatchPrefix(HarmonyInstance instance, Type type, string method, string patch, BindingFlags flags = FlagsAll)
+        {
+            var prefix = typeof(Harmony_Patch).GetMethod(patch);
+            instance.Patch(type.GetMethod(method, flags), new HarmonyMethod(prefix), null);
+            Log.Info($"patch {type.Name}.{method} success");
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace AutoInority
+﻿namespace AutoInority.Extentions
 {
     public static class SkillTypeInfoExtensions
     {

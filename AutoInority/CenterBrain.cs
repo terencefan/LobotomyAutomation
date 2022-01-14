@@ -20,6 +20,19 @@ namespace AutoInority
             }
         }
 
+        internal static void AddRecord(AgentModel agent, CreatureModel creature, SkillTypeInfo skill)
+        {
+            if (creature.script is HappyTeddy || creature.script is YoungPrince || creature.script is BeautyBeast)
+            {
+                Instance.records.Push(new Record()
+                {
+                    Agent = agent,
+                    Creature = creature,
+                    Skill = skill,
+                });
+            }
+        }
+
         internal static Record FindLastRecord(CreatureModel creature)
         {
             foreach (var record in Instance.records)
@@ -44,17 +57,40 @@ namespace AutoInority
             return null;
         }
 
-        internal static void AddRecord(AgentModel agent, CreatureModel creature, SkillTypeInfo skill)
+        internal static List<Record> FindLastRecords(CreatureModel creature, int count)
         {
-            if (creature.script is HappyTeddy)
+            var result = new List<Record>();
+            foreach (var record in Instance.records)
             {
-                Instance.records.Push(new Record()
+                if (record.Creature.metaInfo.id == creature.metaInfo.id)
                 {
-                    Agent = agent,
-                    Creature = creature,
-                    Skill = skill,
-                });
+                    result.Add(record);
+                }
+                if (result.Count == count)
+                {
+                    return result;
+                }
             }
+            Log.Info($"Found {result.Count} records for {creature.metaInfo.name}");
+            return result;
+        }
+
+        internal static List<Record> FindLastRecords(AgentModel agent, int count)
+        {
+            var result = new List<Record>();
+            foreach (var record in Instance.records)
+            {
+                if (record.Agent.name == agent.name)
+                {
+                    result.Add(record);
+                }
+                if (result.Count == count)
+                {
+                    return result;
+                }
+            }
+            Log.Info($"Found {result.Count} records for {agent.name}");
+            return result;
         }
 
         internal sealed class Record

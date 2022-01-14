@@ -2,19 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using UnityEngine;
+using AutoInority.Extentions;
 
 namespace AutoInority
 {
-    class Automaton
+    internal partial class Automaton
     {
         private static Automaton _instance;
 
         private readonly Dictionary<long, List<string>> _caretakers = new Dictionary<long, List<string>>();
 
         private readonly Dictionary<string, Macro> _macros = new Dictionary<string, Macro>();
-
-        private int OverloadLevel = 1;
 
         public static Automaton Instance
         {
@@ -28,10 +26,18 @@ namespace AutoInority
             }
         }
 
+        public float CounterDecreaseConfidence { get; set; } = 0.95f;
+
+        public float CreatureEscapeConfidence { get; set; } = 0.99f;
+
+        public float DeadConfidence { get; set; } = 0.99f;
+
+        private bool All { get; set; } = false;
+
         private bool Running { get; set; } = true;
+
         public static void IncreaseOverloadLevel()
         {
-            Instance.OverloadLevel += 1;
             Log.Info("increase overload level");
         }
 
@@ -40,29 +46,11 @@ namespace AutoInority
             _instance = null;
         }
 
-        /// <summary>
-        /// Try finding an agent to ingratiate himself with the creature.
-        /// </summary>
-        /// <param name="creature"></param>
-        public void Apply(CreatureModel creature)
+        public void AgentTakeDamage(AgentModel agent, DamageInfo dmg)
         {
-            if (!Running)
+            if (agent.hp < 0.25 * agent.maxHp || agent.mental < 0.25 * agent.maxMental)
             {
-                return;
-            }
-
-            if (!_caretakers.TryGetValue(creature.metaInfo.id, out var names))
-            {
-                return;
-            }
-
-            foreach (var name in names)
-            {
-                if (_macros.TryGetValue(name, out var macro) && macro.IsAvailable())
-                {
-                    macro.Apply();
-                    return;
-                }
+                agent.ReturnToSefira();
             }
         }
 
@@ -78,39 +66,77 @@ namespace AutoInority
         }
 
         /// <summary>
+        /// Try finding an agent to ingratiate himself with the creature.
+        /// </summary>
+        /// <param name="creature"></param>
+        public void Creature(CreatureModel creature)
+        {
+            if (!Running)
+            {
+                return;
+            }
+
+            if (_caretakers.TryGetValue(creature.metaInfo.id, out var names))
+            {
+                foreach (var name in names)
+                {
+                    if (_macros.TryGetValue(name, out var macro) && macro.IsAvailable() && macro.IsConfident())
+                    {
+                        macro.Apply();
+                        return;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Complete the macro if the agent got the target EGO gist.
         /// </summary>
         /// <param name="agent"></param>
-        public void Invoke(UseSkill skill)
+        public void FinishWork(UseSkill item)
         {
-            var agent = skill.agent;
+            var agent = item.agent;
+            var skill = item.skillTypeInfo;
 
             if (_macros.TryGetValue(agent.name, out var macro))
             {
-                if (agent.hp < 0.25 * agent.maxHp || agent.mental < 0.25 * agent.maxMental)
+                if (macro.ForGift && agent.HasEGOGift(macro.Creature, out var gift))
                 {
-                    Log.Warning($"{agent.name} has to wait until next level");
-                    macro.WaitUntilLevel(OverloadLevel);
+                    Notice.instance.Send("AddSystemLog", $"{agent.Tag()}获得了{gift.equipTypeInfo.Tag()}");
+                    Remove(agent);
                 }
-
-                if (macro.AimForEGOGift && agent.HasEGOGift(macro.Creature, out var gift))
+                else if (macro.ForExp && agent.HasReachedExpLimit(skill.rwbpType, out var name))
                 {
-					Notice.instance.Send("AddSystemLog", $"{skill.agent.Tag()}获得了{gift.equipTypeInfo.Tag()}");
+                    Notice.instance.Send("AddSystemLog", $"{agent.Tag()}的{name}能力已经达到上限");
                     Remove(agent);
                 }
             }
         }
 
-        public void Register(AgentModel agent, CreatureModel creature, SkillTypeInfo skill, Sprite sprite, bool aimForEGOGift = false)
+        public void OrdealManager(OrdealManager manager)
+        {
+            if (!Running)
+            {
+                return;
+            }
+
+            foreach (var creature in manager.GetOrdealCreatureList())
+            {
+                OrdealCreature(creature);
+            }
+        }
+
+        public void Register(AgentModel agent, CreatureModel creature, SkillTypeInfo skill, bool forGift = false, bool forExp = false)
         {
             try
             {
-                _macros[agent.name] = new Macro(aimForEGOGift)
+                _macros[agent.name] = new Macro()
                 {
                     Agent = agent,
                     Creature = creature,
                     Skill = skill,
-                    Sprite = sprite,
+                    ForExp = forExp,
+                    ForGift = forGift,
                 };
                 if (_caretakers.TryGetValue(creature.metaInfo.id, out var agents))
                 {
@@ -121,12 +147,12 @@ namespace AutoInority
                     _caretakers.Add(creature.metaInfo.id, new List<string>() { agent.name });
                 }
                 Notice.instance.Send("AddSystemLog", $"{agent.Tag()}将会自动对{creature.Tag()}进行{skill.Tag()}");
-                agent.AddUnitBuf(new MacroBurf(creature));
+                agent.AddUnitBuf(new AutomatonBuf(creature));
             }
             catch (Exception e)
             {
-                Log.Warning(e.Message);
-                Log.Warning(e.StackTrace);
+                Log.Error(e.Message);
+                Log.Error(e.StackTrace);
             }
             finally
             {
@@ -148,10 +174,20 @@ namespace AutoInority
                     _caretakers[macro.Creature.metaInfo.id] = new List<string>(names.Where(name => name != agent.name));
                 }
             }
-            foreach (var buf in agent.GetUnitBufList().Where(buf => buf is MacroBurf).ToList())
+            foreach (var buf in agent.GetUnitBufList().Where(buf => buf is AutomatonBuf).ToList())
             {
                 agent.RemoveUnitBuf(buf);
             }
+        }
+
+        public void Sefira(Sefira sefira)
+        {
+            if (!Running)
+            {
+                return;
+            }
+            ManageCreatures(sefira);
+            ManageCreatureKits(sefira);
         }
 
         /// <summary>
@@ -160,31 +196,120 @@ namespace AutoInority
         public void Toggle()
         {
             Running = !Running;
-            var message = Running ? Angela.Automaton.On : Angela.Automaton.Off;
+            var message = AutomationMessage();
             Angela.Say(message);
+        }
+
+        /// <summary>
+        /// Toggle the running status of the Automaton.
+        /// </summary>
+        public void ToggleAll()
+        {
+            All = !All;
+            var message = AutomationMessage();
+            Angela.Say(message);
+        }
+
+        private string AutomationMessage() => Running ? (All ? Angela.Automaton.All : Angela.Automaton.On) : Angela.Automaton.Off;
+
+        private void HandleCandidates(IEnumerable<Candidate> candidates, HashSet<CreatureModel> creatures)
+        {
+            foreach (var candidate in candidates)
+            {
+                if (creatures.Contains(candidate.Creature))
+                {
+                    if (!candidate.Creature.IsAvailable())
+                    {
+                        creatures.Remove(candidate.Creature);
+                    }
+                    else if (candidate.Agent.IsAvailable())
+                    {
+                        candidate.Apply();
+                        creatures.Remove(candidate.Creature);
+                    }
+                }
+            }
+        }
+
+        private void ManageCreatureKits(Sefira sefira)
+        {
+            // TODO
+        }
+
+        private void ManageCreatures(Sefira sefira)
+        {
+            var agents = sefira.AvailableAgents();
+            var creatures = new HashSet<CreatureModel>(sefira.UrgentCreatures());
+
+            var candidates = Candidate.Suggest(agents, creatures);
+            Log.Info(sefira.name, $"Candidates: {candidates.Count()}");
+            HandleCandidates(candidates, creatures);
+
+            if (creatures.Count > 0) // call neighbor depts agents
+            {
+                agents = sefira.NeibourAgents();
+                Log.Info(sefira.name, $"Neighbor agents: {agents.Count()}");
+                candidates = Candidate.Suggest(agents, creatures);
+                Log.Info(sefira.name, $"Candidates: {candidates.Count()}");
+                HandleCandidates(candidates, creatures);
+            }
+
+            if (Instance.All && sefira.sefiraEnum != SefiraEnum.TIPERERTH1 && sefira.sefiraEnum != SefiraEnum.TIPERERTH2) // assign other works
+            {
+                creatures = new HashSet<CreatureModel>(sefira.Creatures());
+                Log.Info(sefira.name, $"Remain creatures: {creatures.Count()}");
+                candidates = Candidate.Suggest(agents.Where(x => x.IsAvailable()), creatures);
+                Log.Info(sefira.name, $"Candidates: {candidates.Count()}");
+                HandleCandidates(candidates, creatures);
+            }
+        }
+
+        private void OrdealCreature(OrdealCreatureModel creature)
+        {
+            if (creature.state == CreatureState.SUPPRESSED || creature.state == CreatureState.SUPPRESSED_RETURN)
+            {
+                return;
+            }
+            var riskLevel = creature.GetRiskLevel();
+            var sefira = creature.sefira;
+
+            // Log.Warning($"{nameof(OrdealCreature)}: {creature.metaInfo.name}, risk level: {riskLevel}");
+            switch (creature.script.GetType().Name)
+            {
+                case nameof(CircusDawn):
+                case nameof(MachineDawn):
+                case nameof(BugDawn):
+                case nameof(OutterGodDawn):
+                case nameof(OutterGodNoon):
+                case nameof(ScavengerNoon):
+                case nameof(CircusNoon):
+                case nameof(MachineNoon):
+                case nameof(CircusDusk):
+                    foreach (var agent in sefira.agentList.Where(x => x.IsAvailable() && x.IsCapableOfPressing(creature)))
+                    {
+                        // Log.Info($"{agent.name} (lv {agent.level}) starts suppressing {creature.metaInfo.name} with {agent.Equipment.armor.metaInfo.grade} armor");
+                        agent.Suppress(creature);
+                    }
+                    return;
+            }
         }
 
         private sealed class Macro
         {
-            public readonly bool AimForEGOGift;
-
             public AgentModel Agent;
+
             public CreatureModel Creature;
+
+            public bool ForExp;
+
+            public bool ForGift;
 
             public SkillTypeInfo Skill;
 
-            public Sprite Sprite;
-
-            private int _levelCounter = 0;
-
-            public Macro(bool forGift = false)
-            {
-                AimForEGOGift = forGift;
-            }
-
             public void Apply()
             {
-                Agent.ManageCreature(Creature, Skill, Sprite);
+                var sprite = CommandWindow.CommandWindow.CurrentWindow.GetWorkSprite(Skill.rwbpType);
+                Agent.ManageCreature(Creature, Skill, sprite);
                 Agent.counterAttackEnabled = false;
                 Creature.Unit.room.OnWorkAllocated(Agent);
                 Creature.script.OnWorkAllocated(Skill, Agent);
@@ -193,13 +318,10 @@ namespace AutoInority
 
             public bool IsAvailable()
             {
-                return Instance.OverloadLevel > _levelCounter && Common.CanWorkWithCreature(Agent, Creature, Skill, silent: true) && Agent.Available() && Creature.Available();
+                return Creature.GetCreatureExtension().CanWorkWith(Agent, Skill, out _) && Agent.IsAvailable() && Creature.IsAvailable();
             }
 
-            public void WaitUntilLevel(int level)
-            {
-                _levelCounter = level;
-            }
+            public bool IsConfident() => Creature.GetCreatureExtension().CheckConfidence(Agent, Skill);
         }
     }
 }
