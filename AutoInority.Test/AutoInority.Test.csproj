@@ -1,11 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
 
     <IsPackable>false</IsPackable>
 
     <OutputType>Library</OutputType>
+
+    <ApplicationIcon />
+
+    <StartupObject />
   </PropertyGroup>
 
   <ItemGroup>
