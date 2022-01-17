@@ -10,6 +10,8 @@ using Harmony;
 
 using UnityEngine;
 
+using Random = System.Random;
+
 namespace AutoInority
 {
     public class Harmony_Patch
@@ -18,7 +20,7 @@ namespace AutoInority
 
         private const BindingFlags FlagsAll = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.SetField | BindingFlags.GetProperty | BindingFlags.SetProperty;
 
-        private static Dictionary<string, DateTime> _limiter = new Dictionary<string, DateTime>();
+        private static Dictionary<string, float> _limiter = new Dictionary<string, float>();
 
         public Harmony_Patch()
         {
@@ -68,7 +70,10 @@ namespace AutoInority
             }
         }
 
-        public static void CreatureModel_OnFixedUpdate_Postfix(CreatureModel __instance) => Invoke(() => Automaton.Instance.Creature(__instance), __instance.metaInfo.name, TimeSpan.FromSeconds(1));
+        public static void CreatureModel_OnFixedUpdate_Postfix(CreatureModel __instance)
+        {
+            Invoke(() => Automaton.Instance.Creature(__instance), __instance.metaInfo.name, 5f, random: true);
+        }
 
         public static void FinishWorkSuccessfully_Postfix(UseSkill __instance)
         {
@@ -81,14 +86,20 @@ namespace AutoInority
             Invoke(Automaton.Reset);
         }
 
-        public static void OrdealManager_OnFixedUpdated_Postfix(OrdealManager __instance) => Invoke(() => Automaton.Instance.OrdealManager(__instance), nameof(OrdealManager), TimeSpan.FromSeconds(1));
+        public static void OrdealManager_OnFixedUpdated_Postfix(OrdealManager __instance)
+        {
+            Invoke(() => Automaton.Instance.OrdealManager(__instance), nameof(OrdealManager), 5f);
+        }
 
         public static void PatchCastOverload_Prefix()
         {
             Invoke(Automaton.IncreaseOverloadLevel);
         }
 
-        public static void SefiraModel_OnFixedUpdate_Prefix(Sefira __instance) => Invoke(() => Automaton.Instance.Sefira(__instance), __instance.name, TimeSpan.FromSeconds(1));
+        public static void SefiraModel_OnFixedUpdate_Prefix(Sefira __instance)
+        {
+            Invoke(() => Automaton.Instance.Sefira(__instance), __instance.name, 5f, offset: __instance.GetPriority());
+        }
 
         public static void UnitMouseEventManager_Update(UnitMouseEventManager __instance)
         {
@@ -187,17 +198,18 @@ namespace AutoInority
             }
         }
 
-        private static void Invoke(Action action, string k, TimeSpan span)
+        private static void Invoke(Action action, string k, float interval, float offset = 0f, bool random = false)
         {
             if (_limiter.TryGetValue(k, out var last))
             {
-                if (DateTime.UtcNow - last < span)
+                if (Time.fixedDeltaTime - last < interval)
                 {
                     return;
                 }
                 Invoke(action);
+                _limiter[k] = Time.fixedDeltaTime;
             }
-            _limiter[k] = DateTime.UtcNow + TimeSpan.FromMilliseconds(new System.Random().Next(500));
+            _limiter[k] = offset + (float)(random ? (new Random().NextDouble()) * interval : interval);
         }
 
         private static void ManagementCreature(AgentModel actor, CreatureModel creature, SkillTypeInfo skill)

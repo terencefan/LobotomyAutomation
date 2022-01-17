@@ -54,5 +54,28 @@ namespace AutoInority.Extentions
             }
             return r;
         }
+
+        public static float GetPriority(this Sefira sefira)
+        {
+            switch ((SefiraEnum)sefira.index)
+            {
+                case SefiraEnum.TIPERERTH1:
+                case SefiraEnum.TIPERERTH2:
+                    return 1f;
+                case SefiraEnum.CHOKHMAH:
+                case SefiraEnum.BINAH:
+                    return 2f;
+                case SefiraEnum.CHESED:
+                case SefiraEnum.GEBURAH:
+                    return 3f;
+                case SefiraEnum.NETZACH:
+                case SefiraEnum.HOD:
+                    return 4f;
+                case SefiraEnum.MALKUT:
+                case SefiraEnum.YESOD:
+                default:
+                    return 5f;
+            }
+        }
     }
 }
