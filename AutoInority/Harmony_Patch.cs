@@ -111,11 +111,24 @@ namespace AutoInority
             {
                 Invoke(Automaton.Instance.ToggleAll);
             }
-            else if (Input.GetKeyDown(KeyCode.LeftShift) && __instance.GetSelectedAgents().Count > 0)
+            else if (Input.GetKeyDown(KeyCode.F))
             {
-                foreach (var agent in __instance.GetSelectedAgents())
+                var currentWindow = CommandWindow.CommandWindow.CurrentWindow;
+                if (currentWindow.enabled && currentWindow.IsEnabled && currentWindow.CurrentTarget is CreatureModel creature)
                 {
-                    Invoke(() => Automaton.Instance.Remove(agent));
+                    Log.Info($"{creature.metaInfo.name} enter farm mode");
+                }
+            }
+            else if (Input.GetKeyDown(KeyCode.LeftShift))
+            {
+                if (__instance.GetSelectedAgents().Count > 0)
+                {
+                    Invoke(() => __instance.GetSelectedAgents().ForEach(x => Automaton.Instance.Remove(x)));
+                }
+                var currentWindow = CommandWindow.CommandWindow.CurrentWindow;
+                if (currentWindow.enabled && currentWindow.IsEnabled && currentWindow.CurrentTarget is CreatureModel creature)
+                {
+                    Log.Info($"{creature.metaInfo.name} leave farm mode");
                 }
             }
             else if (Input.GetKeyDown(KeyCode.V))
@@ -124,7 +137,11 @@ namespace AutoInority
             }
             else if (Input.GetKeyDown(KeyCode.H))
             {
-                SefiraManager.instance.sefiraList.ForEach(x => x.ReturnAgentsToSefira());
+                Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.ReturnAgentsToSefira()));
+            }
+            else if (Input.GetKeyDown(KeyCode.G))
+            {
+                Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.MoveToNeighborPassage()));
             }
         }
 

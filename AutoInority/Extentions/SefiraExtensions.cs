@@ -77,5 +77,9 @@ namespace AutoInority.Extentions
                     return 5f;
             }
         }
+
+        public static void MoveToNeighborPassage(this Sefira sefira)
+        {
+        }
     }
 }

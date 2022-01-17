@@ -161,6 +161,14 @@ namespace AutoInority
         }
 
         /// <summary>
+        /// Enter farm mode
+        /// </summary>
+        /// <param name="creature"></param>
+        public void Register(CreatureModel creature)
+        {
+        }
+
+        /// <summary>
         /// Remove the macro
         /// </summary>
         /// <param name="agent"></param>
@@ -178,6 +186,15 @@ namespace AutoInority
             {
                 agent.RemoveUnitBuf(buf);
             }
+        }
+
+        /// <summary>
+        /// Leave farm mode.
+        /// </summary>
+        /// <param name="creature"></param>
+        public void Remove(CreatureModel creature)
+        {
+
         }
 
         public void Sefira(Sefira sefira)
