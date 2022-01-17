@@ -75,9 +75,10 @@ namespace AutoInority
             {
                 return 1f;
             }
+            maxPoints -= 1;
 
             var r = 0f;
-            for (int i = 0; i <= (maxPoints - 1.0) / damage; i++)
+            for (int i = 0; i < maxPoints / damage; i++)
             {
                 r += P(count, count - i, prob);
             }
@@ -86,37 +87,7 @@ namespace AutoInority
 
         public static float Survive(float maxPoints, float minDamage, float maxDamage, float prob, int count)
         {
-            if (maxPoints / maxDamage > count)
-            {
-                return 1f;
-            }
-
-            var rates = new float[3];
-            var avgDamage = (minDamage + maxDamage) / 2;
-            for (int i = 0; i <= count; i++)
-            {
-                var p = P(count, count - i, prob);
-                if (maxDamage * i < maxPoints - 1.0)
-                {
-                    rates[0] += p;
-                    rates[1] += p;
-                    rates[2] += p;
-                }
-                else if (avgDamage * i < maxPoints - 1.0)
-                {
-                    rates[0] += p;
-                    rates[1] += p;
-                }
-                else if (minDamage * i < maxPoints - 1.0)
-                {
-                    rates[0] += p;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            return Mathf.Pow(rates[0] * rates[1] * rates[1] * rates[2], 0.25f);
+            return Survive(maxPoints, (minDamage + maxDamage) / 2, prob, count);
         }
     }
 }
