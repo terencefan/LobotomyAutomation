@@ -4,13 +4,15 @@
     {
         protected override SkillTypeInfo[] DefaultSkills { get; } = new SkillTypeInfo[] { Insight, Repression };
 
+        private bool IsFarming => Automaton.Instance.FarmingCreatures.Contains(_creature);
+
         public ButterflyExt(CreatureModel creature) : base(creature)
         {
         }
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            if (agent.Rstat > 3 || agent.Pstat < 3)
+            if (agent.Rstat > 3 || agent.Pstat < 3 || !IsFarming)
             {
                 message = "Butterfly";
                 return false;

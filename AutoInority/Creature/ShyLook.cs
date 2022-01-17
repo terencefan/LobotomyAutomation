@@ -8,7 +8,7 @@
 
         protected override float CalculateWorkSuccessProb(AgentModel agent, SkillTypeInfo skill)
         {
-            return base.CalculateWorkSuccessProb(agent, skill) - 0.5f;
+            return 0.2f;
         }
 
         protected override float GetDamageMultiplierInWork(AgentModel agent, SkillTypeInfo skill)

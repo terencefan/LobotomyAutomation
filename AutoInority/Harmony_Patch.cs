@@ -20,7 +20,7 @@ namespace AutoInority
 
         private const BindingFlags FlagsAll = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.SetField | BindingFlags.GetProperty | BindingFlags.SetProperty;
 
-        private static Dictionary<string, float> _limiter = new Dictionary<string, float>();
+        private static Dictionary<string, int> _limiter = new Dictionary<string, int>();
 
         public Harmony_Patch()
         {
@@ -33,7 +33,7 @@ namespace AutoInority
                 PatchUnitMouseEventManager(mod);
                 PatchCommandWindow(mod);
 
-                // PatchAgentModel(mod);
+                PatchAgentModel(mod);
                 PatchCreatureModel(mod);
 
                 PatchOrdealManager(mod);
@@ -62,9 +62,7 @@ namespace AutoInority
                         Invoke(() => ManagementCreature(actor, creature, skill));
                     }
                     return;
-
                 default:
-
                     // TODO
                     return;
             }
@@ -72,7 +70,7 @@ namespace AutoInority
 
         public static void CreatureModel_OnFixedUpdate_Postfix(CreatureModel __instance)
         {
-            Invoke(() => Automaton.Instance.Creature(__instance), __instance.metaInfo.name, 5f, random: true);
+            Invoke(() => Automaton.Instance.Creature(__instance), __instance.metaInfo.name, 120, random: true);
         }
 
         public static void FinishWorkSuccessfully_Postfix(UseSkill __instance)
@@ -88,7 +86,7 @@ namespace AutoInority
 
         public static void OrdealManager_OnFixedUpdated_Postfix(OrdealManager __instance)
         {
-            Invoke(() => Automaton.Instance.OrdealManager(__instance), nameof(OrdealManager), 5f);
+            Invoke(() => Automaton.Instance.HandleOrdealManager(__instance), nameof(OrdealManager), 60);
         }
 
         public static void PatchCastOverload_Prefix()
@@ -98,7 +96,7 @@ namespace AutoInority
 
         public static void SefiraModel_OnFixedUpdate_Prefix(Sefira __instance)
         {
-            Invoke(() => Automaton.Instance.Sefira(__instance), __instance.name, 5f, offset: __instance.GetPriority());
+            Invoke(() => Automaton.Instance.Sefira(__instance), __instance.name, 60, offset: __instance.GetPriority());
         }
 
         public static void UnitMouseEventManager_Update(UnitMouseEventManager __instance)
@@ -121,14 +119,14 @@ namespace AutoInority
             }
             else if (Input.GetKeyDown(KeyCode.LeftShift))
             {
-                if (__instance.GetSelectedAgents().Count > 0)
-                {
-                    Invoke(() => __instance.GetSelectedAgents().ForEach(x => Automaton.Instance.Remove(x)));
-                }
+                Invoke(() => __instance.GetSelectedAgents().ForEach(x => Automaton.Instance.Remove(x)));
+            }
+            else if (Input.GetKeyDown(KeyCode.T))
+            {
                 var currentWindow = CommandWindow.CommandWindow.CurrentWindow;
                 if (currentWindow.enabled && currentWindow.IsEnabled && currentWindow.CurrentTarget is CreatureModel creature)
                 {
-                    Log.Info($"{creature.metaInfo.name} leave farm mode");
+                    Invoke(() => Automaton.Instance.ToggleFarming(creature));
                 }
             }
             else if (Input.GetKeyDown(KeyCode.V))
@@ -139,9 +137,13 @@ namespace AutoInority
             {
                 Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.ReturnAgentsToSefira()));
             }
-            else if (Input.GetKeyDown(KeyCode.G))
+            else if (Input.GetKeyDown(KeyCode.N))
             {
                 Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.MoveToNeighborPassage()));
+            }
+            else if (Input.GetKeyDown(KeyCode.B))
+            {
+                Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.MoveToNetzachElevator()));
             }
         }
 
@@ -215,18 +217,22 @@ namespace AutoInority
             }
         }
 
-        private static void Invoke(Action action, string k, float interval, float offset = 0f, bool random = false)
+        private static void Invoke(Action action, string k, int interval, int offset = 0, bool random = false)
         {
+            var r = new Random();
             if (_limiter.TryGetValue(k, out var last))
             {
-                if (Time.fixedDeltaTime - last < interval)
+                if (Time.frameCount - last < interval)
                 {
                     return;
                 }
                 Invoke(action);
-                _limiter[k] = Time.fixedDeltaTime;
+                _limiter[k] = Time.frameCount;
             }
-            _limiter[k] = offset + (float)(random ? (new Random().NextDouble()) * interval : interval);
+            else
+            {
+                _limiter[k] = offset - (random ? r.Next(interval) : interval);
+            }
         }
 
         private static void ManagementCreature(AgentModel actor, CreatureModel creature, SkillTypeInfo skill)
@@ -238,7 +244,7 @@ namespace AutoInority
 
             if (Input.GetKey(KeyCode.LeftShift))
             {
-                Automaton.Instance.Register(actor, creature, skill);
+                Invoke(() => Automaton.Instance.Register(actor, creature, skill));
             }
             else if (Input.GetKey(KeyCode.LeftControl))
             {

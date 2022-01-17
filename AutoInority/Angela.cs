@@ -32,6 +32,8 @@
 
             public const string Laetitia = "您难道没有发现{0}已经拥有{1}的礼物了吗？您这样的主管真是令我失望。";
 
+            public const string Fairy = "您难道没有发现{0}已经拥有{1}的祝福了吗？您这样的主管真是令我失望。";
+
             public const string RedShoes = "我不认为安排{0}去对{1}进行{2}是一个好主意，很明显{0}还不如您自律。";
 
             public const string SiningMachine = "我相信{0}在结束工作后就会跳进{1}中，这将会是公司的一笔重大财务损失。";

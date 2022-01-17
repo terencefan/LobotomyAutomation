@@ -1,45 +1,15 @@
-﻿namespace AutoInority.Extentions
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace AutoInority.Extentions
 {
     public static class AgentModelExtensions
     {
-        public static bool IsAvailable(this AgentModel agent)
+        public static bool EGOSlotLocked(this AgentModel agent, CreatureEquipmentMakeInfo gift) => agent.Equipment.gifts.GetLockState(gift.equipTypeInfo);
+
+        public static IEnumerable<AgentModel> FilterSuppress(this IEnumerable<AgentModel> agents, CreatureModel creature)
         {
-            return agent.hp == agent.maxHp && agent.mental == agent.maxMental && agent.GetState() == AgentAIState.IDLE;
-        }
-
-        /// <summary>
-        /// Lv 4 agent can suppress WAW
-        /// </summary>
-        /// <param name="agent"></param>
-        /// <param name="creature"></param>
-        /// <returns></returns>
-        public static bool IsCapableOfPressing(this AgentModel agent, CreatureModel creature)
-        {
-            var riskLevel = creature.GetRiskLevel();
-            var weapon = agent.Equipment.weapon.metaInfo;
-            var weaponGrade = (int)weapon.Grade;
-            var armor = agent.Equipment.weapon.metaInfo;
-            var armorGrade = (int)armor.Grade;
-
-            if (agent.level > riskLevel)
-            {
-                return true;
-            }
-            else if (agent.level < riskLevel)
-            {
-                return false;
-            }
-
-            var defense = creature.metaInfo.defenseTable.GetDefenseInfo();
-            if (weaponGrade > riskLevel)
-            {
-                return armorGrade >= riskLevel;
-            }
-            else if (defense.GetMultiplier(weapon.damageInfo.type) > 1.0f)
-            {
-                return armorGrade > riskLevel;
-            }
-            return false;
+            return agents.Where(x => x.IsAvailable() && x.IsCapableOfPressing(creature)).ToList();
         }
 
         public static bool HasEGOGift(this AgentModel agent, CreatureModel creature, out CreatureEquipmentMakeInfo gift)
@@ -77,6 +47,46 @@
             return false;
         }
 
+        public static bool IsAvailable(this AgentModel agent)
+        {
+            return agent.hp == agent.maxHp && agent.mental == agent.maxMental && agent.GetState() == AgentAIState.IDLE;
+        }
+
         public static string Tag(this AgentModel agent) => $"<color=#66bfcd>{agent.name}</color>";
+
+        /// <summary>
+        /// Lv 4 agent can suppress WAW
+        /// </summary>
+        /// <param name="agent"></param>
+        /// <param name="creature"></param>
+        /// <returns></returns>
+        private static bool IsCapableOfPressing(this AgentModel agent, CreatureModel creature)
+        {
+            var riskLevel = creature.GetRiskLevel();
+            var weapon = agent.Equipment.weapon.metaInfo;
+            var weaponGrade = (int)weapon.Grade;
+            var armor = agent.Equipment.weapon.metaInfo;
+            var armorGrade = (int)armor.Grade;
+
+            if (agent.level > riskLevel)
+            {
+                return true;
+            }
+            else if (agent.level < riskLevel)
+            {
+                return false;
+            }
+
+            var defense = creature.metaInfo.defenseTable.GetDefenseInfo();
+            if (weaponGrade > riskLevel)
+            {
+                return armorGrade >= riskLevel;
+            }
+            else if (defense.GetMultiplier(weapon.damageInfo.type) > 1.0f)
+            {
+                return armorGrade > riskLevel;
+            }
+            return false;
+        }
     }
 }

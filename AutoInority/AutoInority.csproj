@@ -46,6 +46,7 @@
     <Compile Include="Creature\CensoredExt.cs" />
     <Compile Include="Creature\DontTouchMeExt.cs" />
     <Compile Include="Creature\CloudedMonkExt.cs" />
+    <Compile Include="Creature\FairyFestivalExt.cs" />
     <Compile Include="Creature\FireBirdExt.cs" />
     <Compile Include="Creature\GoodNormalExt.cs" />
     <Compile Include="Creature\HappyTeddyExt.cs" />

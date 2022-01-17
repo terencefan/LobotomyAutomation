@@ -167,6 +167,10 @@ namespace AutoInority.Extentions
             {
                 return new ShyLook(creature);
             }
+            else if (creature.script is Fairy)
+            {
+                return new FairyFestivalExt(creature);
+            }
             else
             {
                 return new BaseCreatureExt(creature);

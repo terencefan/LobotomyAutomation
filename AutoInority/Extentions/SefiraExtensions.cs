@@ -21,21 +21,55 @@ namespace AutoInority.Extentions
 
         public static string[] AgentNames(this Sefira sefira) => sefira.agentList.Select(x => x.name).ToArray();
 
-        public static string[] CreatureNames(this Sefira sefira) => sefira.creatureList.Select(x => x.metaInfo.name).ToArray();
-
-        public static IEnumerable<CreatureModel> UrgentCreatures(this Sefira sefira)
+        public static IEnumerable<AgentModel> AvailableAgents(this Sefira sefira)
         {
-            return sefira.creatureList.Where(x => !x.IsKit() && x.IsAvailable() && x.IsUrgent());
+            return sefira.agentList.Where(x => x.IsAvailable());
         }
+
+        public static string[] CreatureNames(this Sefira sefira) => sefira.creatureList.Select(x => x.metaInfo.name).ToArray();
 
         public static IEnumerable<CreatureModel> Creatures(this Sefira sefira)
         {
             return sefira.creatureList.Where(x => !x.IsKit() && x.IsAvailable());
         }
 
-        public static IEnumerable<AgentModel> AvailableAgents(this Sefira sefira)
+        public static int GetPriority(this Sefira sefira)
         {
-            return sefira.agentList.Where(x => x.IsAvailable());
+            switch ((SefiraEnum)sefira.index)
+            {
+                case SefiraEnum.TIPERERTH1:
+                case SefiraEnum.TIPERERTH2:
+                    return 10;
+                case SefiraEnum.CHOKHMAH:
+                case SefiraEnum.BINAH:
+                    return 20;
+                case SefiraEnum.CHESED:
+                case SefiraEnum.GEBURAH:
+                    return 30;
+                case SefiraEnum.NETZACH:
+                case SefiraEnum.HOD:
+                    return 40;
+                case SefiraEnum.MALKUT:
+                case SefiraEnum.YESOD:
+                default:
+                    return 50;
+            }
+        }
+
+        public static void MoveToNeighborPassage(this Sefira sefira)
+        {
+            var passage = sefira.passageList.Where(x => x.isActivate && x.type == PassageType.HORIZONTAL);
+            if (passage.Any())
+            {
+                sefira.agentList.ForEach(x => x.SetWaitingPassage(passage.First()));
+            }
+        }
+
+        public static void MoveToNetzachElevator(this Sefira sefira)
+        {
+            var passages = SefiraManager.instance.GetSefira(SefiraEnum.YESOD).passageList;
+            var elevator = passages.Where(x => x.isActivate && x.GetSrc() == "Map/Passage/Yesod/PassageYesodElevator" && x.passageGroup == "1").First();
+            sefira.agentList.ForEach(x => x.SetWaitingPassage(elevator));
         }
 
         public static IEnumerable<AgentModel> NeibourAgents(this Sefira sefira)
@@ -55,31 +89,9 @@ namespace AutoInority.Extentions
             return r;
         }
 
-        public static float GetPriority(this Sefira sefira)
+        public static IEnumerable<CreatureModel> UrgentCreatures(this Sefira sefira)
         {
-            switch ((SefiraEnum)sefira.index)
-            {
-                case SefiraEnum.TIPERERTH1:
-                case SefiraEnum.TIPERERTH2:
-                    return 1f;
-                case SefiraEnum.CHOKHMAH:
-                case SefiraEnum.BINAH:
-                    return 2f;
-                case SefiraEnum.CHESED:
-                case SefiraEnum.GEBURAH:
-                    return 3f;
-                case SefiraEnum.NETZACH:
-                case SefiraEnum.HOD:
-                    return 4f;
-                case SefiraEnum.MALKUT:
-                case SefiraEnum.YESOD:
-                default:
-                    return 5f;
-            }
-        }
-
-        public static void MoveToNeighborPassage(this Sefira sefira)
-        {
+            return sefira.creatureList.Where(x => !x.IsKit() && x.IsAvailable() && x.IsUrgent());
         }
     }
 }

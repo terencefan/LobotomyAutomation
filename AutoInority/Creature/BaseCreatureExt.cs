@@ -1,4 +1,6 @@
-﻿using AutoInority.Extentions;
+﻿using System.Linq;
+
+using AutoInority.Extentions;
 
 namespace AutoInority.Creature
 {
@@ -31,12 +33,17 @@ namespace AutoInority.Creature
         public virtual bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
             message = null;
-            if (agent.GetUnitBufByType(UnitBufType.LITTLEWITCH_HEART) == null || _creature.script is LittleWitch)
+            if (agent.HasUnitBuf(UnitBufType.LITTLEWITCH_HEART) && !(_creature.script is LittleWitch))
             {
-                return true;
+                message = string.Format(Angela.Creatures.Laetitia, agent.Tag(), _creature.Tag(), skill.Tag());
+                return false;
             }
-            message = string.Format(Angela.Creatures.Laetitia, agent.Tag(), _creature.Tag(), skill.Tag());
-            return false;
+            if (agent.GetUnitBufList().Where(x => x is FairyBuf).Any() && !(_creature.script is Fairy))
+            {
+                message = string.Format(Angela.Creatures.Fairy, agent.Tag(), _creature.Tag(), skill.Tag());
+                return false;
+            }
+            return true;
         }
 
         public virtual bool CheckConfidence(AgentModel agent, SkillTypeInfo skill) => CheckSurvive(agent, skill);
