@@ -2,7 +2,7 @@
 
 namespace AutoInority.Localization
 {
-    internal class SimplifiedChinese : English
+    internal class ChineseSimplified : English
     {
         public override SystemLanguage Language => SystemLanguage.ChineseSimplified;
 
