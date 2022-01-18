@@ -171,6 +171,10 @@ namespace AutoInority.Extentions
             {
                 return new FairyFestivalExt(creature);
             }
+            else if (creature.script is Shark)
+            {
+                return new DreamingCurrent(creature);
+            }
             else
             {
                 return new BaseCreatureExt(creature);

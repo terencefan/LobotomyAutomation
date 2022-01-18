@@ -53,6 +53,8 @@
             public const string FireBirdEdge = "我想告诉你的是，{1}已经在突破的边缘了，这个工作安排并不明智。";
 
             public const string BigBird = "{1}的逆卡巴拉计数器已经很低了，我认为这一工作安排结果的风险很大。";
+
+            public const string Shark = "安排{0}对{1}进行{2}是非常不明智的行为，你是不是应该多思考一下。";
         }
     }
 }
