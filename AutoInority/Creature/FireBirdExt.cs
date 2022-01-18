@@ -15,12 +15,12 @@ namespace AutoInority.Creature
 
             if (_creature.qliphothCounter == 1 && confidence < 0.8)
             {
-                message = string.Format(Angela.Creatures.FireBird, agent.Tag(), _creature.Tag(), skill.Tag());
+                message = string.Format(Angela.Creature.FireBird, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
             }
             else if (_creature.qliphothCounter == 2 && confidence < 0.5)
             {
-                message = string.Format(Angela.Creatures.FireBirdEdge, agent.Tag(), _creature.Tag(), skill.Tag());
+                message = string.Format(Angela.Creature.FireBirdEdge, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
             }
             return base.CanWorkWith(agent, skill, out message);

@@ -31,8 +31,6 @@ namespace AutoInority
 
         internal Dictionary<CreatureModel, List<Macro>> MacroCreatures { get; } = new Dictionary<CreatureModel, List<Macro>>();
 
-        private bool All { get; set; } = false;
-
         private bool Running { get; set; } = true;
 
         public static void IncreaseOverloadLevel()
@@ -82,12 +80,14 @@ namespace AutoInority
                     }
                     else if (macro.ForGift && agent.HasEGOGift(macro.Creature, out var gift))
                     {
-                        Notice.instance.Send("AddSystemLog", $"{agent.Tag()}获得了{gift.equipTypeInfo.Tag()}");
+                        var message = string.Format(Angela.Agent.GotEGOGift, agent.Tag(), gift.equipTypeInfo.Tag());
+                        Angela.Log(message);
                         Remove(agent);
                     }
-                    else if (macro.ForExp && agent.HasReachedExpLimit(skill.rwbpType, out var name))
+                    else if (macro.ForExp && agent.HasReachedExpLimit(skill.rwbpType, out var skillName))
                     {
-                        Notice.instance.Send("AddSystemLog", $"{agent.Tag()}的{name}能力已经达到上限");
+                        var message = string.Format(Angela.Agent.ReachMaxExp, agent.Tag(), skillName);
+                        Angela.Log(message);
                         Remove(agent);
                     }
                 }
@@ -216,16 +216,6 @@ namespace AutoInority
         }
 
         /// <summary>
-        /// Toggle the running status of the Automaton.
-        /// </summary>
-        public void ToggleAll()
-        {
-            All = !All;
-            var message = AutomationMessage();
-            Angela.Say(message);
-        }
-
-        /// <summary>
         /// Enter farm mode
         /// </summary>
         /// <param name="creature"></param>
@@ -233,12 +223,14 @@ namespace AutoInority
         {
             if (FarmingCreatures.Remove(creature))
             {
-                Notice.instance.Send("AddSystemLog", $"已结束对{creature.Tag()}的自动工作");
+                var message = string.Format(Angela.Automaton.FarmOff, creature.Tag());
+                Angela.Log(message);
             }
             else
             {
                 FarmingCreatures.Add(creature);
-                Notice.instance.Send("AddSystemLog", $"已开始对{creature.Tag()}自动工作");
+                var message = string.Format(Angela.Automaton.FarmOn, creature.Tag());
+                Angela.Log(message);
             }
         }
 
@@ -279,7 +271,7 @@ namespace AutoInority
             return false;
         }
 
-        private string AutomationMessage() => Running ? (All ? Angela.Automaton.All : Angela.Automaton.On) : Angela.Automaton.Off;
+        private string AutomationMessage() => Running ? Angela.Automaton.On : Angela.Automaton.Off;
 
         private bool HandleCandidates(IEnumerable<Candidate> candidates, HashSet<CreatureModel> creatures)
         {

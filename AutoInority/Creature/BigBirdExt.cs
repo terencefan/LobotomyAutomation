@@ -12,7 +12,7 @@
         {
             if (NormalConfidence(agent, skill) < Automaton.Instance.CreatureEscapeConfidence && _creature.qliphothCounter < 3)
             {
-                message = Message(Angela.Creatures.BigBird, agent, skill);
+                message = Message(Angela.Creature.BigBird, agent, skill);
                 return false;
             }
             return base.CanWorkWith(agent, skill, out message);

@@ -74,6 +74,9 @@
     <Compile Include="Extentions\SefiraExtensions.cs" />
     <Compile Include="Extentions\SkillTypeInfoExtensions.cs" />
     <Compile Include="Harmony_Patch.cs" />
+    <Compile Include="Localization\English.cs" />
+    <Compile Include="Localization\LanguageBase.cs" />
+    <Compile Include="Localization\SimplifiedChinese.cs" />
     <Compile Include="Log.cs" />
     <Compile Include="AutomatonBuf.cs" />
     <Compile Include="Ordeal\CircusDawn.cs" />

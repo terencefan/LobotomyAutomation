@@ -14,7 +14,7 @@ namespace AutoInority.Creature
         {
             if (agent.level < 5) // Never send agent less than level V though he may survive.
             {
-                message = string.Format(Angela.Creatures.Censored, agent.Tag(), _creature.Tag(), skill.Tag());
+                message = string.Format(Angela.Creature.Censored, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
             }
             return base.CanWorkWith(agent, skill, out message);

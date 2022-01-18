@@ -1,6 +1,6 @@
 ﻿namespace AutoInority.Creature
 {
-    class DreamingCurrent : BaseCreatureExt
+    internal class DreamingCurrent : BaseCreatureExt
     {
         protected override SkillTypeInfo[] DefaultSkills => new SkillTypeInfo[] { Instinct, Attachment, Repression };
 
@@ -12,7 +12,7 @@
         {
             if (agent.temperanceLevel == 1)
             {
-                message = Message(Angela.Creatures.Shark, agent, skill);
+                message = Message(Angela.Creature.Shark, agent, skill);
                 return false;
             }
             return base.CanWorkWith(agent, skill, out message);

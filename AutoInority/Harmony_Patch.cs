@@ -108,10 +108,6 @@ namespace AutoInority
             {
                 Invoke(Automaton.Instance.Toggle);
             }
-            else if (Input.GetKeyDown(KeyCode.O))
-            {
-                Invoke(Automaton.Instance.ToggleAll);
-            }
             else if (Input.GetKeyDown(KeyCode.F))
             {
                 var currentWindow = CommandWindow.CommandWindow.CurrentWindow;
@@ -256,12 +252,14 @@ namespace AutoInority
             {
                 if (actor.HasEGOGift(creature, out var gift))
                 {
-                    Angela.Say(string.Format(Angela.HasEGOGift, actor.name, gift.equipTypeInfo.Name));
+                    message = string.Format(Angela.Agent.HasEGOGift, actor.name, gift.equipTypeInfo.Name);
+                    Angela.Say(message);
                     return;
                 }
                 else if (actor.EGOSlotLocked(gift, out var slotName))
                 {
-                    Angela.Say(string.Format(Angela.SlotLocked, actor.name, slotName));
+                    message = string.Format(Angela.Agent.SlotLocked, actor.name, slotName);
+                    Angela.Say(message);
                     return;
                 }
                 Automaton.Instance.Register(actor, creature, skill, forGift: true);
