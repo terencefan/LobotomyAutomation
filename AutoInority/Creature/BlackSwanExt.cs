@@ -2,7 +2,7 @@
 {
     internal class BlackSwanExt : BaseCreatureExt
     {
-        protected override SkillTypeInfo[] DefaultSkills { get; } = new SkillTypeInfo[] { Instinct, Insight, Repression};
+        protected override SkillTypeInfo[] DefaultSkills { get; } = new SkillTypeInfo[] { Instinct, Insight, Repression };
 
         public BlackSwanExt(CreatureModel creature) : base(creature)
         {

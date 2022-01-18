@@ -55,7 +55,7 @@
             public const string BigBird = "{1}的逆卡巴拉计数器已经很低了，我认为这一工作安排结果的风险很大。";
 
             public const string Shark = "安排{0}对{1}进行{2}是非常不明智的行为，你是不是应该多思考一下。";
-            
+
             public const string DerFreischutzExt = "{1}对正义有着极高的要求，{0}的工作可能会激怒他导致逆卡巴拉计数器的减少，你是不是没有注意到这一点？";
 
             public const string SnowQueen = "本次对{1}的{2}有可能会导致{0}被冰封，请准备解救工作";
