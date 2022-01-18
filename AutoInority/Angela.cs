@@ -35,7 +35,9 @@ namespace AutoInority
             switch (language)
             {
                 case SystemLanguage.ChineseSimplified:
-                    return new SimplifiedChinese();
+                    return new ChineseSimplified();
+                case SystemLanguage.ChineseTraditional:
+                    return new ChineseTraditional();
                 default:
                     return new English();
             }
