@@ -11,10 +11,10 @@
 6. Press `H` to send all agents back to their restroom.
    - Press `Alt + H` to send all agents to the passage next to their restroom. Can be useful when handling Outter God Noon.
    - Press `Shift + H` to send all agents to the top left elevator. Can be useful when handling Machine Midnight.
-8. Press `P` to pause the automation works.
 9. Press `Shift` when selecting agents to cancel their automation works.
-10. Press `V` to clear all automation works.
-11. Angela will diss you when you made a wrong decision that will result in agents die or creatures escape. 
+10. Press `P` to pause all automation works.
+11. Press `V` to clear all automation works.
+12. Angela will diss you when you made a wrong decision that will result in agents die or creatures escape. 
     - Only support a few creatures.
 
 ## Testing Features
