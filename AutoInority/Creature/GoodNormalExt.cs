@@ -13,7 +13,7 @@
 
         protected virtual bool CheckGoodNormal(AgentModel agent, SkillTypeInfo skill)
         {
-            if (_creature.qliphothCounter > 1)
+            if (QliphothCounter > 1)
             {
                 return NormalConfidence(agent, skill) > Automaton.Instance.CounterDecreaseConfidence;
             }
