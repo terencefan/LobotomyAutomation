@@ -62,4 +62,5 @@ Agents will not repeat the work work if:
 - Red Shoes
 - Today's Shy Look
 - Singing Machine
+- Snow Queen
 - Snow White's Apple
