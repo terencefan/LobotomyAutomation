@@ -5,7 +5,7 @@ using AutoInority.Extentions;
 
 namespace AutoInority
 {
-    internal sealed class Candidate
+    public sealed class Candidate
     {
         public AgentModel Agent { get; private set; }
 
@@ -60,6 +60,8 @@ namespace AutoInority
         }
 
         public static List<Candidate> Suggest(AgentModel agent, IEnumerable<CreatureModel> creatures) => Suggest(new[] { agent }, creatures);
+
+        public static List<Candidate> Suggest(IEnumerable<AgentModel> agents, CreatureModel creature) => Suggest(agents, new[] { creature });
 
         public void Apply()
         {

@@ -72,7 +72,7 @@ namespace AutoInority.Extentions
             sefira.agentList.ForEach(x => x.SetWaitingPassage(elevator));
         }
 
-        public static IEnumerable<AgentModel> NeibourAgents(this Sefira sefira)
+        public static IEnumerable<AgentModel> NeighborAgents(this Sefira sefira)
         {
             var r = new List<AgentModel>();
             if (_neibours.TryGetValue(sefira.sefiraEnum, out var neibours))
@@ -87,11 +87,6 @@ namespace AutoInority.Extentions
                 }
             }
             return r;
-        }
-
-        public static IEnumerable<CreatureModel> UrgentCreatures(this Sefira sefira)
-        {
-            return sefira.creatureList.Where(x => !x.IsKit() && x.IsAvailable() && x.IsUrgent());
         }
     }
 }

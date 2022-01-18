@@ -94,13 +94,34 @@ namespace AutoInority
             }
         }
 
-        public void ManageCreatures(CreatureManager manager)
+        public bool ManageCreatures(CreatureManager manager)
         {
             if (!Running)
             {
-                return;
+                return true;
             }
 
+            // handle Qliphoth meltdown events (and some other urgent events)
+            for (int riskLevel = 5; riskLevel > 0; riskLevel--)
+            {
+                var creatures = manager.GetCreatureList().FilterUrgent(riskLevel).ToHashSet();
+
+                // find from current dtps
+                var candidates = creatures.FindCandidates();
+                if (HandleCandidates(candidates, creatures))
+                {
+                    return true;
+                }
+
+                // find from neighbor depts
+                candidates = creatures.FindCandidates(true);
+                if (HandleCandidates(candidates, creatures))
+                {
+                    return true;
+                }
+            }
+
+            // suppress escaping creatures (only a few of them)
             foreach (var creature in manager.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
             {
                 Log.Info($"{creature.metaInfo.name} is escaping");
@@ -110,47 +131,14 @@ namespace AutoInority
                 }
             }
 
-            foreach (var macros in MacroCreatures.Values)
+            // parse macro / farm when handling ordeals.
+            if (OrdealManager.instance.GetOrdealCreatureList().Where(x => x.state != CreatureState.SUPPRESSED).Any())
             {
-                foreach (var macro in macros)
-                {
-                    if (macro.IsAvailable())
-                    {
-                        macro.Apply();
-                        return;
-                    }
-                }
+                return true;
             }
 
-            foreach (var creature in FarmingCreatures)
-            {
-                var agents = creature.sefira.agentList.FilterEGOGift(creature);
-                var candidates = Candidate.Suggest(agents, new[] { creature });
-
-                foreach (var candidate in candidates)
-                {
-                    if (candidate.Agent.IsAvailable() && candidate.Creature.IsAvailable())
-                    {
-                        candidate.Apply();
-                        return;
-                    }
-                }
-            }
-
-            foreach (var creature in FarmingCreatures)
-            {
-                var agents = creature.sefira.NeibourAgents().FilterEGOGift(creature);
-                var candidates = Candidate.Suggest(agents, new[] { creature });
-
-                foreach (var candidate in candidates)
-                {
-                    if (candidate.Agent.IsAvailable() && candidate.Creature.IsAvailable())
-                    {
-                        candidate.Apply();
-                        return;
-                    }
-                }
-            }
+            // assign only one work per cycle.
+            return TryRunMacro() || TryFarm() || TryFarm(true);
         }
 
         public void ManageOrdealCreatures(OrdealManager manager)
@@ -162,20 +150,24 @@ namespace AutoInority
 
             foreach (var creature in manager.GetOrdealCreatureList())
             {
-                OrdealCreature(creature);
+                SuppressOrdealCreature(creature);
             }
         }
 
-        public void ManageSefira(Sefira sefira)
+        public void ManageSefira(SefiraManager manager)
         {
             if (!Running)
             {
                 return;
             }
 
-            Log.Info(sefira.name, sefira.name);
-            SefiraManageCreatures(sefira);
-            SefiraManageCreatureKits(sefira);
+            var sefiras = manager.GetOpendSefiraList().ToList();
+            sefiras.Sort((x, y) => x.GetPriority().CompareTo(y.GetPriority()));
+
+            foreach (var sefira in sefiras)
+            {
+                // TODO
+            }
         }
 
         public void Register(AgentModel agent, CreatureModel creature, SkillTypeInfo skill, bool forGift = false, bool forExp = false)
@@ -250,10 +242,48 @@ namespace AutoInority
             }
         }
 
+        private bool TryRunMacro()
+        {
+            foreach (var macros in MacroCreatures.Values)
+            {
+                foreach (var macro in macros)
+                {
+                    if (macro.IsAvailable())
+                    {
+                        macro.Apply();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private bool TryFarm(bool neighbor = false)
+        {
+            foreach (var creature in FarmingCreatures)
+            {
+                var agents = neighbor ? creature.sefira.NeighborAgents() : creature.sefira.agentList;
+                agents = agents.FilterEGOGift(creature);
+
+                var candidates = Candidate.Suggest(agents, new[] { creature });
+
+                foreach (var candidate in candidates)
+                {
+                    if (candidate.Agent.IsAvailable() && candidate.Creature.IsAvailable())
+                    {
+                        candidate.Apply();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         private string AutomationMessage() => Running ? (All ? Angela.Automaton.All : Angela.Automaton.On) : Angela.Automaton.Off;
 
-        private void HandleCandidates(IEnumerable<Candidate> candidates, HashSet<CreatureModel> creatures)
+        private bool HandleCandidates(IEnumerable<Candidate> candidates, HashSet<CreatureModel> creatures)
         {
+            int count = 0;
             foreach (var candidate in candidates)
             {
                 if (creatures.Contains(candidate.Creature))
@@ -264,22 +294,16 @@ namespace AutoInority
                     }
                     else if (candidate.Agent.IsAvailable())
                     {
+                        count++;
                         candidate.Apply();
                         creatures.Remove(candidate.Creature);
                     }
                 }
             }
+            return count > 0;
         }
 
-        /// <summary>
-        /// Try finding an agent to ingratiate himself with the creature.
-        /// </summary>
-        /// <param name="creature"></param>
-        private void ManageCreature(CreatureModel creature)
-        {
-        }
-
-        private void OrdealCreature(OrdealCreatureModel creature)
+        private void SuppressOrdealCreature(OrdealCreatureModel creature)
         {
             if (creature.state == CreatureState.SUPPRESSED || creature.state == CreatureState.SUPPRESSED_RETURN)
             {
@@ -307,48 +331,10 @@ namespace AutoInority
                     }
                     else
                     {
-                        agents = sefira.NeibourAgents().FilterCanSuppress(creature).ToList();
+                        agents = sefira.NeighborAgents().FilterCanSuppress(creature).ToList();
                         agents.ForEach(x => x.Suppress(creature));
                     }
                     return;
-            }
-        }
-
-        private void SefiraManageCreatureKits(Sefira sefira)
-        {
-            // TODO
-        }
-
-        private void SefiraManageCreatures(Sefira sefira)
-        {
-            var agents = sefira.AvailableAgents();
-            var creatures = new HashSet<CreatureModel>(sefira.UrgentCreatures());
-
-            var candidates = Candidate.Suggest(agents, creatures);
-            // Log.Info(sefira.name, $"Candidates: {candidates.Count()}");
-            HandleCandidates(candidates, creatures);
-
-            if (creatures.Count > 0) // call neighbor depts agents
-            {
-                agents = sefira.NeibourAgents();
-                // Log.Info(sefira.name, $"Neighbor agents: {agents.Count()}");
-                candidates = Candidate.Suggest(agents, creatures);
-                // Log.Info(sefira.name, $"Candidates: {candidates.Count()}");
-                HandleCandidates(candidates, creatures);
-            }
-
-            if (OrdealManager.instance.GetOrdealCreatureList().Where(x => x.state != CreatureState.SUPPRESSED).Any())
-            {
-                return;
-            }
-
-            if (Instance.All && sefira.sefiraEnum != SefiraEnum.TIPERERTH1 && sefira.sefiraEnum != SefiraEnum.TIPERERTH2) // assign other works
-            {
-                creatures = new HashSet<CreatureModel>(sefira.Creatures());
-                // Log.Info(sefira.name, $"Remain creatures: {creatures.Count()}");
-                candidates = Candidate.Suggest(agents.Where(x => x.IsAvailable()), creatures);
-                // Log.Info(sefira.name, $"Candidates: {candidates.Count()}");
-                HandleCandidates(candidates, creatures);
             }
         }
 

@@ -39,7 +39,7 @@ namespace AutoInority
                 PatchOrdealManager(mod);
                 PatchUseSkill(mod);
 
-                PatchSefira(mod);
+                PatchSefiraManager(mod);
                 Log.Info("patch success");
             });
         }
@@ -94,9 +94,12 @@ namespace AutoInority
             Invoke(Automaton.IncreaseOverloadLevel);
         }
 
-        public static void SefiraModel_OnFixedUpdate_Prefix(Sefira __instance)
+        public static void SefiraManager_OnNotice_Postfix(SefiraManager __instance, string notice, params object[] param)
         {
-            Invoke(() => Automaton.Instance.ManageSefira(__instance), __instance.name, 60, offset: __instance.GetPriority());
+            if (notice == NoticeName.FixedUpdate)
+            {
+                Invoke(() => Automaton.Instance.ManageSefira(__instance), nameof(SefiraManager), 60);
+            }
         }
 
         public static void UnitMouseEventManager_Update(UnitMouseEventManager __instance)
@@ -199,7 +202,7 @@ namespace AutoInority
 
         public void PatchOrdealManager(HarmonyInstance mod) => PatchPostfix(mod, typeof(OrdealManager), nameof(OrdealManager.OnFixedUpdate), nameof(OrdealManager_OnFixedUpdated_Postfix));
 
-        public void PatchSefira(HarmonyInstance mod) => PatchPrefix(mod, typeof(Sefira), nameof(Sefira.OnFixedUpdate), nameof(SefiraModel_OnFixedUpdate_Prefix));
+        public void PatchSefiraManager(HarmonyInstance mod) => PatchPrefix(mod, typeof(SefiraManager), nameof(SefiraManager.OnNotice), nameof(SefiraManager_OnNotice_Postfix));
 
         public void PatchUnitMouseEventManager(HarmonyInstance mod) => PatchPostfix(mod, typeof(UnitMouseEventManager), "Update", nameof(UnitMouseEventManager_Update));
 

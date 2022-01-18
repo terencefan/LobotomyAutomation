@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 using AutoInority.Creature;
@@ -87,6 +88,22 @@ namespace AutoInority.Extentions
 
             // TODO generate a custom portrait.
             return portrait != null;
+        }
+
+        public static IEnumerable<CreatureModel> FilterUrgent(this IEnumerable<CreatureModel> creatures, int riskLevel)
+        {
+            return creatures.Where(x => !x.IsKit() && x.GetRiskLevel() == riskLevel && x.IsUrgent() && x.IsAvailable());
+        }
+
+        public static List<Candidate> FindCandidates(this IEnumerable<CreatureModel> creatures, bool neighbor = false)
+        {
+            var candidates = new List<Candidate>();
+            foreach (var creature in creatures)
+            {
+                var agents = neighbor ? creature.sefira.NeighborAgents() : creature.sefira.agentList;
+                candidates.AddRange(Candidate.Suggest(agents, creature));
+            }
+            return candidates;
         }
 
         private static ICreatureExtension CreateCreatureExtension(CreatureModel creature)
@@ -178,10 +195,6 @@ namespace AutoInority.Extentions
             else if (creature.script is Freischutz)
             {
                 return new DerFreischutzExt(creature);
-            }
-            else if (creature.script is SnowQueen)
-            {
-                return new SnowQueenExt(creature);
             }
             else
             {
