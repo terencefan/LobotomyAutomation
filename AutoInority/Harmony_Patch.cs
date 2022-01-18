@@ -34,8 +34,8 @@ namespace AutoInority
                 PatchCommandWindow(mod);
 
                 PatchAgentModel(mod);
-                PatchCreatureModel(mod);
 
+                PatchCreatureManager(mod);
                 PatchOrdealManager(mod);
                 PatchUseSkill(mod);
 
@@ -68,9 +68,9 @@ namespace AutoInority
             }
         }
 
-        public static void CreatureModel_OnFixedUpdate_Postfix(CreatureModel __instance)
+        public static void CreatureManager_OnFixedUpdate_Postfix(CreatureManager __instance)
         {
-            Invoke(() => Automaton.Instance.Creature(__instance), __instance.metaInfo.name, 120, random: true);
+            Invoke(() => Automaton.Instance.ManageCreatures(__instance), nameof(CreatureManager), 60);
         }
 
         public static void FinishWorkSuccessfully_Postfix(UseSkill __instance)
@@ -86,7 +86,7 @@ namespace AutoInority
 
         public static void OrdealManager_OnFixedUpdated_Postfix(OrdealManager __instance)
         {
-            Invoke(() => Automaton.Instance.HandleOrdealManager(__instance), nameof(OrdealManager), 60);
+            Invoke(() => Automaton.Instance.ManageOrdealCreatures(__instance), nameof(OrdealManager), 60);
         }
 
         public static void PatchCastOverload_Prefix()
@@ -96,7 +96,7 @@ namespace AutoInority
 
         public static void SefiraModel_OnFixedUpdate_Prefix(Sefira __instance)
         {
-            Invoke(() => Automaton.Instance.Sefira(__instance), __instance.name, 60, offset: __instance.GetPriority());
+            Invoke(() => Automaton.Instance.ManageSefira(__instance), __instance.name, 60, offset: __instance.GetPriority());
         }
 
         public static void UnitMouseEventManager_Update(UnitMouseEventManager __instance)
@@ -135,15 +135,18 @@ namespace AutoInority
             }
             else if (Input.GetKeyDown(KeyCode.H))
             {
-                Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.ReturnAgentsToSefira()));
-            }
-            else if (Input.GetKeyDown(KeyCode.N))
-            {
-                Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.MoveToNeighborPassage()));
-            }
-            else if (Input.GetKeyDown(KeyCode.B))
-            {
-                Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.MoveToNetzachElevator()));
+                if (Input.GetKeyDown(KeyCode.LeftShift))
+                {
+                    Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.MoveToNeighborPassage()));
+                }
+                else if (Input.GetKeyDown(KeyCode.LeftAlt))
+                {
+                    Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.MoveToNetzachElevator()));
+                }
+                else
+                {
+                    Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.ReturnAgentsToSefira()));
+                }
             }
         }
 
@@ -186,7 +189,7 @@ namespace AutoInority
 
         public void PatchCommandWindow(HarmonyInstance mod) => PatchPrefix(mod, typeof(CommandWindow.CommandWindow), nameof(CommandWindow.CommandWindow.OnClick), nameof(CommandWindow_OnClick_Prefix));
 
-        public void PatchCreatureModel(HarmonyInstance mod) => PatchPostfix(mod, typeof(CreatureModel), nameof(CreatureModel.OnFixedUpdate), nameof(CreatureModel_OnFixedUpdate_Postfix));
+        public void PatchCreatureManager(HarmonyInstance mod) => PatchPostfix(mod, typeof(CreatureManager), nameof(CreatureManager.OnFixedUpdate), nameof(CreatureManager_OnFixedUpdate_Postfix));
 
         public void PatchGameManager(HarmonyInstance mod)
         {
@@ -253,9 +256,8 @@ namespace AutoInority
                     Angela.Say(string.Format(Angela.HasEGOGift, actor.name, gift.equipTypeInfo.Name));
                     return;
                 }
-                else if (actor.Equipment.gifts.GetLockState(gift.equipTypeInfo))
+                else if (actor.EGOSlotLocked(gift, out var slotName))
                 {
-                    var slotName = UnitEGOgiftSpace.GetRegionName(UnitEGOgiftSpace.GetRegionId(gift.equipTypeInfo));
                     Angela.Say(string.Format(Angela.SlotLocked, actor.name, slotName));
                     return;
                 }

@@ -9,7 +9,7 @@ namespace AutoInority.Extentions
 {
     public static class CreatureModelExtensions
     {
-        private static Dictionary<long, ICreatureExtension> _dict = new Dictionary<long, ICreatureExtension>();
+        private static Dictionary<CreatureModel, ICreatureExtension> _dict = new Dictionary<CreatureModel, ICreatureExtension>();
 
         public static float CalculateWorkSuccessProb(this CreatureModel creature, AgentModel agent, SkillTypeInfo skill)
         {
@@ -45,10 +45,10 @@ namespace AutoInority.Extentions
 
         public static ICreatureExtension GetCreatureExtension(this CreatureModel creature)
         {
-            if (!_dict.TryGetValue(creature.metaInfo.id, out var ext))
+            if (!_dict.TryGetValue(creature, out var ext))
             {
                 ext = CreateCreatureExtension(creature);
-                _dict[creature.metaInfo.id] = ext;
+                _dict[creature] = ext;
             }
             return ext;
         }

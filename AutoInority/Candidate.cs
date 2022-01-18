@@ -31,7 +31,7 @@ namespace AutoInority
             {
                 return -1;
             }
-            else if (yExp && !xExp && x.GoodConfidence > 0.9f)
+            else if (yExp && !xExp && y.GoodConfidence > 0.9f)
             {
                 return -1;
             }

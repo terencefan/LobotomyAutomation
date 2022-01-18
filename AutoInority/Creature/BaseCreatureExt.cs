@@ -6,22 +6,27 @@ namespace AutoInority.Creature
 {
     public class BaseCreatureExt : ICreatureExtension
     {
-        protected static readonly SkillTypeInfo Instinct = SkillTypeList.instance.GetData((long)RwbpType.R);
-        protected static readonly SkillTypeInfo Insight = SkillTypeList.instance.GetData((long)RwbpType.W);
         protected static readonly SkillTypeInfo Attachment = SkillTypeList.instance.GetData((long)RwbpType.B);
+
+        protected static readonly SkillTypeInfo Insight = SkillTypeList.instance.GetData((long)RwbpType.W);
+
+        protected static readonly SkillTypeInfo Instinct = SkillTypeList.instance.GetData((long)RwbpType.R);
+
         protected static readonly SkillTypeInfo Repression = SkillTypeList.instance.GetData((long)RwbpType.P);
 
         protected readonly CreatureModel _creature;
 
-        protected static SkillTypeInfo[] All => new SkillTypeInfo[] { Instinct, Insight, Attachment, Repression };
+        public virtual bool AutoSuppress => false;
 
-        protected virtual SkillTypeInfo[] DefaultSkills { get; } = All;
+        protected static SkillTypeInfo[] All => new SkillTypeInfo[] { Instinct, Insight, Attachment, Repression };
 
         protected float CounterDecreaseConfidence => Automaton.Instance.CounterDecreaseConfidence;
 
         protected float CreatureEscapeConfidence => Automaton.Instance.CreatureEscapeConfidence;
 
         protected float DeadConfidence => Automaton.Instance.DeadConfidence;
+
+        protected virtual SkillTypeInfo[] DefaultSkills { get; } = All;
 
         protected int QliphothCounter => _creature.qliphothCounter;
 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 using AutoInority.Extentions;
@@ -9,12 +8,6 @@ namespace AutoInority
     internal partial class Automaton
     {
         private static Automaton _instance;
-
-        private readonly Dictionary<long, List<string>> _caretakers = new Dictionary<long, List<string>>();
-
-        private readonly Dictionary<string, Macro> _macros = new Dictionary<string, Macro>();
-
-        internal HashSet<CreatureModel> FarmingCreatures { get; } = new HashSet<CreatureModel>();
 
         public static Automaton Instance
         {
@@ -33,6 +26,10 @@ namespace AutoInority
         public float CreatureEscapeConfidence { get; set; } = 0.99f;
 
         public float DeadConfidence { get; set; } = 0.99f;
+
+        internal HashSet<CreatureModel> FarmingCreatures { get; } = new HashSet<CreatureModel>();
+
+        internal Dictionary<CreatureModel, List<Macro>> MacroCreatures { get; } = new Dictionary<CreatureModel, List<Macro>>();
 
         private bool All { get; set; } = false;
 
@@ -61,36 +58,63 @@ namespace AutoInority
         /// </summary>
         public void Clear()
         {
-            foreach (var macro in _macros.Values)
-            {
-                Remove(macro.Agent);
-            }
+            MacroCreatures.Clear();
+            FarmingCreatures.Clear();
+            AgentManager.instance.GetAgentList().ToList().ForEach(x => x.RemoveAutomatonBuff());
         }
 
         /// <summary>
-        /// Try finding an agent to ingratiate himself with the creature.
+        /// Complete the macro if the agent got the target EGO gist.
         /// </summary>
-        /// <param name="creature"></param>
-        public void Creature(CreatureModel creature)
+        /// <param name="agent"></param>
+        public void FinishWork(UseSkill item)
+        {
+            var agent = item.agent;
+            var skill = item.skillTypeInfo;
+
+            if (MacroCreatures.TryGetValue(item.targetCreature, out var macros))
+            {
+                foreach (var macro in macros)
+                {
+                    if (agent != macro.Agent)
+                    {
+                        continue;
+                    }
+                    else if (macro.ForGift && agent.HasEGOGift(macro.Creature, out var gift))
+                    {
+                        Notice.instance.Send("AddSystemLog", $"{agent.Tag()}获得了{gift.equipTypeInfo.Tag()}");
+                        Remove(agent);
+                    }
+                    else if (macro.ForExp && agent.HasReachedExpLimit(skill.rwbpType, out var name))
+                    {
+                        Notice.instance.Send("AddSystemLog", $"{agent.Tag()}的{name}能力已经达到上限");
+                        Remove(agent);
+                    }
+                }
+            }
+        }
+
+        public void ManageCreatures(CreatureManager manager)
         {
             if (!Running)
             {
                 return;
             }
 
-            if (creature.state == CreatureState.ESCAPE)
+            foreach (var creature in manager.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
             {
-                if (creature.script is Butterfly)
+                Log.Info($"{creature.metaInfo.name} is escaping");
+                if (creature.GetCreatureExtension().AutoSuppress)
                 {
-                    creature.sefira.agentList.FilterSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
+                    creature.sefira.agentList.FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
                 }
             }
 
-            if (_caretakers.TryGetValue(creature.metaInfo.id, out var names))
+            foreach (var macros in MacroCreatures.Values)
             {
-                foreach (var name in names)
+                foreach (var macro in macros)
                 {
-                    if (_macros.TryGetValue(name, out var macro) && macro.IsAvailable() && macro.IsConfident())
+                    if (macro.IsAvailable())
                     {
                         macro.Apply();
                         return;
@@ -98,13 +122,24 @@ namespace AutoInority
                 }
             }
 
-            if (FarmingCreatures.Contains(creature))
+            foreach (var creature in FarmingCreatures)
             {
-                var agents = creature.sefira.agentList.Where(x => !x.HasEGOGift(creature, out var gift) && !x.EGOSlotLocked(gift));
-                if (!agents.Any())
+                var agents = creature.sefira.agentList.FilterEGOGift(creature);
+                var candidates = Candidate.Suggest(agents, new[] { creature });
+
+                foreach (var candidate in candidates)
                 {
-                    agents = creature.sefira.NeibourAgents().Where(x => !x.HasEGOGift(creature, out var gift) && !x.EGOSlotLocked(gift));
+                    if (candidate.Agent.IsAvailable() && candidate.Creature.IsAvailable())
+                    {
+                        candidate.Apply();
+                        return;
+                    }
                 }
+            }
+
+            foreach (var creature in FarmingCreatures)
+            {
+                var agents = creature.sefira.NeibourAgents().FilterEGOGift(creature);
                 var candidates = Candidate.Suggest(agents, new[] { creature });
 
                 foreach (var candidate in candidates)
@@ -118,31 +153,7 @@ namespace AutoInority
             }
         }
 
-        /// <summary>
-        /// Complete the macro if the agent got the target EGO gist.
-        /// </summary>
-        /// <param name="agent"></param>
-        public void FinishWork(UseSkill item)
-        {
-            var agent = item.agent;
-            var skill = item.skillTypeInfo;
-
-            if (_macros.TryGetValue(agent.name, out var macro))
-            {
-                if (macro.ForGift && agent.HasEGOGift(macro.Creature, out var gift))
-                {
-                    Notice.instance.Send("AddSystemLog", $"{agent.Tag()}获得了{gift.equipTypeInfo.Tag()}");
-                    Remove(agent);
-                }
-                else if (macro.ForExp && agent.HasReachedExpLimit(skill.rwbpType, out var name))
-                {
-                    Notice.instance.Send("AddSystemLog", $"{agent.Tag()}的{name}能力已经达到上限");
-                    Remove(agent);
-                }
-            }
-        }
-
-        public void HandleOrdealManager(OrdealManager manager)
+        public void ManageOrdealCreatures(OrdealManager manager)
         {
             if (!Running)
             {
@@ -155,9 +166,27 @@ namespace AutoInority
             }
         }
 
+        public void ManageSefira(Sefira sefira)
+        {
+            if (!Running)
+            {
+                return;
+            }
+
+            Log.Info(sefira.name, sefira.name);
+            SefiraManageCreatures(sefira);
+            SefiraManageCreatureKits(sefira);
+        }
+
         public void Register(AgentModel agent, CreatureModel creature, SkillTypeInfo skill, bool forGift = false, bool forExp = false)
         {
-            _macros[agent.name] = new Macro()
+            if (!MacroCreatures.TryGetValue(creature, out var macros))
+            {
+                macros = new List<Macro>();
+                MacroCreatures[creature] = macros;
+            }
+
+            var macro = new Macro()
             {
                 Agent = agent,
                 Creature = creature,
@@ -165,33 +194,10 @@ namespace AutoInority
                 ForExp = forExp,
                 ForGift = forGift,
             };
-            if (_caretakers.TryGetValue(creature.metaInfo.id, out var agents))
-            {
-                agents.Add(agent.name);
-            }
-            else
-            {
-                _caretakers.Add(creature.metaInfo.id, new List<string>() { agent.name });
-            }
+            macros.Add(macro);
+
             Notice.instance.Send("AddSystemLog", $"{agent.Tag()}将会自动对{creature.Tag()}进行{skill.Tag()}");
             agent.AddUnitBuf(new AutomatonBuf(creature));
-        }
-
-        /// <summary>
-        /// Enter farm mode
-        /// </summary>
-        /// <param name="creature"></param>
-        public void ToggleFarming(CreatureModel creature)
-        {
-            if (FarmingCreatures.Remove(creature))
-            {
-                Notice.instance.Send("AddSystemLog", $"已结束对{creature.Tag()}的自动工作");
-            }
-            else
-            {
-                FarmingCreatures.Add(creature);
-                Notice.instance.Send("AddSystemLog", $"已开始对{creature.Tag()}自动工作");
-            }
         }
 
         /// <summary>
@@ -200,29 +206,11 @@ namespace AutoInority
         /// <param name="agent"></param>
         public void Remove(AgentModel agent)
         {
-            if (_macros.TryGetValue(agent.name, out var macro))
+            foreach (var entry in MacroCreatures)
             {
-                _macros.Remove(agent.name);
-                if (_caretakers.TryGetValue(macro.Creature.metaInfo.id, out var names))
-                {
-                    _caretakers[macro.Creature.metaInfo.id] = new List<string>(names.Where(name => name != agent.name));
-                }
+                MacroCreatures[entry.Key] = entry.Value.Where(x => x.Agent != agent).ToList();
             }
-            foreach (var buf in agent.GetUnitBufList().Where(buf => buf is AutomatonBuf).ToList())
-            {
-                agent.RemoveUnitBuf(buf);
-            }
-        }
-
-        public void Sefira(Sefira sefira)
-        {
-            if (!Running)
-            {
-                return;
-            }
-            Log.Info(sefira.name, sefira.name);
-            ManageCreatures(sefira);
-            ManageCreatureKits(sefira);
+            agent.RemoveAutomatonBuff();
         }
 
         /// <summary>
@@ -243,6 +231,23 @@ namespace AutoInority
             All = !All;
             var message = AutomationMessage();
             Angela.Say(message);
+        }
+
+        /// <summary>
+        /// Enter farm mode
+        /// </summary>
+        /// <param name="creature"></param>
+        public void ToggleFarming(CreatureModel creature)
+        {
+            if (FarmingCreatures.Remove(creature))
+            {
+                Notice.instance.Send("AddSystemLog", $"已结束对{creature.Tag()}的自动工作");
+            }
+            else
+            {
+                FarmingCreatures.Add(creature);
+                Notice.instance.Send("AddSystemLog", $"已开始对{creature.Tag()}自动工作");
+            }
         }
 
         private string AutomationMessage() => Running ? (All ? Angela.Automaton.All : Angela.Automaton.On) : Angela.Automaton.Off;
@@ -266,12 +271,55 @@ namespace AutoInority
             }
         }
 
-        private void ManageCreatureKits(Sefira sefira)
+        /// <summary>
+        /// Try finding an agent to ingratiate himself with the creature.
+        /// </summary>
+        /// <param name="creature"></param>
+        private void ManageCreature(CreatureModel creature)
+        {
+        }
+
+        private void OrdealCreature(OrdealCreatureModel creature)
+        {
+            if (creature.state == CreatureState.SUPPRESSED || creature.state == CreatureState.SUPPRESSED_RETURN)
+            {
+                return;
+            }
+            var riskLevel = creature.GetRiskLevel();
+            var sefira = creature.sefira;
+
+            // Log.Warning($"{nameof(OrdealCreature)}: {creature.metaInfo.name}, risk level: {riskLevel}");
+            switch (creature.script.GetType().Name)
+            {
+                case nameof(CircusDawn):
+                case nameof(MachineDawn):
+                case nameof(BugDawn):
+                case nameof(OutterGodDawn):
+                case nameof(OutterGodNoon):
+                case nameof(ScavengerNoon):
+                case nameof(CircusNoon):
+                case nameof(MachineNoon):
+                case nameof(CircusDusk):
+                    var agents = sefira.agentList.FilterCanSuppress(creature).ToList();
+                    if (agents.Count > 0)
+                    {
+                        agents.ForEach(x => x.Suppress(creature));
+                    }
+                    else
+                    {
+                        agents = sefira.NeibourAgents().FilterCanSuppress(creature).ToList();
+                        agents.ForEach(x => x.Suppress(creature));
+                    }
+                    return;
+            }
+        }
+
+        private void SefiraManageCreatureKits(Sefira sefira)
         {
             // TODO
         }
 
-        private void ManageCreatures(Sefira sefira)
+        private void SefiraManageCreatures(Sefira sefira)
         {
             var agents = sefira.AvailableAgents();
             var creatures = new HashSet<CreatureModel>(sefira.UrgentCreatures());
@@ -304,42 +352,7 @@ namespace AutoInority
             }
         }
 
-        private void OrdealCreature(OrdealCreatureModel creature)
-        {
-            if (creature.state == CreatureState.SUPPRESSED || creature.state == CreatureState.SUPPRESSED_RETURN)
-            {
-                return;
-            }
-            var riskLevel = creature.GetRiskLevel();
-            var sefira = creature.sefira;
-
-            // Log.Warning($"{nameof(OrdealCreature)}: {creature.metaInfo.name}, risk level: {riskLevel}");
-            switch (creature.script.GetType().Name)
-            {
-                case nameof(CircusDawn):
-                case nameof(MachineDawn):
-                case nameof(BugDawn):
-                case nameof(OutterGodDawn):
-                case nameof(OutterGodNoon):
-                case nameof(ScavengerNoon):
-                case nameof(CircusNoon):
-                case nameof(MachineNoon):
-                case nameof(CircusDusk):
-                    var agents = sefira.agentList.FilterSuppress(creature).ToList();
-                    if (agents.Count > 0)
-                    {
-                        agents.ForEach(x => x.Suppress(creature));
-                    }
-                    else
-                    {
-                        agents = sefira.NeibourAgents().FilterSuppress(creature).ToList();
-                        agents.ForEach(x => x.Suppress(creature));
-                    }
-                    return;
-            }
-        }
-
-        private sealed class Macro
+        internal sealed class Macro
         {
             public AgentModel Agent;
 

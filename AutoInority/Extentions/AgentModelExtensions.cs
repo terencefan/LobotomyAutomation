@@ -5,11 +5,20 @@ namespace AutoInority.Extentions
 {
     public static class AgentModelExtensions
     {
-        public static bool EGOSlotLocked(this AgentModel agent, CreatureEquipmentMakeInfo gift) => agent.Equipment.gifts.GetLockState(gift.equipTypeInfo);
+        public static bool EGOSlotLocked(this AgentModel agent, CreatureEquipmentMakeInfo gift, out string slotName)
+        {
+            slotName = UnitEGOgiftSpace.GetRegionName(UnitEGOgiftSpace.GetRegionId(gift.equipTypeInfo));
+            return agent.Equipment.gifts.GetLockState(gift.equipTypeInfo);
+        }
 
-        public static IEnumerable<AgentModel> FilterSuppress(this IEnumerable<AgentModel> agents, CreatureModel creature)
+        public static IEnumerable<AgentModel> FilterCanSuppress(this IEnumerable<AgentModel> agents, CreatureModel creature)
         {
             return agents.Where(x => x.IsAvailable() && x.IsCapableOfPressing(creature)).ToList();
+        }
+
+        public static IEnumerable<AgentModel> FilterEGOGift(this IEnumerable<AgentModel> agents, CreatureModel creature)
+        {
+            return agents.Where(x => !x.HasEGOGift(creature, out var gift) && !x.EGOSlotLocked(gift, out _));
         }
 
         public static bool HasEGOGift(this AgentModel agent, CreatureModel creature, out CreatureEquipmentMakeInfo gift)
@@ -19,6 +28,14 @@ namespace AutoInority.Extentions
                 return agent.Equipment.gifts.HasEquipment(gift.equipTypeInfo.id);
             }
             return true;
+        }
+
+        public static void RemoveAutomatonBuff(this AgentModel agent)
+        {
+            foreach (var buf in agent.GetUnitBufList().Where(buf => buf is AutomatonBuf).ToList())
+            {
+                agent.RemoveUnitBuf(buf);
+            }
         }
 
         public static bool HasReachedExpLimit(this AgentModel agent, RwbpType type, out string name)

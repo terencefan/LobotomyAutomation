@@ -2,6 +2,8 @@
 {
     internal class ButterflyExt : BaseCreatureExt
     {
+        public override bool AutoSuppress => true;
+
         protected override SkillTypeInfo[] DefaultSkills { get; } = new SkillTypeInfo[] { Insight, Repression };
 
         private bool IsFarming => Automaton.Instance.FarmingCreatures.Contains(_creature);
@@ -12,7 +14,11 @@
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            if (agent.Rstat > 3 || agent.Pstat < 3 || !IsFarming)
+            if (IsFarming)
+            {
+                return base.CanWorkWith(agent, skill, out message);
+            }
+            else if (agent.Rstat > 3 || agent.Pstat < 3)
             {
                 message = "Butterfly";
                 return false;
