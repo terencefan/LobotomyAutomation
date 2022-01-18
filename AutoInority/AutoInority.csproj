@@ -39,33 +39,34 @@
   <ItemGroup>
     <Compile Include="Candidate.cs" />
     <Compile Include="CenterBrain.cs" />
+    <Compile Include="Creature\ALEPH\CensoredExt.cs" />
+    <Compile Include="Creature\ALEPH\NothingExt.cs" />
     <Compile Include="Creature\BaseCreatureExt.cs" />
-    <Compile Include="Creature\BeautyBeastExt.cs" />
-    <Compile Include="Creature\BigBirdExt.cs" />
-    <Compile Include="Creature\BlackSwanExt.cs" />
-    <Compile Include="Creature\ButterflyExt.cs" />
-    <Compile Include="Creature\CensoredExt.cs" />
-    <Compile Include="Creature\DerFreischutzExt.cs" />
-    <Compile Include="Creature\DontTouchMeExt.cs" />
-    <Compile Include="Creature\CloudedMonkExt.cs" />
-    <Compile Include="Creature\DreamingCurrent.cs" />
-    <Compile Include="Creature\FairyFestivalExt.cs" />
-    <Compile Include="Creature\FireBirdExt.cs" />
     <Compile Include="Creature\GoodNormalExt.cs" />
-    <Compile Include="Creature\HappyTeddyExt.cs" />
+    <Compile Include="Creature\HE\ButterflyExt.cs" />
+    <Compile Include="Creature\HE\DerFreischutzExt.cs" />
+    <Compile Include="Creature\HE\HappyTeddyExt.cs" />
+    <Compile Include="Creature\HE\LaetitiaExt.cs" />
+    <Compile Include="Creature\HE\NamelessFetusExt.cs" />
+    <Compile Include="Creature\HE\RedShoesExt.cs" />
+    <Compile Include="Creature\HE\SingingMachineExt.cs" />
+    <Compile Include="Creature\HE\SnowQueenExt.cs" />
     <Compile Include="Creature\ICreatureExtension.cs" />
-    <Compile Include="Creature\JudgementBirdExt.cs" />
-    <Compile Include="Creature\LaetitiaExt.cs" />
-    <Compile Include="Creature\HatredQueen.cs" />
-    <Compile Include="Creature\NakedNestExt.cs" />
-    <Compile Include="Creature\NamelessFetusExt.cs" />
-    <Compile Include="Creature\NothingExt.cs" />
-    <Compile Include="Creature\QueenBeeExt.cs" />
-    <Compile Include="Creature\RedShoesExt.cs" />
-    <Compile Include="Creature\ShyLook.cs" />
-    <Compile Include="Creature\SingingMachineExt.cs" />
-    <Compile Include="Creature\SnowWhiteExt.cs" />
-    <Compile Include="Creature\LittlePrince.cs" />
+    <Compile Include="Creature\TETH\BeautyBeastExt.cs" />
+    <Compile Include="Creature\TETH\ShyLook.cs" />
+    <Compile Include="Creature\WAW\BigBirdExt.cs" />
+    <Compile Include="Creature\WAW\BlackSwanExt.cs" />
+    <Compile Include="Creature\WAW\CloudedMonkExt.cs" />
+    <Compile Include="Creature\WAW\DreamingCurrent.cs" />
+    <Compile Include="Creature\WAW\FireBirdExt.cs" />
+    <Compile Include="Creature\WAW\HatredQueen.cs" />
+    <Compile Include="Creature\WAW\JudgementBirdExt.cs" />
+    <Compile Include="Creature\WAW\LittlePrince.cs" />
+    <Compile Include="Creature\WAW\NakedNestExt.cs" />
+    <Compile Include="Creature\WAW\QueenBeeExt.cs" />
+    <Compile Include="Creature\WAW\SnowWhiteExt.cs" />
+    <Compile Include="Creature\ZAYIN\DontTouchMeExt.cs" />
+    <Compile Include="Creature\ZAYIN\FairyFestivalExt.cs" />
     <Compile Include="Extentions\AgentModelExtensions.cs" />
     <Compile Include="Angela.cs" />
     <Compile Include="Automaton.cs" />
@@ -83,6 +84,11 @@
     <Compile Include="Ordeal\CircusDawn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Confidence.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -102,5 +108,12 @@
       <HintPath>lib\UnityEngine.ImageConversionModule.dll</HintPath>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
