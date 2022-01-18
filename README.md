@@ -19,12 +19,8 @@
 ## Testing Features
 
 1. Automatically handle Qliphoth Meltdown events.
-2. Automatically assign works to get cubes.
 3. Automatically suppress `Morning` and `Lunch` ordeal creatures.
-
-## Incoming Features
-
-- Farm mode. Press `F` on a creature to automatically pick agents who hasn't its EGO gift to work with it.
+4. Automatically suppress escaped creatures.
 
 ## Automation Strategy
 
@@ -34,9 +30,10 @@ Agents will not repeat the work work if:
    - HP/Mental is not full, or not in `IDLE` status.
 
 2. The agent is not capable of doing that work. Usually because it will result in an instant death or creature escape.
-   - For example, he is the last agent who worked with Teddy Bear.
+   - For example, if the agent was the last agent who worked with Teddy Bear, he won't repeat the work.
 
 3. The agent doesn't have enough confidence to survive from the work.
+   - Current threshold is 99%.
 
 ## Supported creatures
 
