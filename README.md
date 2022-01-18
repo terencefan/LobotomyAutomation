@@ -14,7 +14,7 @@
 9. Press `Shift` when selecting agents to cancel their automation works.
 10. Press `P` to pause all automation works.
 11. Press `V` to clear all automation works.
-12. Angela will diss you when you made a wrong decision that will result in agents die or creatures escape. 
+12. **Angela will diss you when you made a wrong decision that will result in agents die or creatures escape.**
     - Only support a few creatures.
 
 ## Testing Features
