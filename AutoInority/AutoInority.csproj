@@ -44,8 +44,10 @@
     <Compile Include="Creature\BlackSwanExt.cs" />
     <Compile Include="Creature\ButterflyExt.cs" />
     <Compile Include="Creature\CensoredExt.cs" />
+    <Compile Include="Creature\DerFreischutzExt.cs" />
     <Compile Include="Creature\DontTouchMeExt.cs" />
     <Compile Include="Creature\CloudedMonkExt.cs" />
+    <Compile Include="Creature\DreamingCurrent.cs" />
     <Compile Include="Creature\FairyFestivalExt.cs" />
     <Compile Include="Creature\FireBirdExt.cs" />
     <Compile Include="Creature\GoodNormalExt.cs" />
@@ -55,6 +57,7 @@
     <Compile Include="Creature\LaetitiaExt.cs" />
     <Compile Include="Creature\HatredQueen.cs" />
     <Compile Include="Creature\NakedNestExt.cs" />
+    <Compile Include="Creature\NamelessFetusExt.cs" />
     <Compile Include="Creature\NothingExt.cs" />
     <Compile Include="Creature\QueenBeeExt.cs" />
     <Compile Include="Creature\RedShoesExt.cs" />

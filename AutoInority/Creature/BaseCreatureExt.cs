@@ -4,7 +4,7 @@ using AutoInority.Extentions;
 
 namespace AutoInority.Creature
 {
-    public class BaseCreatureExt : ICreatureExtension
+    public abstract class BaseCreatureExt : ICreatureExtension
     {
         protected static readonly SkillTypeInfo Attachment = SkillTypeList.instance.GetData((long)RwbpType.B);
 
@@ -93,15 +93,6 @@ namespace AutoInority.Creature
         protected virtual float CalculateWorkSuccessProb(AgentModel agent, SkillTypeInfo skill)
         {
             return _creature.CalculateWorkSuccessProb(agent, skill);
-        }
-
-        protected virtual bool CheckGoodNormal(AgentModel agent, SkillTypeInfo skill)
-        {
-            if (_creature.qliphothCounter > 1)
-            {
-                return NormalConfidence(agent, skill) > Automaton.Instance.CounterDecreaseConfidence;
-            }
-            return GoodConfidence(agent, skill) > Automaton.Instance.CreatureEscapeConfidence;
         }
 
         protected virtual bool CheckNormal(AgentModel agent, SkillTypeInfo skill)

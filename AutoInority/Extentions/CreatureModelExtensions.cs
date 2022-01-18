@@ -175,9 +175,13 @@ namespace AutoInority.Extentions
             {
                 return new DreamingCurrent(creature);
             }
+            else if (creature.script is Freischutz)
+            {
+                return new DerFreischutzExt(creature);
+            }
             else
             {
-                return new BaseCreatureExt(creature);
+                return new GoodNormalExt(creature);
             }
         }
     }

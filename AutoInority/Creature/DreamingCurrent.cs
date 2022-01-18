@@ -2,6 +2,8 @@
 {
     class DreamingCurrent : BaseCreatureExt
     {
+        protected override SkillTypeInfo[] DefaultSkills => new SkillTypeInfo[] { Instinct, Attachment, Repression };
+
         public DreamingCurrent(CreatureModel creature) : base(creature)
         {
         }
@@ -10,7 +12,7 @@
         {
             if (agent.temperanceLevel == 1)
             {
-                message = "";
+                message = Message(Angela.Creatures.Shark, agent, skill);
                 return false;
             }
             return base.CanWorkWith(agent, skill, out message);
