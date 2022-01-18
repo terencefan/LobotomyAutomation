@@ -1,33 +1,70 @@
-﻿namespace AutoInority
+﻿using AutoInority.Localization;
+
+using UnityEngine;
+
+namespace AutoInority
 {
     internal class Angela
     {
-        public const string HasEGOGift = "我认为{0}已经拥有{1}了，这是个毫无意义的工作安排，我不会帮您执行。";
+        private static LanguageBase _language;
 
-        public const string SlotLocked = "{0}的{1}栏已经被锁定了，这是个毫无意义的工作安排，我不会帮您执行。";
+        private static LanguageBase Language
+        {
+            get
+            {
+                if (_language == null || _language.Language != GlobalGameManager.instance.Language)
+                {
+                    _language = GetLanguage(GlobalGameManager.instance.Language);
+                }
+                return _language;
+            }
+        }
 
         public static void Say(string message)
         {
             AngelaConversationUI.instance.AddAngelaMessage(message);
         }
 
-        public class Automaton
+        public static void Log(string message)
         {
-            public const string Off = "我已经暂停了所有的自动化工作，祝您工作顺利。";
-
-            public const string On = "自动化工作已经开始，员工将会回到他们自己的岗位上。";
-
-            public const string All = "自动化工作将会以最大功率进行，希望不会惹出什么大麻烦。";
+            Notice.instance.Send("AddSystemLog", message);
         }
 
-        public class Creatures
+        private static LanguageBase GetLanguage(SystemLanguage language)
         {
-            public const string Bad = "{0}对{1}进行{2}的结果有可能是差，这将会导致逆卡巴拉计数器的减少，您确定要这样安排吗？";
+            switch (language)
+            {
+                case SystemLanguage.ChineseSimplified:
+                    return new SimplifiedChinese();
+                default:
+                    return new English();
+            }
+        }
 
-            public const string Normal = "{0}对{1}进行{2}的结果有可能是良，这将会导致逆卡巴拉计数器的减少，您确定要这样安排吗？";
+        public class Automaton
+        {
+            public static string On => Language.Automation_Conv_On;
 
-            public const string Good = "{0}对{1}进行{2}的结果有可能是优，这将会导致逆卡巴拉计数器的减少，您确定要这样安排吗？";
+            public static string Off => Language.Automation_Conv_Off;
 
+            public static string FarmOn => Language.Automation_Log_FarmOn;
+
+            public static string FarmOff => Language.Automation_Log_FarmOff;
+        }
+
+        public class Agent
+        {
+            public static string HasEGOGift => Language.Agent_Conv_HasEGOGift;
+
+            public static string SlotLocked => Language.Agent_Conv_SlotLocked;
+
+            public static string GotEGOGift => Language.Agent_Log_GotEGOGift;
+
+            public static string ReachMaxExp => Language.Agent_Log_ReachMaxExp;
+        }
+
+        public class Creature
+        {
             public const string HappyTeddy = "我很遗憾看到您连续安排{0}对{1}进行{2}，或许下一位主管能做的比您更好些。";
 
             public const string Laetitia = "您难道没有发现{0}已经拥有{1}的礼物了吗？您这样的主管真是令我失望。";

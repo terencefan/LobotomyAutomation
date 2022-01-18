@@ -14,7 +14,7 @@ namespace AutoInority.Creature
         {
             if (agent.justiceLevel < 4)
             {
-                message = string.Format(Angela.Creatures.Nothing, agent.Tag(), _creature.Tag(), skill.Tag());
+                message = string.Format(Angela.Creature.Nothing, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
             }
 
@@ -23,7 +23,7 @@ namespace AutoInority.Creature
 
             if (confidence < Automaton.Instance.DeadConfidence)
             {
-                message = string.Format(Angela.Creatures.Nothing, agent.Tag(), _creature.Tag(), skill.Tag());
+                message = string.Format(Angela.Creature.Nothing, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
             }
             return base.CanWorkWith(agent, skill, out message);

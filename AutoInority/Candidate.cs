@@ -80,6 +80,7 @@ namespace AutoInority
                 Log.Error(e.StackTrace);
             }
         }
+
         public override string ToString() => $"{Agent.name} - {Creature.metaInfo.name} - {Skill.calledName}: {GoodConfidence}";
     }
 }

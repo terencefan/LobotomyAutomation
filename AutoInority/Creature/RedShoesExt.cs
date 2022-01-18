@@ -14,7 +14,7 @@ namespace AutoInority.Creature
         {
             if (agent.temperanceLevel < 3)
             {
-                message = string.Format(Angela.Creatures.RedShoes, agent.Tag(), _creature.Tag(), skill.Tag());
+                message = string.Format(Angela.Creature.RedShoes, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
             }
             return base.CanWorkWith(agent, skill, out message);

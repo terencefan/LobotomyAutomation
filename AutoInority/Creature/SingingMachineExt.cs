@@ -14,7 +14,7 @@ namespace AutoInority.Creature
         {
             if (agent.Rstat > 3 || agent.Bstat < 3)
             {
-                message = string.Format(Angela.Creatures.SiningMachine, agent.Tag(), _creature.Tag(), skill.Tag());
+                message = string.Format(Angela.Creature.SiningMachine, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
             }
             return base.CanWorkWith(agent, skill, out message);

@@ -1,6 +1,6 @@
 ﻿namespace AutoInority.Creature
 {
-    class DerFreischutzExt : GoodNormalExt
+    internal class DerFreischutzExt : GoodNormalExt
     {
         protected override SkillTypeInfo[] DefaultSkills => new SkillTypeInfo[] { Repression };
 
@@ -12,7 +12,7 @@
         {
             if (agent.justiceLevel <= 3)
             {
-                message = Message(Angela.Creatures.DerFreischutzExt, agent, skill);
+                message = Message(Angela.Creature.DerFreischutzExt, agent, skill);
                 return false;
             }
             return base.CanWorkWith(agent, skill, out message);

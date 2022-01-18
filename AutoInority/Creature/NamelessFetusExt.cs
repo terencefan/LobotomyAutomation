@@ -1,11 +1,11 @@
 ﻿namespace AutoInority.Creature
 {
-    class NamelessFetusExt : GoodNormalExt
+    internal class NamelessFetusExt : GoodNormalExt
     {
+        protected override SkillTypeInfo[] DefaultSkills => new SkillTypeInfo[] { Instinct };
+
         public NamelessFetusExt(CreatureModel creature) : base(creature)
         {
         }
-
-        protected override SkillTypeInfo[] DefaultSkills => new SkillTypeInfo[] { Instinct };
     }
 }

@@ -6,9 +6,8 @@ namespace AutoInority
 {
     public class AutomatonBuf : UnitBuf
     {
-        private GameObject _gameObject;
-
         private readonly CreatureModel _creature;
+        private GameObject _gameObject;
 
         public AutomatonBuf(CreatureModel creature) : base()
         {
@@ -18,6 +17,8 @@ namespace AutoInority
             remainTime = float.MaxValue;
             type = UnitBufType.ADD_SUPERARMOR;
         }
+
+        public static Sprite GetPortrait(string portraitSrc) => Resources.Load<Sprite>(portraitSrc);
 
         public override void Init(UnitModel model)
         {
@@ -53,7 +54,5 @@ namespace AutoInority
             base.OnDestroy();
             _gameObject.SetActive(value: false);
         }
-
-        public static Sprite GetPortrait(string portraitSrc) => Resources.Load<Sprite>(portraitSrc);
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace AutoInority.Creature
 {
-    class FairyFestivalExt : BaseCreatureExt
+    internal class FairyFestivalExt : BaseCreatureExt
     {
         public FairyFestivalExt(CreatureModel creature) : base(creature)
         {

@@ -40,12 +40,12 @@ namespace AutoInority.Creature
             message = null;
             if (agent.HasUnitBuf(UnitBufType.LITTLEWITCH_HEART) && !(_creature.script is LittleWitch))
             {
-                message = string.Format(Angela.Creatures.Laetitia, agent.Tag(), _creature.Tag(), skill.Tag());
+                message = string.Format(Angela.Creature.Laetitia, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
             }
             if (agent.GetUnitBufList().Where(x => x is FairyBuf).Any() && !(_creature.script is Fairy))
             {
-                message = string.Format(Angela.Creatures.Fairy, agent.Tag(), _creature.Tag(), skill.Tag());
+                message = string.Format(Angela.Creature.Fairy, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
             }
             return true;

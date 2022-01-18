@@ -18,7 +18,7 @@ namespace AutoInority.Creature
         {
             if (CenterBrain.FindLastRecords(agent, AGENT_MAX).Where(x => x.Creature == _creature).Count() == AGENT_MAX)
             {
-                message = string.Format(Angela.Creatures.YoungPrinceHasBuf, agent.Tag(), _creature.Tag(), skill.Tag());
+                message = string.Format(Angela.Creature.YoungPrinceHasBuf, agent.Tag(), _creature.Tag(), skill.Tag());
 
                 // WhenHasBuf(agent);
                 return false;
@@ -27,7 +27,7 @@ namespace AutoInority.Creature
             {
                 if (CenterBrain.FindLastRecords(_creature, SKILL_MAX).Where(r => r.Skill.rwbpType != RwbpType.W).Count() == SKILL_MAX)
                 {
-                    message = string.Format(Angela.Creatures.YoungPrinceTwice, agent.Tag(), _creature.Tag(), skill.Tag());
+                    message = string.Format(Angela.Creature.YoungPrinceTwice, agent.Tag(), _creature.Tag(), skill.Tag());
                     return false;
                 }
             }
