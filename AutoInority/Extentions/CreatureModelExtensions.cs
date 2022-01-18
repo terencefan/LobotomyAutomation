@@ -179,6 +179,10 @@ namespace AutoInority.Extentions
             {
                 return new DerFreischutzExt(creature);
             }
+            else if (creature.script is SnowQueen)
+            {
+                return new SnowQueenExt(creature);
+            }
             else
             {
                 return new GoodNormalExt(creature);
