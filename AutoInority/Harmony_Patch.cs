@@ -132,6 +132,10 @@ namespace AutoInority
             {
                 Invoke(Automaton.Instance.Clear);
             }
+            else if (Input.GetKeyDown(KeyCode.B))
+            {
+                Screen.SetResolution(Screen.width, Screen.height, !Screen.fullScreen);
+            }
             else if (Input.GetKeyDown(KeyCode.H))
             {
                 if (Input.GetKeyDown(KeyCode.LeftShift))
