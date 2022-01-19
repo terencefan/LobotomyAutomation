@@ -38,27 +38,43 @@ Agents will not repeat the work work if:
 
 ## Supported creatures
 
+### ZAYIN
+- Don't Touch Me
+
+### TETH
 - Beauty Beast
+- Bloodbath
+- Forsaken Murderer
+- Grave of Cherry Blossoms
+- Scorched Girl
+- Today's Shy Look
+- Void Dream
+
+### HE
+- Funeral of the Dead Butterflies
+- Der Freischütz
+- Happy Teddy Bear
+- Laetitia
+- Nameless Fetus
+- Red Shoes
+- Singing Machine
+- Snow Queen
+
+### WAW
 - Big Bird
 - Dream of Black Swan
-- Funeral of the Dead Butterflies
-- 「CENSORED」
 - Clouded Monk
-- Don't Touch Me
 - The Dreaming Current
 - Fire Bird (Not recommend)
   - Better if you had a low-level agent in its dept.
-- Happy Teddy Bear
 - The Queen of Hatred (Not recommend)
   - Better if you had a super ultimate double plus work success rate agent in its dept.
 - Judgement Bird
-- Laetitia
 - The Little Prince
 - Naked Nest
-- Nothing
 - Queen Bee
-- Red Shoes
-- Today's Shy Look
-- Singing Machine
-- Snow Queen
 - Snow White's Apple
+
+### ALEPH
+- 「CENSORED」
+- Nothing
