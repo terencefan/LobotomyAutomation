@@ -7,6 +7,7 @@ namespace AutoInority.Localization
         public abstract SystemLanguage Language { get; }
 
         #region Automation
+
         public abstract string Automation_Conv_On { get; }
 
         public abstract string Automation_Conv_Off { get; }
@@ -14,9 +15,11 @@ namespace AutoInority.Localization
         public abstract string Automation_Log_FarmOn { get; }
 
         public abstract string Automation_Log_FarmOff { get; }
-        #endregion
+
+        #endregion Automation
 
         #region Agent
+
         public abstract string Agent_Conv_HasEGOGift { get; }
 
         public abstract string Agent_Log_GotEGOGift { get; }
@@ -24,6 +27,7 @@ namespace AutoInority.Localization
         public abstract string Agent_Conv_SlotLocked { get; }
 
         public abstract string Agent_Log_ReachMaxExp { get; }
-        #endregion
+
+        #endregion Agent
     }
 }

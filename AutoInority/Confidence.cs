@@ -58,7 +58,7 @@ namespace AutoInority
         {
             if (n > _table.Length || r > n)
             {
-                Log.Error("nCr out of bound.");
+                Log.Error(new Exception("nCr out of bound."));
                 return -1;
             }
             return _table[n][r];

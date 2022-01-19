@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 using UnityEngine;
 
@@ -7,12 +6,7 @@ namespace AutoInority
 {
     internal class Log
     {
-        public static void Error(string message)
-        {
-            File.AppendAllText(Application.dataPath + "/BaseMods/Error.txt", message + "\n");
-        }
-
-        public static void Error(Exception e)
+        public static void Error(System.Exception e)
         {
             Error($"{e.GetType().Name}: {e.Message}");
             Error(e.StackTrace);
@@ -23,6 +17,11 @@ namespace AutoInority
         public static void Info(string file, string message)
         {
             File.AppendAllText($"{Application.dataPath}/BaseMods/{file}.txt", message + "\n");
+        }
+
+        private static void Error(string message)
+        {
+            File.AppendAllText(Application.dataPath + "/BaseMods/Error.txt", message + "\n");
         }
     }
 }

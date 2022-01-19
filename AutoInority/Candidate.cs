@@ -76,8 +76,7 @@ namespace AutoInority
             }
             catch (Exception e)
             {
-                Log.Error(e.Message);
-                Log.Error(e.StackTrace);
+                Log.Error(e);
             }
         }
 

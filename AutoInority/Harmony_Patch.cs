@@ -65,6 +65,7 @@ namespace AutoInority
                     }
                     return;
                 default:
+
                     // TODO
                     return;
             }
@@ -224,8 +225,7 @@ namespace AutoInority
             }
             catch (Exception e)
             {
-                Log.Error($"{e.GetType().Name}: {e.Message}");
-                Log.Error(e.StackTrace);
+                Log.Error(e);
             }
         }
 
