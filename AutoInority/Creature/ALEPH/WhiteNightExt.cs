@@ -1,12 +1,12 @@
 ﻿namespace AutoInority.Creature
 {
-    internal class WhiteNight : BaseCreatureExt
+    internal class WhiteNightExt : BaseCreatureExt
     {
         public override bool IsUrgent => QliphothCounter < 3;
 
         public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Insight, Attachment, Repression };
 
-        public WhiteNight(CreatureModel creature) : base(creature)
+        public WhiteNightExt(CreatureModel creature) : base(creature)
         {
         }
 

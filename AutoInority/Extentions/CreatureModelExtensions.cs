@@ -119,7 +119,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is DeathAngel)
             {
-
+                return new WhiteNightExt(model);
             }
             return new GoodNormalExt(model);
         }
