@@ -35,13 +35,13 @@ namespace AutoInority
             switch (language)
             {
                 case SystemLanguage.ChineseSimplified:
-                    AutoInority.Log.Info("Simplified chinese resource loaded");
+                    // AutoInority.Log.Info("Simplified chinese resource loaded");
                     return new ChineseSimplified();
                 case SystemLanguage.ChineseTraditional:
-                    AutoInority.Log.Info("Traditional chinese resource loaded");
+                    // AutoInority.Log.Info("Traditional chinese resource loaded");
                     return new ChineseTraditional();
                 default:
-                    AutoInority.Log.Info("English resource loaded");
+                    // AutoInority.Log.Info("English resource loaded");
                     return new English();
             }
         }

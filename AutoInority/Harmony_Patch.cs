@@ -73,7 +73,7 @@ namespace AutoInority
 
         public static void CreatureManager_OnFixedUpdate_Postfix(CreatureManager __instance)
         {
-            Invoke(() => Automaton.Instance.ManageCreatures(__instance), nameof(CreatureManager), 60);
+            Invoke(() => Automaton.Instance.ManageCreatures(__instance), nameof(CreatureManager), 15);
         }
 
         public static void FinishWorkSuccessfully_Postfix(UseSkill __instance)

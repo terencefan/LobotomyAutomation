@@ -6,6 +6,8 @@ namespace AutoInority
 {
     internal class Log
     {
+        private static bool DEBUG = false;
+
         public static void Error(System.Exception e)
         {
             Error($"{e.GetType().Name}: {e.Message}");
@@ -17,6 +19,14 @@ namespace AutoInority
         public static void Info(string file, string message)
         {
             File.AppendAllText($"{Application.dataPath}/BaseMods/{file}.txt", message + "\n");
+        }
+
+        public static void Debug(string message)
+        {
+            if (DEBUG)
+            {
+                Info(message);
+            }
         }
 
         private static void Error(string message)

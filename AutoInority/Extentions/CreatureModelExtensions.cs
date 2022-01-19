@@ -271,8 +271,6 @@ namespace AutoInority.Extentions
             {
                 return new DreamingCurrent(model);
             }
-
-            // abnoral dimension
             else
             {
                 return new GoodNormalExt(model);
