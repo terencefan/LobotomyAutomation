@@ -25,6 +25,8 @@ namespace AutoInority.Creature
 
         protected static SkillTypeInfo[] All => new SkillTypeInfo[] { Instinct, Insight, Attachment, Repression };
 
+        protected IEnumerable<AgentModel> AllAgents => AgentManager.instance.GetAgentList();
+
         protected float CounterDecreaseConfidence => Automaton.Instance.CounterDecreaseConfidence;
 
         protected float CreatureEscapeConfidence => Automaton.Instance.CreatureEscapeConfidence;
@@ -95,9 +97,14 @@ namespace AutoInority.Creature
             return gift != null;
         }
 
-        public IEnumerable<AgentModel> FindAgents()
+        public virtual IEnumerable<AgentModel> FindAgents(bool extend = false)
         {
-            throw new System.NotImplementedException();
+            var s = new HashSet<SefiraEnum>() { _creature.sefira.sefiraEnum };
+            if (extend)
+            {
+                s.UnionWith(SefiraExtensions.GetNeighborEnums(_creature.sefira.sefiraEnum));
+            }
+            return AllAgents.Where(x => x.IsAvailable() && s.Contains(x.GetActualSefira().sefiraEnum));
         }
 
         protected virtual float CalculateWorkSuccessProb(AgentModel agent, SkillTypeInfo skill)

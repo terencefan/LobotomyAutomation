@@ -49,12 +49,12 @@ namespace AutoInority.Extentions
             return creatures.Where(x => !x.IsKit() && x.GetRiskLevel() == riskLevel && x.IsUrgent() && x.IsAvailable());
         }
 
-        public static List<Candidate> FindCandidates(this IEnumerable<CreatureModel> creatures, bool neighbor = false)
+        public static List<Candidate> FindCandidates(this IEnumerable<CreatureModel> creatures, bool extend = false)
         {
             var candidates = new List<Candidate>();
             foreach (var creature in creatures)
             {
-                var agents = neighbor ? creature.sefira.NeighborAgents() : creature.sefira.agentList;
+                var agents = creature.GetExtension().FindAgents(extend);
                 candidates.AddRange(Candidate.Suggest(agents, creature));
             }
             return candidates;
