@@ -1,4 +1,8 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+
+using AutoInority.Extentions;
 
 namespace AutoInority.Creature
 {
@@ -51,10 +55,9 @@ namespace AutoInority.Creature
             else if (IsFarming) // a tricky way to get her buff.
             {
                 message = "";
-                Log.Info("farming can work with");
                 return skill.rwbpType == RwbpType.P;
             }
-            else if (agent.Equipment.HasEquipment(DummyGiftId) && GoodConfidence(agent, skill) < DeadConfidence)
+            else if (agent.HasEquipment(DummyGiftId) && GoodConfidence(agent, skill) < DeadConfidence)
             {
                 message = Message(Angela.Creature.SnowQueen, agent, skill);
                 return false;
@@ -70,7 +73,25 @@ namespace AutoInority.Creature
 
         public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
         {
-            return IsFarming || base.CheckConfidence(agent, skill);
+            if (IsFarming)
+            {
+                // skip confidence check when farming.
+                return CheckSurvive(agent, skill);
+            }
+            return base.CheckConfidence(agent, skill);
+        }
+
+        public override IEnumerable<AgentModel> FindAgents(bool extend = false)
+        {
+            if (IsFarming && !IsFreezing)
+            {
+                var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && x.HasEquipment(DummyGiftId));
+                if (agents.Any())
+                {
+                    return agents;
+                }
+            }
+            return base.FindAgents(extend);
         }
     }
 }
