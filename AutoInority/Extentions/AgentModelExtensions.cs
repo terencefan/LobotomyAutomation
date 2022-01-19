@@ -5,10 +5,10 @@ namespace AutoInority.Extentions
 {
     public static class AgentModelExtensions
     {
-        public static bool EGOSlotLocked(this AgentModel agent, CreatureEquipmentMakeInfo gift, out string slotName)
+        public static bool EGOSlotLocked(this AgentModel agent, EquipmentTypeInfo gift, out string slotName)
         {
-            slotName = UnitEGOgiftSpace.GetRegionName(UnitEGOgiftSpace.GetRegionId(gift.equipTypeInfo));
-            return agent.Equipment.gifts.GetLockState(gift.equipTypeInfo);
+            slotName = UnitEGOgiftSpace.GetRegionName(UnitEGOgiftSpace.GetRegionId(gift));
+            return agent.Equipment.gifts.GetLockState(gift);
         }
 
         public static IEnumerable<AgentModel> FilterCanSuppress(this IEnumerable<AgentModel> agents, CreatureModel creature)
@@ -21,21 +21,9 @@ namespace AutoInority.Extentions
             return agents.Where(x => !x.HasEGOGift(creature, out var gift) && !x.EGOSlotLocked(gift, out _));
         }
 
-        public static bool HasEGOGift(this AgentModel agent, CreatureModel creature, out CreatureEquipmentMakeInfo gift)
+        public static bool HasEGOGift(this AgentModel agent, CreatureModel creature, out EquipmentTypeInfo gift)
         {
-            if (creature.TryGetEGOGift(out gift))
-            {
-                return agent.Equipment.gifts.HasEquipment(gift.equipTypeInfo.id);
-            }
-            return true;
-        }
-
-        public static void RemoveAutomatonBuff(this AgentModel agent)
-        {
-            foreach (var buf in agent.GetUnitBufList().Where(buf => buf is AutomatonBuf).ToList())
-            {
-                agent.RemoveUnitBuf(buf);
-            }
+            return creature.GetExtension().TryGetEGOGift(out gift) && agent.Equipment.gifts.HasEquipment(gift.id);
         }
 
         public static bool HasReachedExpLimit(this AgentModel agent, RwbpType type, out string name)
@@ -69,6 +57,13 @@ namespace AutoInority.Extentions
             return agent.hp == agent.maxHp && agent.mental == agent.maxMental && agent.GetState() == AgentAIState.IDLE;
         }
 
+        public static void RemoveAutomatonBuff(this AgentModel agent)
+        {
+            foreach (var buf in agent.GetUnitBufList().Where(buf => buf is AutomatonBuf).ToList())
+            {
+                agent.RemoveUnitBuf(buf);
+            }
+        }
         public static string Tag(this AgentModel agent) => $"<color=#66bfcd>{agent.name}</color>";
 
         /// <summary>

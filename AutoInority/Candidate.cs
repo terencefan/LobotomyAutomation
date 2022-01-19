@@ -20,7 +20,7 @@ namespace AutoInority
             Agent = agent;
             Creature = creature;
             Skill = skill;
-            GoodConfidence = creature.GetCreatureExtension().GoodConfidence(agent, skill);
+            GoodConfidence = creature.GetExtension().GoodConfidence(agent, skill);
         }
 
         public static int Comparer(Candidate x, Candidate y)
@@ -43,7 +43,7 @@ namespace AutoInority
             var candidates = new List<Candidate>();
             foreach (var creature in creatures)
             {
-                var ext = creature.GetCreatureExtension();
+                var ext = creature.GetExtension();
                 foreach (var agent in agents)
                 {
                     foreach (var skill in ext.SkillSets())

@@ -90,6 +90,12 @@ namespace AutoInority.Creature
 
         public virtual SkillTypeInfo[] SkillSets() => DefaultSkills;
 
+        public virtual bool TryGetEGOGift(out EquipmentTypeInfo gift)
+        {
+            gift = _creature.metaInfo.equipMakeInfos.Find((x) => x.equipTypeInfo.type == EquipmentTypeInfo.EquipmentType.SPECIAL)?.equipTypeInfo;
+            return gift != null;
+        }
+
         protected virtual float CalculateWorkSuccessProb(AgentModel agent, SkillTypeInfo skill)
         {
             return _creature.CalculateWorkSuccessProb(agent, skill);

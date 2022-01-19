@@ -14,6 +14,8 @@
 
         float NormalConfidence(AgentModel agent, SkillTypeInfo skill);
 
+        bool TryGetEGOGift(out EquipmentTypeInfo gift);
+
         SkillTypeInfo[] SkillSets();
     }
 }

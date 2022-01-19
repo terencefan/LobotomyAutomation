@@ -43,6 +43,17 @@ namespace AutoInority
             _instance = null;
         }
 
+        public void AgentAttachEGOgift(AgentModel agent, EGOgiftModel gift)
+        {
+            if (agent.EGOSlotLocked(gift.metaInfo, out var slotName))
+            {
+                Log.Info($"slotName: {slotName}");
+                return;
+            }
+            Angela.Log(string.Format(Angela.Agent.GotEGOGift, agent.Tag(), gift.metaInfo.Tag()));
+            // TODO shoud we lock the slot?
+        }
+
         public void AgentTakeDamage(AgentModel agent, DamageInfo dmg)
         {
             if (agent.GetState() == AgentAIState.SUPPRESS_CREATURE && agent.hp < 0.25 * agent.maxHp || agent.mental < 0.25 * agent.maxMental)
@@ -50,7 +61,6 @@ namespace AutoInority
                 agent.ReturnToSefira();
             }
         }
-
         /// <summary>
         /// Clear all macros.
         /// </summary>
@@ -80,7 +90,7 @@ namespace AutoInority
                     }
                     else if (macro.ForGift && agent.HasEGOGift(macro.Creature, out var gift))
                     {
-                        var message = string.Format(Angela.Agent.GotEGOGift, agent.Tag(), gift.equipTypeInfo.Tag());
+                        var message = string.Format(Angela.Agent.GotEGOGift, agent.Tag(), gift.Tag());
                         Angela.Log(message);
                         Remove(agent);
                     }
@@ -104,7 +114,7 @@ namespace AutoInority
             // handle Qliphoth meltdown events (and some other urgent events)
             for (int riskLevel = 5; riskLevel > 0; riskLevel--)
             {
-                var creatures = manager.GetCreatureList().FilterUrgent(riskLevel).ToHashSet();
+                var creatures = new HashSet<CreatureModel>(manager.GetCreatureList().FilterUrgent(riskLevel));
 
                 // find from current dtps
                 var candidates = creatures.FindCandidates();
@@ -125,7 +135,7 @@ namespace AutoInority
             foreach (var creature in manager.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
             {
                 Log.Info($"{creature.metaInfo.name} is escaping");
-                if (creature.GetCreatureExtension().AutoSuppress)
+                if (creature.GetExtension().AutoSuppress)
                 {
                     creature.sefira.agentList.FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
                 }
@@ -234,43 +244,6 @@ namespace AutoInority
             }
         }
 
-        private bool TryRunMacro()
-        {
-            foreach (var macros in MacroCreatures.Values)
-            {
-                foreach (var macro in macros)
-                {
-                    if (macro.IsAvailable())
-                    {
-                        macro.Apply();
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        private bool TryFarm(bool neighbor = false)
-        {
-            foreach (var creature in FarmingCreatures)
-            {
-                var agents = neighbor ? creature.sefira.NeighborAgents() : creature.sefira.agentList;
-                agents = agents.FilterEGOGift(creature);
-
-                var candidates = Candidate.Suggest(agents, new[] { creature });
-
-                foreach (var candidate in candidates)
-                {
-                    if (candidate.Agent.IsAvailable() && candidate.Creature.IsAvailable())
-                    {
-                        candidate.Apply();
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
         private string AutomationMessage() => Running ? Angela.Automaton.On : Angela.Automaton.Off;
 
         private bool HandleCandidates(IEnumerable<Candidate> candidates, HashSet<CreatureModel> creatures)
@@ -330,6 +303,44 @@ namespace AutoInority
             }
         }
 
+        private bool TryFarm(bool neighbor = false)
+        {
+            foreach (var creature in FarmingCreatures)
+            {
+                var agents = neighbor ? creature.sefira.NeighborAgents() : creature.sefira.agentList;
+                // Log.Info($"Found {agents.Count()} agents.");
+                agents = agents.FilterEGOGift(creature);
+
+                var candidates = Candidate.Suggest(agents, new[] { creature });
+                // Log.Info($"Found {candidates.Count} candidates to work on {creature.metaInfo.name}.");
+
+                foreach (var candidate in candidates)
+                {
+                    if (candidate.Agent.IsAvailable() && candidate.Creature.IsAvailable())
+                    {
+                        candidate.Apply();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private bool TryRunMacro()
+        {
+            foreach (var macros in MacroCreatures.Values)
+            {
+                foreach (var macro in macros)
+                {
+                    if (macro.IsAvailable())
+                    {
+                        macro.Apply();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         internal sealed class Macro
         {
             public AgentModel Agent;
@@ -354,10 +365,10 @@ namespace AutoInority
 
             public bool IsAvailable()
             {
-                return Creature.GetCreatureExtension().CanWorkWith(Agent, Skill, out _) && Agent.IsAvailable() && Creature.IsAvailable();
+                return Creature.GetExtension().CanWorkWith(Agent, Skill, out _) && Agent.IsAvailable() && Creature.IsAvailable();
             }
 
-            public bool IsConfident() => Creature.GetCreatureExtension().CheckConfidence(Agent, Skill);
+            public bool IsConfident() => Creature.GetExtension().CheckConfidence(Agent, Skill);
         }
     }
 }

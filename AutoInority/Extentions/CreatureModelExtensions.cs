@@ -44,11 +44,27 @@ namespace AutoInority.Extentions
             return prob;
         }
 
-        public static ICreatureExtension GetCreatureExtension(this CreatureModel creature)
+        public static IEnumerable<CreatureModel> FilterUrgent(this IEnumerable<CreatureModel> creatures, int riskLevel)
+        {
+            return creatures.Where(x => !x.IsKit() && x.GetRiskLevel() == riskLevel && x.IsUrgent() && x.IsAvailable());
+        }
+
+        public static List<Candidate> FindCandidates(this IEnumerable<CreatureModel> creatures, bool neighbor = false)
+        {
+            var candidates = new List<Candidate>();
+            foreach (var creature in creatures)
+            {
+                var agents = neighbor ? creature.sefira.NeighborAgents() : creature.sefira.agentList;
+                candidates.AddRange(Candidate.Suggest(agents, creature));
+            }
+            return candidates;
+        }
+
+        public static ICreatureExtension GetExtension(this CreatureModel creature)
         {
             if (!_dict.TryGetValue(creature, out var ext))
             {
-                ext = CreateCreatureExtension(creature);
+                ext = BuildExtension(creature);
                 _dict[creature] = ext;
             }
             return ext;
@@ -67,7 +83,7 @@ namespace AutoInority.Extentions
 
         public static bool IsUrgent(this CreatureModel creature)
         {
-            return creature.isOverloaded || creature.GetCreatureExtension().IsUrgent();
+            return creature.isOverloaded || creature.GetExtension().IsUrgent();
         }
 
         public static int MaxCube(this CreatureModel creature) => creature.metaInfo.feelingStateCubeBounds.GetLastBound();
@@ -75,12 +91,6 @@ namespace AutoInority.Extentions
         public static int NormalBound(this CreatureModel creature) => creature.metaInfo.feelingStateCubeBounds.upperBounds[0];
 
         public static string Tag(this CreatureModel creature) => $"<color=#ef9696>{creature.metaInfo.name}</color>";
-
-        public static bool TryGetEGOGift(this CreatureModel creature, out CreatureEquipmentMakeInfo gift)
-        {
-            gift = creature.metaInfo.equipMakeInfos.Find((x) => x.equipTypeInfo.type == EquipmentTypeInfo.EquipmentType.SPECIAL);
-            return gift != null;
-        }
 
         public static bool TryGetPortrait(this CreatureModel creature, out Sprite portrait)
         {
@@ -90,120 +100,161 @@ namespace AutoInority.Extentions
             return portrait != null;
         }
 
-        public static IEnumerable<CreatureModel> FilterUrgent(this IEnumerable<CreatureModel> creatures, int riskLevel)
+        private static ICreatureExtension BuildExtension(CreatureModel model)
         {
-            return creatures.Where(x => !x.IsKit() && x.GetRiskLevel() == riskLevel && x.IsUrgent() && x.IsAvailable());
-        }
+            switch (model.GetRiskLevel())
+            {
+                case 1:
+                    return BuildZayinExt(model);
+                case 2:
+                    return BuildTethExt(model);
+                case 4:
+                    return BuildWawExt(model);
+            }
 
-        public static List<Candidate> FindCandidates(this IEnumerable<CreatureModel> creatures, bool neighbor = false)
-        {
-            var candidates = new List<Candidate>();
-            foreach (var creature in creatures)
+            if (model.script is HappyTeddy)
             {
-                var agents = neighbor ? creature.sefira.NeighborAgents() : creature.sefira.agentList;
-                candidates.AddRange(Candidate.Suggest(agents, creature));
+                return new HappyTeddyExt(model);
             }
-            return candidates;
-        }
-
-        private static ICreatureExtension CreateCreatureExtension(CreatureModel creature)
-        {
-            if (creature.script is HappyTeddy)
+            else if (model.script is LittleWitch)
             {
-                return new HappyTeddyExt(creature);
+                return new LaetitiaExt(model);
             }
-            else if (creature.script is LittleWitch)
+            else if (model.script is Nothing)
             {
-                return new LaetitiaExt(creature);
+                return new NothingExt(model);
             }
-            else if (creature.script is Nothing)
+            else if (model.script is RedShoes)
             {
-                return new NothingExt(creature);
+                return new RedShoesExt(model);
             }
-            else if (creature.script is RedShoes)
+            else if (model.script is SingingMachine)
             {
-                return new RedShoesExt(creature);
+                return new SingingMachineExt(model);
             }
-            else if (creature.script is SingingMachine)
+            else if (model.script is Censored)
             {
-                return new SingingMachineExt(creature);
+                return new CensoredExt(model);
             }
-            else if (creature.script is Censored)
+            else if (model.script is Butterfly)
             {
-                return new CensoredExt(creature);
+                return new ButterflyExt(model);
             }
-            else if (creature.script is BlackSwan)
+            else if (model.script is Freischutz)
             {
-                return new BlackSwanExt(creature);
+                return new DerFreischutzExt(model);
             }
-            else if (creature.script is DontTouchMe)
+            else if (model.script is SnowQueen)
             {
-                return new DontTouchMeExt(creature);
-            }
-            else if (creature.script is BeautyBeast)
-            {
-                return new BeautyBeastExt(creature);
-            }
-            else if (creature.script is YoungPrince)
-            {
-                return new LittlePrince(creature);
-            }
-            else if (creature.script is QueenBee)
-            {
-                return new QueenBeeExt(creature);
-            }
-            else if (creature.script is ViscusSnake)
-            {
-                return new NakedNestExt(creature);
-            }
-            else if (creature.script is MagicalGirl) // Require a high work prob agent.
-            {
-                return new HatredQueen(creature);
-            }
-            else if (creature.script is SnowWhite)
-            {
-                return new SnowWhiteExt(creature);
-            }
-            else if (creature.script is LongBird)
-            {
-                return new JudgementBirdExt(creature);
-            }
-            else if (creature.script is FengYun)
-            {
-                return new CloudedMonkExt(creature);
-            }
-            else if (creature.script is FireBird)
-            {
-                return new FireBirdExt(creature);
-            }
-            else if (creature.script is Butterfly)
-            {
-                return new ButterflyExt(creature);
-            }
-            else if (creature.script is ShyThing)
-            {
-                return new ShyLook(creature);
-            }
-            else if (creature.script is Fairy)
-            {
-                return new FairyFestivalExt(creature);
-            }
-            else if (creature.script is Shark)
-            {
-                return new DreamingCurrent(creature);
-            }
-            else if (creature.script is Freischutz)
-            {
-                return new DerFreischutzExt(creature);
-            }
-            else if (creature.script is SnowQueen)
-            {
-                return new SnowQueenExt(creature);
+                return new SnowQueenExt(model);
             }
             else
             {
-                return new GoodNormalExt(creature);
+                return new GoodNormalExt(model);
             }
+        }
+
+        private static ICreatureExtension BuildTethExt(CreatureModel model)
+        {
+            if (model.script is ShyThing)
+            {
+                return new ShyLook(model);
+            }
+            else if (model.script is BeautyBeast)
+            {
+                return new BeautyBeastExt(model);
+            }
+            else if (model.script is StraitJacket)
+            {
+                return new MurdererExt(model);
+            }
+            else if (model.script is MatchGirl)
+            {
+                return new ScorchedGirlExt(model);
+            }
+            else if (model.script is Baku)
+            {
+                return new VoidDreamExt(model);
+            }
+            else if (model.script is BloodBath)
+            {
+                return new BloodBathExt(model);
+            }
+            else if (model.script is Sakura)
+            {
+                return new SakuraExt(model);
+            }
+            return new GoodNormalExt(model);
+        }
+
+        private static ICreatureExtension BuildWawExt(CreatureModel model)
+        {
+            if (model.script is BlackSwan)
+            {
+                return new BlackSwanExt(model);
+            }
+            else if (model.script is YoungPrince)
+            {
+                return new LittlePrince(model);
+            }
+            else if (model.script is QueenBee)
+            {
+                return new QueenBeeExt(model);
+            }
+            else if (model.script is ViscusSnake)
+            {
+                return new NakedNestExt(model);
+            }
+            else if (model.script is MagicalGirl) // Require a high work prob agent.
+            {
+                return new HatredQueen(model);
+            }
+            else if (model.script is SnowWhite)
+            {
+                return new SnowWhiteExt(model);
+            }
+            else if (model.script is LongBird)
+            {
+                return new JudgementBirdExt(model);
+            }
+            else if (model.script is FengYun)
+            {
+                return new CloudedMonkExt(model);
+            }
+            else if (model.script is FireBird)
+            {
+                return new FireBirdExt(model);
+            }
+            else if (model.script is Shark)
+            {
+                return new DreamingCurrent(model);
+            }
+            // abnoral dimension
+            else
+            {
+                return new GoodNormalExt(model);
+            }
+        }
+
+        private static ICreatureExtension BuildZayinExt(CreatureModel model)
+        {
+            if (model.script is OneBadManyGood)
+            {
+                return new OneBadManyGoodExt(model);
+            }
+            else if (model.script is Wellcheers)
+            {
+                return new WellcheersExt(model);
+            }
+            else if (model.script is DontTouchMe)
+            {
+                return new DontTouchMeExt(model);
+            }
+            else if (model.script is Fairy)
+            {
+                return new FairyFestivalExt(model);
+            }
+            return new GoodNormalExt(model);
         }
     }
 }

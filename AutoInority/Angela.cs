@@ -35,10 +35,13 @@ namespace AutoInority
             switch (language)
             {
                 case SystemLanguage.ChineseSimplified:
+                    AutoInority.Log.Info("Simplified chinese resource loaded");
                     return new ChineseSimplified();
                 case SystemLanguage.ChineseTraditional:
+                    AutoInority.Log.Info("Traditional chinese resource loaded");
                     return new ChineseTraditional();
                 default:
+                    AutoInority.Log.Info("English resource loaded");
                     return new English();
             }
         }
@@ -99,7 +102,13 @@ namespace AutoInority
 
             public const string SnowQueen = "本次对{1}的{2}有可能会导致{0}被冰封，请准备解救工作";
 
-            public const string SnowQueenDual = "本次对{1}的{2}有可能会导致{0}被冰封，请准备解救工作";
+            public const string SnowQueenDual = "你真的相信{0}能在与{1}的决斗中取胜？至少我不是这么认为的。";
+
+            public const string VoidDream = "我相信{0}在进入{1}的收容单位后会陷入永久的睡眠，你真的有看过观察资料吗？";
+
+            public const string BloodBath = "将{0}送入{1}中以提高能量产出确实是一个不错的主意，如果你也这么认为的话。";
+
+            public const string Sakura = "本次对{1}的工作将会导致设施内的员工对其着魔，不过我相信你应该已经准备好镇压了。";
         }
     }
 }

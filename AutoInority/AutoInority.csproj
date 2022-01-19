@@ -9,11 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AutoInority</RootNamespace>
     <AssemblyName>AutoInority</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -53,10 +52,16 @@
     <Compile Include="Creature\HE\SnowQueenExt.cs" />
     <Compile Include="Creature\ICreatureExtension.cs" />
     <Compile Include="Creature\TETH\BeautyBeastExt.cs" />
+    <Compile Include="Creature\TETH\BloodBathExt.cs" />
+    <Compile Include="Creature\TETH\SakuraExt.cs" />
+    <Compile Include="Creature\TETH\ScorchedGirlExt.cs" />
+    <Compile Include="Creature\TETH\MurdererExt.cs" />
     <Compile Include="Creature\TETH\ShyLook.cs" />
+    <Compile Include="Creature\TETH\VoidDreamExt.cs" />
     <Compile Include="Creature\WAW\BigBirdExt.cs" />
     <Compile Include="Creature\WAW\BlackSwanExt.cs" />
     <Compile Include="Creature\WAW\CloudedMonkExt.cs" />
+    <Compile Include="Creature\WAW\DimensionExt.cs" />
     <Compile Include="Creature\WAW\DreamingCurrent.cs" />
     <Compile Include="Creature\WAW\FireBirdExt.cs" />
     <Compile Include="Creature\WAW\HatredQueen.cs" />
@@ -67,6 +72,8 @@
     <Compile Include="Creature\WAW\SnowWhiteExt.cs" />
     <Compile Include="Creature\ZAYIN\DontTouchMeExt.cs" />
     <Compile Include="Creature\ZAYIN\FairyFestivalExt.cs" />
+    <Compile Include="Creature\ZAYIN\OneBadManyGoodExt.cs" />
+    <Compile Include="Creature\ZAYIN\WellcheersExt.cs" />
     <Compile Include="Extentions\AgentModelExtensions.cs" />
     <Compile Include="Angela.cs" />
     <Compile Include="Automaton.cs" />

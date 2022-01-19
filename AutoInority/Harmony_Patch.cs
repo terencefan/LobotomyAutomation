@@ -46,6 +46,8 @@ namespace AutoInority
 
         public static void AgentModel_TakeDamage_Postfix(AgentModel __instance, DamageInfo dmg) => Invoke(() => Automaton.Instance.AgentTakeDamage(__instance, dmg));
 
+        public static void AgentModel_AttachGift_Postfix(AgentModel __instance, EGOgiftModel gift) => Invoke(() => Automaton.Instance.AgentAttachEGOgift(__instance, gift));
+
         public static void CommandWindow_OnClick_Prefix(CommandWindow.CommandWindow __instance, AgentModel actor)
         {
             if (actor == null)
@@ -185,9 +187,13 @@ namespace AutoInority
 
         public void PatchAgentModel(HarmonyInstance mod)
         {
-            var postfix = typeof(Harmony_Patch).GetMethod(nameof(AgentModel_TakeDamage_Postfix));
-            mod.Patch(typeof(AgentModel).GetMethod(nameof(AgentModel.TakeDamage), new[] { typeof(DamageInfo) }), null, new HarmonyMethod(postfix));
+            var takeDamage = typeof(Harmony_Patch).GetMethod(nameof(AgentModel_TakeDamage_Postfix));
+            mod.Patch(typeof(AgentModel).GetMethod(nameof(AgentModel.TakeDamage), new[] { typeof(DamageInfo) }), null, new HarmonyMethod(takeDamage));
             Log.Info($"patch AgentModel.TakeDamage success");
+
+            var attachGift = typeof(Harmony_Patch).GetMethod(nameof(AgentModel_AttachGift_Postfix));
+            mod.Patch(typeof(AgentModel).GetMethod(nameof(AgentModel.AttachEGOgift)), null, new HarmonyMethod(attachGift));
+            Log.Info($"patch AgentModel.AttachEGOgift success");
         }
 
         public void PatchCommandWindow(HarmonyInstance mod) => PatchPrefix(mod, typeof(CommandWindow.CommandWindow), nameof(CommandWindow.CommandWindow.OnClick), nameof(CommandWindow_OnClick_Prefix));
@@ -243,7 +249,7 @@ namespace AutoInority
 
         private static void ManagementCreature(AgentModel actor, CreatureModel creature, SkillTypeInfo skill)
         {
-            if (!creature.GetCreatureExtension().CanWorkWith(actor, skill, out var message))
+            if (!creature.GetExtension().CanWorkWith(actor, skill, out var message))
             {
                 Angela.Say(message);
             }
@@ -256,7 +262,7 @@ namespace AutoInority
             {
                 if (actor.HasEGOGift(creature, out var gift))
                 {
-                    message = string.Format(Angela.Agent.HasEGOGift, actor.name, gift.equipTypeInfo.Name);
+                    message = string.Format(Angela.Agent.HasEGOGift, actor.name, gift.Name);
                     Angela.Say(message);
                     return;
                 }
