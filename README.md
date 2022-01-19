@@ -38,13 +38,13 @@ Agents will not repeat the work work if:
 
 ## Supported creatures
 
-### ZAYIN
+### ![color](https://via.placeholder.com/15/1df900/000000?text=+) ZAYIN
 - Don't Touch Me
 - Fairy Festival
 - One Sin and Hundreds of Good Deeds
 - Opened Can of Wellcheers
 
-### TETH
+### ![color](https://via.placeholder.com/15/13a2ff/000000?text=+) TETH
 - Beauty Beast
 - Bloodbath
 - Forsaken Murderer
@@ -53,7 +53,7 @@ Agents will not repeat the work work if:
 - Today's Shy Look
 - Void Dream
 
-### HE
+### ![color](https://via.placeholder.com/15/fff900/000000?text=+) HE
 - Funeral of the Dead Butterflies
 - Der Freischütz
 - Happy Teddy Bear
@@ -63,7 +63,7 @@ Agents will not repeat the work work if:
 - Singing Machine
 - Snow Queen
 
-### WAW
+### ![color](https://via.placeholder.com/15/7B2BF3/000000?text=+) WAW
 - Big Bird
 - Dream of Black Swan
 - Clouded Monk
@@ -78,6 +78,6 @@ Agents will not repeat the work work if:
 - Queen Bee
 - Snow White's Apple
 
-### ALEPH
+### ![color](https://via.placeholder.com/15/ff0000/000000?text=+) ALEPH
 - 「CENSORED」
 - Nothing
