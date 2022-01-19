@@ -83,7 +83,7 @@ namespace AutoInority.Extentions
 
         public static bool IsUrgent(this CreatureModel creature)
         {
-            return creature.isOverloaded || creature.GetExtension().IsUrgent();
+            return creature.isOverloaded || creature.GetExtension().IsUrgent;
         }
 
         public static int MaxCube(this CreatureModel creature) => creature.metaInfo.feelingStateCubeBounds.GetLastBound();

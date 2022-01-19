@@ -84,7 +84,7 @@ namespace AutoInority.Creature
 
         public float GoodConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), _creature.GoodBound());
 
-        public virtual bool IsUrgent() => false;
+        public virtual bool IsUrgent => false;
 
         public float NormalConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), _creature.NormalBound());
 

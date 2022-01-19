@@ -15,7 +15,7 @@ namespace AutoInority.Creature
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            if (IsUrgent())
+            if (IsUrgent)
             {
                 if (agent.fortitudeLevel < 5)
                 {
@@ -37,11 +37,11 @@ namespace AutoInority.Creature
             return base.CanWorkWith(agent, skill, out message);
         }
 
-        public override bool IsUrgent() => (bool)_field.GetValue(_creature.script);
+        public override bool IsUrgent => (bool)_field.GetValue(_creature.script);
 
         public override SkillTypeInfo[] SkillSets()
         {
-            if (IsUrgent())
+            if (IsUrgent)
             {
                 Log.Info("urgent");
                 return new SkillTypeInfo[] { Instinct };

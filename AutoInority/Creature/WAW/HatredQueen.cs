@@ -8,6 +8,6 @@
         {
         }
 
-        public override bool IsUrgent() => _creature.qliphothCounter == 1;
+        public override bool IsUrgent => _creature.qliphothCounter == 1;
     }
 }

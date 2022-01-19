@@ -6,13 +6,15 @@
 
         bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message);
 
+        bool IsUrgent { get; }
+
+        #region Confidence
         bool CheckConfidence(AgentModel agent, SkillTypeInfo skill);
 
         float GoodConfidence(AgentModel agent, SkillTypeInfo skill);
 
-        bool IsUrgent();
-
         float NormalConfidence(AgentModel agent, SkillTypeInfo skill);
+        #endregion
 
         bool TryGetEGOGift(out EquipmentTypeInfo gift);
 

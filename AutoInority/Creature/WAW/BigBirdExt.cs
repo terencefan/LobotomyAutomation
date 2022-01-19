@@ -18,9 +18,6 @@
             return base.CanWorkWith(agent, skill, out message);
         }
 
-        public override bool IsUrgent()
-        {
-            return _creature.qliphothCounter < 5;
-        }
+        public override bool IsUrgent => _creature.qliphothCounter < 5;
     }
 }
