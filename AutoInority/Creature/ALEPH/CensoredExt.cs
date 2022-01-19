@@ -4,7 +4,7 @@ namespace AutoInority.Creature
 {
     internal class CensoredExt : BaseCreatureExt
     {
-        protected override SkillTypeInfo[] DefaultSkills { get; } = new SkillTypeInfo[] { Instinct, Insight, Attachment };
+        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Insight, Attachment };
 
         public CensoredExt(CreatureModel creature) : base(creature)
         {

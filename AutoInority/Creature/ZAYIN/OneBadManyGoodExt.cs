@@ -2,10 +2,10 @@
 {
     internal class OneBadManyGoodExt : BaseCreatureExt
     {
+        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Insight, Attachment };
+
         public OneBadManyGoodExt(CreatureModel creature) : base(creature)
         {
         }
-
-        protected override SkillTypeInfo[] DefaultSkills => new SkillTypeInfo[] { Insight, Attachment };
     }
 }

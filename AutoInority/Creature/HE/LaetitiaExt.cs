@@ -2,7 +2,7 @@
 {
     internal class LaetitiaExt : BaseCreatureExt
     {
-        protected override SkillTypeInfo[] DefaultSkills { get; } = new SkillTypeInfo[] { Instinct, Insight, Attachment };
+        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Insight, Attachment };
 
         public LaetitiaExt(CreatureModel creature) : base(creature)
         {

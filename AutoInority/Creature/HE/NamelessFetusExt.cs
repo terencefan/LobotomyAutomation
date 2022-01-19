@@ -2,7 +2,7 @@
 {
     internal class NamelessFetusExt : GoodNormalExt
     {
-        protected override SkillTypeInfo[] DefaultSkills => new SkillTypeInfo[] { Instinct };
+        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct };
 
         public NamelessFetusExt(CreatureModel creature) : base(creature)
         {

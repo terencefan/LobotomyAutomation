@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 using AutoInority.Extentions;
 
@@ -18,6 +19,10 @@ namespace AutoInority.Creature
 
         public virtual bool AutoSuppress => false;
 
+        public virtual bool IsUrgent => false;
+
+        public virtual SkillTypeInfo[] SkillSets { get; } = All;
+
         protected static SkillTypeInfo[] All => new SkillTypeInfo[] { Instinct, Insight, Attachment, Repression };
 
         protected float CounterDecreaseConfidence => Automaton.Instance.CounterDecreaseConfidence;
@@ -25,8 +30,6 @@ namespace AutoInority.Creature
         protected float CreatureEscapeConfidence => Automaton.Instance.CreatureEscapeConfidence;
 
         protected float DeadConfidence => Automaton.Instance.DeadConfidence;
-
-        protected virtual SkillTypeInfo[] DefaultSkills { get; } = All;
 
         protected int QliphothCounter => _creature.qliphothCounter;
 
@@ -84,16 +87,17 @@ namespace AutoInority.Creature
 
         public float GoodConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), _creature.GoodBound());
 
-        public virtual bool IsUrgent => false;
-
         public float NormalConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), _creature.NormalBound());
-
-        public virtual SkillTypeInfo[] SkillSets() => DefaultSkills;
 
         public virtual bool TryGetEGOGift(out EquipmentTypeInfo gift)
         {
             gift = _creature.metaInfo.equipMakeInfos.Find((x) => x.equipTypeInfo.type == EquipmentTypeInfo.EquipmentType.SPECIAL)?.equipTypeInfo;
             return gift != null;
+        }
+
+        public IEnumerable<AgentModel> FindAgents()
+        {
+            throw new System.NotImplementedException();
         }
 
         protected virtual float CalculateWorkSuccessProb(AgentModel agent, SkillTypeInfo skill)

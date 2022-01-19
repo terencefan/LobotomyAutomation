@@ -2,9 +2,34 @@
 
 namespace AutoInority.Creature
 {
-    class SnowQueenExt : GoodNormalExt
+    internal class SnowQueenExt : GoodNormalExt
     {
+        private static readonly int DummyGiftId = 1021;
+
+        private static readonly int RealGiftId = 1023;
+
         private readonly FieldInfo _field;
+
+        public override SkillTypeInfo[] SkillSets
+        {
+            get
+            {
+                if (IsFreezing)
+                {
+                    return new SkillTypeInfo[] { Instinct };
+                }
+                else if (IsFarming)
+                {
+                    return new SkillTypeInfo[] { Repression };
+                }
+                else
+                {
+                    return new SkillTypeInfo[] { Insight, Attachment };
+                }
+            }
+        }
+
+        private bool IsFreezing => (bool)_field.GetValue(_creature.script);
 
         private bool IsFarming => Automaton.Instance.FarmingCreatures.Contains(_creature);
 
@@ -15,7 +40,7 @@ namespace AutoInority.Creature
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            if (IsUrgent)
+            if (IsFreezing)
             {
                 if (agent.fortitudeLevel < 5)
                 {
@@ -29,7 +54,7 @@ namespace AutoInority.Creature
                 Log.Info("farming can work with");
                 return skill.rwbpType == RwbpType.P;
             }
-            else if (agent.Equipment.HasEquipment(1021) && GoodConfidence(agent, skill) < DeadConfidence)
+            else if (agent.Equipment.HasEquipment(DummyGiftId) && GoodConfidence(agent, skill) < DeadConfidence)
             {
                 message = Message(Angela.Creature.SnowQueen, agent, skill);
                 return false;
@@ -37,30 +62,9 @@ namespace AutoInority.Creature
             return base.CanWorkWith(agent, skill, out message);
         }
 
-        public override bool IsUrgent => (bool)_field.GetValue(_creature.script);
-
-        public override SkillTypeInfo[] SkillSets()
-        {
-            if (IsUrgent)
-            {
-                Log.Info("urgent");
-                return new SkillTypeInfo[] { Instinct };
-            }
-            else if (IsFarming)
-            {
-                Log.Info("farming");
-                return new SkillTypeInfo[] { Repression };
-            }
-            else
-            {
-                Log.Info("normal");
-                return new SkillTypeInfo[] { Insight, Attachment };
-            }
-        }
-
         public override bool TryGetEGOGift(out EquipmentTypeInfo gift)
         {
-            gift = EquipmentTypeList.instance.GetData(1023);
+            gift = EquipmentTypeList.instance.GetData(RealGiftId);
             return gift != null;
         }
 

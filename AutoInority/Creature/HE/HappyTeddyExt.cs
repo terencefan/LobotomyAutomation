@@ -4,7 +4,7 @@ namespace AutoInority.Creature
 {
     internal class HappyTeddyExt : BaseCreatureExt
     {
-        protected override SkillTypeInfo[] DefaultSkills { get; } = new SkillTypeInfo[] { Insight, Attachment, Repression };
+        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Insight, Attachment, Repression };
 
         public HappyTeddyExt(CreatureModel creature) : base(creature)
         {

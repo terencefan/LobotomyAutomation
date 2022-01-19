@@ -8,12 +8,6 @@ namespace AutoInority.Creature
         {
         }
 
-        private double LessThanGoodConfidence(AgentModel agent, SkillTypeInfo skill)
-        {
-            var workProb = CalculateWorkSuccessProb(agent, skill);
-            return Confidence.InRange(_creature.MaxCube(), workProb, 0, _creature.GoodBound() - 1);
-        }
-
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
             var rate = LessThanGoodConfidence(agent, skill);
@@ -37,6 +31,12 @@ namespace AutoInority.Creature
                 return false;
             }
             return base.CheckConfidence(agent, skill);
+        }
+
+        private double LessThanGoodConfidence(AgentModel agent, SkillTypeInfo skill)
+        {
+            var workProb = CalculateWorkSuccessProb(agent, skill);
+            return Confidence.InRange(_creature.MaxCube(), workProb, 0, _creature.GoodBound() - 1);
         }
     }
 }

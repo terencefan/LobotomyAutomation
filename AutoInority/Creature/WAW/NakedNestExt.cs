@@ -2,7 +2,7 @@
 {
     internal class NakedNestExt : BaseCreatureExt
     {
-        protected override SkillTypeInfo[] DefaultSkills { get; } = new SkillTypeInfo[] { Instinct, Attachment, Repression };
+        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Attachment, Repression };
 
         public NakedNestExt(CreatureModel creature) : base(creature)
         {

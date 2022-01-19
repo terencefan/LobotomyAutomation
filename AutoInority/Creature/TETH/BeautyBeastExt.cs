@@ -2,7 +2,7 @@
 {
     public class BeautyBeastExt : BaseCreatureExt
     {
-        protected override SkillTypeInfo[] DefaultSkills { get; } = new SkillTypeInfo[] { Insight, Repression };
+        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Insight, Repression };
 
         public BeautyBeastExt(CreatureModel creature) : base(creature)
         {

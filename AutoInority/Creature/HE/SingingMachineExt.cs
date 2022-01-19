@@ -4,7 +4,7 @@ namespace AutoInority.Creature
 {
     internal class SingingMachineExt : BaseCreatureExt
     {
-        protected override SkillTypeInfo[] DefaultSkills { get; } = new SkillTypeInfo[] { Instinct, Insight, Repression };
+        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Insight, Repression };
 
         public SingingMachineExt(CreatureModel creature) : base(creature)
         {

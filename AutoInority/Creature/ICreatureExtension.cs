@@ -1,23 +1,29 @@
-﻿namespace AutoInority.Creature
+﻿using System.Collections.Generic;
+
+namespace AutoInority.Creature
 {
     public interface ICreatureExtension
     {
         bool AutoSuppress { get; }
 
-        bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message);
-
         bool IsUrgent { get; }
 
+        SkillTypeInfo[] SkillSets { get; }
+
+        bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message);
+
         #region Confidence
+
         bool CheckConfidence(AgentModel agent, SkillTypeInfo skill);
 
         float GoodConfidence(AgentModel agent, SkillTypeInfo skill);
 
         float NormalConfidence(AgentModel agent, SkillTypeInfo skill);
-        #endregion
+
+        #endregion Confidence
 
         bool TryGetEGOGift(out EquipmentTypeInfo gift);
 
-        SkillTypeInfo[] SkillSets();
+        IEnumerable<AgentModel> FindAgents();
     }
 }

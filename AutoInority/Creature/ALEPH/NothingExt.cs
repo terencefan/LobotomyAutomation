@@ -4,7 +4,7 @@ namespace AutoInority.Creature
 {
     internal class NothingExt : BaseCreatureExt
     {
-        protected override SkillTypeInfo[] DefaultSkills { get; } = new SkillTypeInfo[] { Instinct, Attachment };
+        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Attachment };
 
         public NothingExt(CreatureModel creature) : base(creature)
         {

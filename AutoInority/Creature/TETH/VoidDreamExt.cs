@@ -2,11 +2,11 @@
 {
     internal class VoidDreamExt : GoodNormalExt
     {
+        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Insight, Attachment };
+
         public VoidDreamExt(CreatureModel creature) : base(creature)
         {
         }
-
-        protected override SkillTypeInfo[] DefaultSkills => new SkillTypeInfo[] { Instinct, Insight, Attachment };
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {

@@ -4,7 +4,7 @@
     {
         public override bool AutoSuppress => true;
 
-        protected override SkillTypeInfo[] DefaultSkills { get; } = new SkillTypeInfo[] { Insight, Repression };
+        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Insight, Repression };
 
         private bool IsFarming => Automaton.Instance.FarmingCreatures.Contains(_creature);
 

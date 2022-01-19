@@ -2,7 +2,7 @@
 {
     internal class DreamingCurrent : BaseCreatureExt
     {
-        protected override SkillTypeInfo[] DefaultSkills => new SkillTypeInfo[] { Instinct, Attachment, Repression };
+        public override SkillTypeInfo[] SkillSets => new SkillTypeInfo[] { Instinct, Attachment, Repression };
 
         public DreamingCurrent(CreatureModel creature) : base(creature)
         {

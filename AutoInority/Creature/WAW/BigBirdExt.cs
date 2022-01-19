@@ -2,7 +2,9 @@
 {
     internal class BigBirdExt : BaseCreatureExt
     {
-        protected override SkillTypeInfo[] DefaultSkills { get; } = new SkillTypeInfo[] { Instinct, Attachment };
+        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Attachment };
+
+        public override bool IsUrgent => _creature.qliphothCounter < 5;
 
         public BigBirdExt(CreatureModel creature) : base(creature)
         {
@@ -17,7 +19,5 @@
             }
             return base.CanWorkWith(agent, skill, out message);
         }
-
-        public override bool IsUrgent => _creature.qliphothCounter < 5;
     }
 }

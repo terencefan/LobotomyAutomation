@@ -46,7 +46,7 @@ namespace AutoInority
                 var ext = creature.GetExtension();
                 foreach (var agent in agents)
                 {
-                    foreach (var skill in ext.SkillSets())
+                    foreach (var skill in ext.SkillSets)
                     {
                         if (ext.CanWorkWith(agent, skill, out _) && ext.CheckConfidence(agent, skill))
                         {
