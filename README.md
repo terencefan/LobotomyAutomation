@@ -3,6 +3,7 @@
 
 ## Features
 
+1. **Angela will diss you when you made a wrong decision that will result in agents die or creatures escape.**
 1. Press `Shift + click` to repeat the work.
 2. Press `Ctrl + click` to repeat the work until the agent gets the EGO gift.
 3. Press `Alt + click` to repeat the work until the agent gets max EXP of that work type.
@@ -14,14 +15,13 @@
 9. Press `Shift` when selecting agents to cancel their automation works.
 10. Press `P` to pause all automation works.
 11. Press `V` to clear all automation works.
-12. **Angela will diss you when you made a wrong decision that will result in agents die or creatures escape.**
-    - Only support a few creatures.
-
-## Testing Features
-
 1. Automatically handle Qliphoth Meltdown events.
 3. Automatically suppress `Morning` and `Lunch` ordeal creatures.
-4. Automatically suppress escaped creatures.
+
+### TODO Features
+
+1. Automatically suppress escaped creatures.
+1. Rescue agents that are in `CANNOT_CONTROL` and `PANIC` status.
 
 ## Automation Strategy
 
