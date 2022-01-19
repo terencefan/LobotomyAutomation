@@ -40,6 +40,7 @@
     <Compile Include="CenterBrain.cs" />
     <Compile Include="Creature\ALEPH\CensoredExt.cs" />
     <Compile Include="Creature\ALEPH\NothingExt.cs" />
+    <Compile Include="Creature\ALEPH\WhiteNightExt.cs" />
     <Compile Include="Creature\BaseCreatureExt.cs" />
     <Compile Include="Creature\GoodNormalExt.cs" />
     <Compile Include="Creature\HE\ButterflyExt.cs" />
