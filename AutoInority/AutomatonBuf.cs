@@ -7,6 +7,7 @@ namespace AutoInority
     public class AutomatonBuf : UnitBuf
     {
         private readonly CreatureModel _creature;
+
         private GameObject _gameObject;
 
         public AutomatonBuf(CreatureModel creature) : base()
