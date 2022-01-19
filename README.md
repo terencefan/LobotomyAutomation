@@ -40,6 +40,9 @@ Agents will not repeat the work work if:
 
 ### ZAYIN
 - Don't Touch Me
+- Fairy Festival
+- One Sin and Hundreds of Good Deeds
+- Opened Can of Wellcheers
 
 ### TETH
 - Beauty Beast
