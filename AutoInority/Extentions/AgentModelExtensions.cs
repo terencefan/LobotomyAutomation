@@ -59,11 +59,13 @@ namespace AutoInority.Extentions
 
         public static void RemoveAutomatonBuff(this AgentModel agent)
         {
-            foreach (var buf in agent.GetUnitBufList().Where(buf => buf is AutomatonBuf).ToList())
+            var buff = agent.GetUnitBufList().Where(buf => buf is AutomatonBuf).FirstOrDefault(null);
+            if (buff != null)
             {
-                agent.RemoveUnitBuf(buf);
+                agent.RemoveUnitBuf(buff);
             }
         }
+
         public static string Tag(this AgentModel agent) => $"<color=#66bfcd>{agent.name}</color>";
 
         /// <summary>
