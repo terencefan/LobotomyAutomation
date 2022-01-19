@@ -17,7 +17,7 @@ namespace AutoInority.Creature
 
         protected readonly CreatureModel _creature;
 
-        public virtual bool AutoSuppress => false;
+        public virtual bool AutoSuppress => _creature.GetRiskLevel() < 4;
 
         public virtual bool IsUrgent => false;
 
