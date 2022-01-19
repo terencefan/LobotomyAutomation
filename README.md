@@ -36,7 +36,7 @@ Agents will not repeat the work work if:
 3. The agent doesn't have enough confidence to survive from the work.
    - Current threshold is 99%.
 
-## Supported creatures
+## Supported anomoly creatures
 
 ### ![color](https://via.placeholder.com/15/1df900/000000?text=+) ZAYIN
 - Don't Touch Me
