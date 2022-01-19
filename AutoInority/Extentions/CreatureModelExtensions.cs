@@ -184,6 +184,10 @@ namespace AutoInority.Extentions
             {
                 return new SakuraExt(model);
             }
+            else if (model.script is SmallBird)
+            {
+                return new PunishingBirdExt(model);
+            } 
             return new GoodNormalExt(model);
         }
 

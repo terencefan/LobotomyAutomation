@@ -63,7 +63,6 @@ namespace AutoInority
                 return;
             }
             Angela.Log(string.Format(Angela.Agent.GotEGOGift, agent.Tag(), gift.metaInfo.Tag()));
-            // TODO shoud we lock the slot?
         }
 
         public void AgentTakeDamage(AgentModel agent, DamageInfo dmg)
