@@ -218,6 +218,10 @@ namespace AutoInority.Extentions
             {
                 return new PunishingBirdExt(model);
             }
+            else if (model.script is OldLady)
+            {
+                return new OldLadyExt(model);
+            }
             return new GoodNormalExt(model);
         }
 
