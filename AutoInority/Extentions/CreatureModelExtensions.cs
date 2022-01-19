@@ -7,65 +7,13 @@ using AutoInority.Creature;
 
 using UnityEngine;
 
+using WhiteNightSpace;
+
 namespace AutoInority.Extentions
 {
     public static class CreatureModelExtensions
     {
         private static Dictionary<CreatureModel, ICreatureExtension> _dict = new Dictionary<CreatureModel, ICreatureExtension>();
-
-        public static ICreatureExtension BuildAlephExt(CreatureModel model)
-        {
-            if (model.GetRiskLevel() != 5)
-            {
-                throw new Exception("Risk level mismatch");
-            }
-            else if (model.script is Nothing)
-            {
-                return new NothingExt(model);
-            }
-            else if (model.script is Censored)
-            {
-                return new CensoredExt(model);
-            }
-            return new GoodNormalExt(model);
-        }
-
-        public static ICreatureExtension BuildHeExt(CreatureModel model)
-        {
-            if (model.GetRiskLevel() != 3)
-            {
-                throw new Exception("Risk level mismatch");
-            }
-            else if (model.script is HappyTeddy)
-            {
-                return new HappyTeddyExt(model);
-            }
-            else if (model.script is LittleWitch)
-            {
-                return new LaetitiaExt(model);
-            }
-            else if (model.script is RedShoes)
-            {
-                return new RedShoesExt(model);
-            }
-            else if (model.script is SingingMachine)
-            {
-                return new SingingMachineExt(model);
-            }
-            else if (model.script is Butterfly)
-            {
-                return new ButterflyExt(model);
-            }
-            else if (model.script is Freischutz)
-            {
-                return new DerFreischutzExt(model);
-            }
-            else if (model.script is SnowQueen)
-            {
-                return new SnowQueenExt(model);
-            }
-            return new GoodNormalExt(model);
-        }
 
         public static float CalculateWorkSuccessProb(this CreatureModel creature, AgentModel agent, SkillTypeInfo skill)
         {
@@ -155,6 +103,27 @@ namespace AutoInority.Extentions
             return portrait != null;
         }
 
+        private static ICreatureExtension BuildAlephExt(CreatureModel model)
+        {
+            if (model.GetRiskLevel() != 5)
+            {
+                throw new Exception("Risk level mismatch");
+            }
+            else if (model.script is Nothing)
+            {
+                return new NothingExt(model);
+            }
+            else if (model.script is Censored)
+            {
+                return new CensoredExt(model);
+            }
+            else if (model.script is DeathAngel)
+            {
+
+            }
+            return new GoodNormalExt(model);
+        }
+
         private static ICreatureExtension BuildExtension(CreatureModel model)
         {
             switch (model.GetRiskLevel())
@@ -172,6 +141,43 @@ namespace AutoInority.Extentions
                 default:
                     return new GoodNormalExt(model);
             }
+        }
+
+        private static ICreatureExtension BuildHeExt(CreatureModel model)
+        {
+            if (model.GetRiskLevel() != 3)
+            {
+                throw new Exception("Risk level mismatch");
+            }
+            else if (model.script is HappyTeddy)
+            {
+                return new HappyTeddyExt(model);
+            }
+            else if (model.script is LittleWitch)
+            {
+                return new LaetitiaExt(model);
+            }
+            else if (model.script is RedShoes)
+            {
+                return new RedShoesExt(model);
+            }
+            else if (model.script is SingingMachine)
+            {
+                return new SingingMachineExt(model);
+            }
+            else if (model.script is Butterfly)
+            {
+                return new ButterflyExt(model);
+            }
+            else if (model.script is Freischutz)
+            {
+                return new DerFreischutzExt(model);
+            }
+            else if (model.script is SnowQueen)
+            {
+                return new SnowQueenExt(model);
+            }
+            return new GoodNormalExt(model);
         }
 
         private static ICreatureExtension BuildTethExt(CreatureModel model)
