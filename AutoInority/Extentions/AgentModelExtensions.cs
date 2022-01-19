@@ -22,22 +22,29 @@ namespace AutoInority.Extentions
             return agents.Where(x => !x.HasEGOGift(creature, out var gift) && !x.EGOSlotLocked(gift, out _));
         }
 
-        public static bool HasEGOGift(this AgentModel agent, CreatureModel creature, out EquipmentTypeInfo gift)
-        {
-            return creature.GetExtension().TryGetEGOGift(out gift) && agent.Equipment.gifts.HasEquipment(gift.id);
-        }
-
         public static Sefira GetActualSefira(this AgentModel agent)
         {
+            MovableObjectNode node = null;
+            PassageObjectModel passage = null;
+            Sefira sefira = null;
             try
             {
-                return agent.GetMovableNode().GetPassage().GetSefira();
+                node = agent.GetMovableNode();
+                passage = node.GetPassage();
+                sefira = passage.GetSefira();
+                return sefira;
             }
             catch (Exception e)
             {
                 Log.Error(e);
+                Log.Info($"ageng: {agent.name}, node: {node == null}, passage: {passage == null}, sefira: {sefira == null}");
                 return agent.GetCurrentSefira();
             }
+        }
+
+        public static bool HasEGOGift(this AgentModel agent, CreatureModel creature, out EquipmentTypeInfo gift)
+        {
+            return creature.GetExtension().TryGetEGOGift(out gift) && agent.Equipment.gifts.HasEquipment(gift.id);
         }
 
         public static bool HasReachedExpLimit(this AgentModel agent, RwbpType type, out string name)
@@ -73,10 +80,10 @@ namespace AutoInority.Extentions
 
         public static void RemoveAutomatonBuff(this AgentModel agent)
         {
-            var buff = agent.GetUnitBufList().Where(buf => buf is AutomatonBuf).FirstOrDefault(null);
-            if (buff != null)
+            var buff = agent.GetUnitBufList().Where(buf => buf is AutomatonBuf);
+            if (buff.Any())
             {
-                agent.RemoveUnitBuf(buff);
+                agent.RemoveUnitBuf(buff.First());
             }
         }
 

@@ -12,7 +12,7 @@
 
         public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
         {
-            return NormalConfidence(agent, skill) < Automaton.Instance.DeadConfidence && base.CheckConfidence(agent, skill);
+            return NormalConfidence(agent, skill) > Automaton.Instance.DeadConfidence && base.CheckConfidence(agent, skill);
         }
     }
 }

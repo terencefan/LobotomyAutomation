@@ -132,6 +132,7 @@ namespace AutoInority
                 var candidates = creatures.FindCandidates();
                 if (HandleCandidates(candidates, creatures))
                 {
+                    Log.Debug($"handle emergency risk level {riskLevel}");
                     return true;
                 }
 
@@ -139,6 +140,7 @@ namespace AutoInority
                 candidates = creatures.FindCandidates(true);
                 if (HandleCandidates(candidates, creatures))
                 {
+                    Log.Debug($"handle emergency risk level {riskLevel}, extend");
                     return true;
                 }
             }
@@ -146,7 +148,7 @@ namespace AutoInority
             // auto suppress escaping creatures (only a few of them)
             foreach (var creature in manager.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
             {
-                Log.Info($"{creature.metaInfo.name} is escaping");
+                Log.Debug($"{creature.metaInfo.name} is escaping");
                 if (creature.GetExtension().AutoSuppress)
                 {
                     creature.GetExtension().FindAgents().FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
@@ -156,6 +158,7 @@ namespace AutoInority
             // parse macro / farm when handling ordeals.
             if (InEmergency)
             {
+                Log.Debug($"In emergency");
                 return true;
             }
 
@@ -222,7 +225,11 @@ namespace AutoInority
         {
             foreach (var entry in MacroCreatures)
             {
-                MacroCreatures[entry.Key] = entry.Value.Where(x => x.Agent != agent).ToList();
+                var macro = entry.Value.Where(x => x.Agent == agent);
+                if (macro.Any())
+                {
+                    MacroCreatures[entry.Key].Remove(macro.First());
+                }
             }
             agent.RemoveAutomatonBuff();
         }
@@ -315,7 +322,7 @@ namespace AutoInority
 
         private bool TryFarm(bool extend = false)
         {
-            foreach (var creature in FarmingCreatures)
+            foreach (var creature in FarmingCreatures.Where(x => x.IsAvailable()))
             {
                 var agents = creature.GetExtension().FindAgents(extend).FilterEGOGift(creature);
 
@@ -326,6 +333,7 @@ namespace AutoInority
                     if (candidate.Agent.IsAvailable() && candidate.Creature.IsAvailable())
                     {
                         candidate.Apply();
+                        Log.Debug($"Farm on {candidate.Creature.metaInfo.name}, extend: {extend}");
                         return true;
                     }
                 }
@@ -341,6 +349,7 @@ namespace AutoInority
                 {
                     if (macro.IsAvailable())
                     {
+                        Log.Debug($"Run macro on {macro.Creature.metaInfo.name}");
                         macro.Apply();
                         return true;
                     }

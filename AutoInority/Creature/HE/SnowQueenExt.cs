@@ -14,6 +14,8 @@ namespace AutoInority.Creature
 
         private readonly FieldInfo _field;
 
+        public override bool IsUrgent => IsFreezing;
+
         public override SkillTypeInfo[] SkillSets
         {
             get
@@ -33,9 +35,9 @@ namespace AutoInority.Creature
             }
         }
 
-        private bool IsFreezing => (bool)_field.GetValue(_creature.script);
-
         private bool IsFarming => Automaton.Instance.FarmingCreatures.Contains(_creature);
+
+        private bool IsFreezing => (bool)_field.GetValue(_creature.script);
 
         public SnowQueenExt(CreatureModel creature) : base(creature)
         {
@@ -51,6 +53,7 @@ namespace AutoInority.Creature
                     message = Message(Angela.Creature.SnowQueenDual, agent, skill);
                     return false;
                 }
+                Log.Debug($"[{agent.name}]Can work with");
             }
             else if (IsFarming) // a tricky way to get her buff.
             {
@@ -65,17 +68,11 @@ namespace AutoInority.Creature
             return base.CanWorkWith(agent, skill, out message);
         }
 
-        public override bool TryGetEGOGift(out EquipmentTypeInfo gift)
-        {
-            gift = EquipmentTypeList.instance.GetData(RealGiftId);
-            return gift != null;
-        }
-
         public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
         {
             if (IsFarming)
             {
-                // skip confidence check when farming.
+                Log.Debug($"[{agent.name}]CheckConfidence, freezing status: {IsFreezing}");
                 return CheckSurvive(agent, skill);
             }
             return base.CheckConfidence(agent, skill);
@@ -83,6 +80,7 @@ namespace AutoInority.Creature
 
         public override IEnumerable<AgentModel> FindAgents(bool extend = false)
         {
+            Log.Debug($"FindAgents, freezing status: {IsFreezing}, state: {_creature.state}");
             if (IsFarming && !IsFreezing)
             {
                 var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && x.HasEquipment(DummyGiftId));
@@ -92,6 +90,12 @@ namespace AutoInority.Creature
                 }
             }
             return base.FindAgents(extend);
+        }
+
+        public override bool TryGetEGOGift(out EquipmentTypeInfo gift)
+        {
+            gift = EquipmentTypeList.instance.GetData(RealGiftId);
+            return gift != null;
         }
     }
 }
