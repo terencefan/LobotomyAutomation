@@ -14,7 +14,7 @@ namespace AutoInority
 
         public static void Error(Exception e)
         {
-            Error(e.Message);
+            Error($"{e.GetType().Name}: {e.Message}");
             Error(e.StackTrace);
         }
 

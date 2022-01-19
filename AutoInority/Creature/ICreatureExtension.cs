@@ -24,6 +24,6 @@ namespace AutoInority.Creature
 
         bool TryGetEGOGift(out EquipmentTypeInfo gift);
 
-        IEnumerable<AgentModel> FindAgents();
+        IEnumerable<AgentModel> FindAgents(bool extend = false);
     }
 }

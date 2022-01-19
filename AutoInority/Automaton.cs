@@ -27,6 +27,18 @@ namespace AutoInority
 
         public float DeadConfidence { get; set; } = 0.99f;
 
+        public bool InEmergency
+        {
+            get
+            {
+                if (OrdealManager.instance.GetOrdealCreatureList().Where(x => x.state != CreatureState.SUPPRESSED).Any())
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
+
         internal HashSet<CreatureModel> FarmingCreatures { get; } = new HashSet<CreatureModel>();
 
         internal Dictionary<CreatureModel, List<Macro>> MacroCreatures { get; } = new Dictionary<CreatureModel, List<Macro>>();
@@ -61,6 +73,7 @@ namespace AutoInority
                 agent.ReturnToSefira();
             }
         }
+
         /// <summary>
         /// Clear all macros.
         /// </summary>
@@ -131,18 +144,18 @@ namespace AutoInority
                 }
             }
 
-            // suppress escaping creatures (only a few of them)
+            // auto suppress escaping creatures (only a few of them)
             foreach (var creature in manager.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
             {
                 Log.Info($"{creature.metaInfo.name} is escaping");
                 if (creature.GetExtension().AutoSuppress)
                 {
-                    creature.sefira.agentList.FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
+                    creature.GetExtension().FindAgents().FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
                 }
             }
 
             // parse macro / farm when handling ordeals.
-            if (OrdealManager.instance.GetOrdealCreatureList().Where(x => x.state != CreatureState.SUPPRESSED).Any())
+            if (InEmergency)
             {
                 return true;
             }
@@ -274,10 +287,8 @@ namespace AutoInority
             {
                 return;
             }
-            var riskLevel = creature.GetRiskLevel();
             var sefira = creature.sefira;
 
-            // Log.Warning($"{nameof(OrdealCreature)}: {creature.metaInfo.name}, risk level: {riskLevel}");
             switch (creature.script.GetType().Name)
             {
                 case nameof(CircusDawn):
@@ -289,30 +300,27 @@ namespace AutoInority
                 case nameof(CircusNoon):
                 case nameof(MachineNoon):
                 case nameof(CircusDusk):
-                    var agents = sefira.agentList.FilterCanSuppress(creature).ToList();
+                    var agents = sefira.FindNearestAgents().FilterCanSuppress(creature).ToList();
                     if (agents.Count > 0)
                     {
                         agents.ForEach(x => x.Suppress(creature));
                     }
                     else
                     {
-                        agents = sefira.NeighborAgents().FilterCanSuppress(creature).ToList();
+                        agents = sefira.FindNearestAgents(true).FilterCanSuppress(creature).ToList();
                         agents.ForEach(x => x.Suppress(creature));
                     }
                     return;
             }
         }
 
-        private bool TryFarm(bool neighbor = false)
+        private bool TryFarm(bool extend = false)
         {
             foreach (var creature in FarmingCreatures)
             {
-                var agents = neighbor ? creature.sefira.NeighborAgents() : creature.sefira.agentList;
-                // Log.Info($"Found {agents.Count()} agents.");
-                agents = agents.FilterEGOGift(creature);
+                var agents = creature.GetExtension().FindAgents(extend).FilterEGOGift(creature);
 
                 var candidates = Candidate.Suggest(agents, new[] { creature });
-                // Log.Info($"Found {candidates.Count} candidates to work on {creature.metaInfo.name}.");
 
                 foreach (var candidate in candidates)
                 {
@@ -341,6 +349,7 @@ namespace AutoInority
             }
             return false;
         }
+
         internal sealed class Macro
         {
             public AgentModel Agent;

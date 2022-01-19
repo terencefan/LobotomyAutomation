@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AutoInority.Extentions
@@ -24,6 +25,19 @@ namespace AutoInority.Extentions
         public static bool HasEGOGift(this AgentModel agent, CreatureModel creature, out EquipmentTypeInfo gift)
         {
             return creature.GetExtension().TryGetEGOGift(out gift) && agent.Equipment.gifts.HasEquipment(gift.id);
+        }
+
+        public static Sefira GetActualSefira(this AgentModel agent)
+        {
+            try
+            {
+                return agent.GetMovableNode().GetPassage().GetSefira();
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+                return agent.GetCurrentSefira();
+            }
         }
 
         public static bool HasReachedExpLimit(this AgentModel agent, RwbpType type, out string name)
@@ -68,12 +82,6 @@ namespace AutoInority.Extentions
 
         public static string Tag(this AgentModel agent) => $"<color=#66bfcd>{agent.name}</color>";
 
-        /// <summary>
-        /// Lv 4 agent can suppress WAW
-        /// </summary>
-        /// <param name="agent"></param>
-        /// <param name="creature"></param>
-        /// <returns></returns>
         private static bool IsCapableOfPressing(this AgentModel agent, CreatureModel creature)
         {
             var riskLevel = creature.GetRiskLevel();

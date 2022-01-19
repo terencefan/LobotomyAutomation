@@ -5,7 +5,7 @@ namespace AutoInority.Extentions
 {
     public static class SefiraExtensions
     {
-        private static readonly Dictionary<SefiraEnum, List<SefiraEnum>> _neibours = new Dictionary<SefiraEnum, List<SefiraEnum>>()
+        private static readonly Dictionary<SefiraEnum, List<SefiraEnum>> _neighborDict = new Dictionary<SefiraEnum, List<SefiraEnum>>()
         {
             { SefiraEnum.MALKUT, new List<SefiraEnum>(){SefiraEnum.YESOD, SefiraEnum.NETZACH, SefiraEnum.HOD} },
             { SefiraEnum.YESOD, new List<SefiraEnum>(){SefiraEnum.MALKUT, SefiraEnum.NETZACH, SefiraEnum.HOD} },
@@ -18,6 +18,15 @@ namespace AutoInority.Extentions
             { SefiraEnum.CHOKHMAH, new List<SefiraEnum>(){SefiraEnum.CHESED} },
             { SefiraEnum.BINAH, new List<SefiraEnum>(){SefiraEnum.GEBURAH} },
         };
+
+        public static IEnumerable<SefiraEnum> GetNeighborEnums(SefiraEnum sefiraEnum)
+        {
+            if (_neighborDict.TryGetValue(sefiraEnum, out var sefiraEnums))
+            {
+                return sefiraEnums;
+            }
+            return new SefiraEnum[] { };
+        }
 
         public static string[] AgentNames(this Sefira sefira) => sefira.agentList.Select(x => x.name).ToArray();
 
@@ -72,21 +81,14 @@ namespace AutoInority.Extentions
             sefira.agentList.ForEach(x => x.SetWaitingPassage(elevator));
         }
 
-        public static IEnumerable<AgentModel> NeighborAgents(this Sefira sefira)
+        public static IEnumerable<AgentModel> FindNearestAgents(this Sefira sefira, bool extend = false)
         {
-            var r = new List<AgentModel>();
-            if (_neibours.TryGetValue(sefira.sefiraEnum, out var neibours))
+            var s = new HashSet<SefiraEnum>() { sefira.sefiraEnum };
+            if (extend)
             {
-                foreach (var id in neibours)
-                {
-                    var neibour = SefiraManager.instance.GetSefira(id);
-                    if (neibour != null)
-                    {
-                        r.AddRange(neibour.AvailableAgents());
-                    }
-                }
+                s.UnionWith(GetNeighborEnums(sefira.sefiraEnum));
             }
-            return r;
+            return AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && s.Contains(x.GetActualSefira().sefiraEnum));
         }
     }
 }
