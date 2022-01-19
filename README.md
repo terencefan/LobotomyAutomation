@@ -18,7 +18,7 @@
 1. Automatically handle Qliphoth Meltdown events.
 3. Automatically suppress `Morning` and `Lunch` ordeal creatures.
 
-### TODO Features
+### Next Features
 
 1. Automatically suppress escaped creatures.
 1. Rescue agents that are in `CANNOT_CONTROL` and `PANIC` status.
