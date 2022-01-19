@@ -36,6 +36,14 @@ Agents will not repeat the work work if:
 3. The agent doesn't have enough confidence to survive from the work.
    - Current threshold is 99%.
 
+## Work priority
+
+1. Handle urgent events. From riskLevel 5 to 1.
+2. Supress escaping creatures.
+3. --- return if in emergency (ordeal) ---
+4. Try running macros (Agent repeat work)
+5. Try farming
+
 ## Supported anomoly creatures
 
 ### ![color](https://via.placeholder.com/15/1df900/000000?text=+) ZAYIN
@@ -61,7 +69,7 @@ Agents will not repeat the work work if:
 - Nameless Fetus
 - Red Shoes
 - Singing Machine
-- Snow Queen
+- Snow Queen (Agent freezing will be treated as **Urgent**)
 
 ### ![color](https://via.placeholder.com/15/7B2BF3/000000?text=+) WAW
 - Big Bird
@@ -81,3 +89,4 @@ Agents will not repeat the work work if:
 ### ![color](https://via.placeholder.com/15/ff0000/000000?text=+) ALEPH
 - 「CENSORED」
 - Nothing
+- White Night (Not with farm mode, Qliphoth counter < 3 will be treated as **Urgent**)
