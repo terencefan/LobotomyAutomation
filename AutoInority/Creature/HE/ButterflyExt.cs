@@ -20,7 +20,7 @@
             }
             else if (agent.Rstat > 3 || agent.Pstat < 3)
             {
-                message = "Butterfly";
+                message = Message(Angela.Creature.Butterfly, agent, skill);
                 return false;
             }
             return base.CanWorkWith(agent, skill, out message);

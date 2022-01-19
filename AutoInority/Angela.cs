@@ -100,6 +100,8 @@ namespace AutoInority
 
             public const string DerFreischutzExt = "{1}对正义有着极高的要求，{0}的工作可能会激怒他导致逆卡巴拉计数器的减少，你是不是没有注意到这一点？";
 
+            public const string Butterfly = "安排{0}去进行{2}大概会激怒{1}吧，不过我想这也不是什么大问题。";
+
             public const string SnowQueen = "本次对{1}的{2}有可能会导致{0}被冰封，请准备解救工作";
 
             public const string SnowQueenDual = "你真的相信{0}能在与{1}的决斗中取胜？至少我不是这么认为的。";
