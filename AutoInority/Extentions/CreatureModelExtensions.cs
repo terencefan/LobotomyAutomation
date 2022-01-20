@@ -315,6 +315,10 @@ namespace AutoInority.Extentions
             {
                 return new FairyFestivalExt(model);
             }
+            else if (model.script is PinkCorps)
+            {
+                return new PinkCorpsExt(model);
+            }
             return new GoodNormalExt(model);
         }
     }
