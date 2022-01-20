@@ -50,20 +50,31 @@ namespace AutoInority.Test
         }
 
         [Theory]
-        [InlineData(100f, 4, 11, 0.7, 30)]
-        [InlineData(100f, 5, 10, 0.7, 30)]
-        [InlineData(100f, 6, 9, 0.7, 30)]
-        [InlineData(100f, 7, 8, 0.7, 30)]
+        [InlineData(100f, 4, 6, 0.5, 20)]
+        [InlineData(150f, 9, 11, 0.5, 30)]
+        [InlineData(150f, 8, 12, 0.5, 30)]
+        [InlineData(150f, 7, 13, 0.5, 30)]
+        [InlineData(150f, 6, 14, 0.5, 30)]
+        [InlineData(150f, 1, 19, 0.5, 30)]
+        [InlineData(100f, 6, 9, 0.2, 20)]
+        [InlineData(100f, 6, 9, 0.4, 20)]
+        [InlineData(100f, 6, 9, 0.6, 20)]
+        [InlineData(100f, 6, 9, 0.8, 20)]
+        [InlineData(100f, 6, 9, 0.2, 30)]
+        [InlineData(100f, 6, 9, 0.4, 30)]
         [InlineData(100f, 6, 9, 0.6, 30)]
-        [InlineData(100f, 6, 9, 0.65, 30)]
-        [InlineData(100f, 6, 9, 0.75, 30)]
         [InlineData(100f, 6, 9, 0.8, 30)]
+        [InlineData(100f, 5, 10, 0.5, 30)]
+        [InlineData(100f, 4, 11, 0.5, 30)]
+        [InlineData(100f, 3, 12, 0.5, 30)]
+        [InlineData(100f, 2, 13, 0.5, 30)]
+        [InlineData(100f, 1, 14, 0.5, 30)]
         public void SurviveConfidenceRangeDamageTest(float maxPoints, float minDamage, float maxDamage, float prob, int count)
         {
             RetryAssert((repeatTimes) =>
             {
-                var expected = MonteCarlo(() => SurviveSimulate(maxPoints, minDamage, maxDamage, prob, count), repeatTimes);
                 var actual = Confidence.Survive(maxPoints, minDamage, maxDamage, prob, count);
+                var expected = MonteCarlo(() => SurviveSimulate(maxPoints, minDamage, maxDamage, prob, count), repeatTimes);
                 Assert.Equal(expected, actual, 2);
             });
         }

@@ -125,9 +125,8 @@ namespace AutoInority
             return r;
         }
 
-        public static double NormalizeDistribute(double x, int n)
+        public static double NormalizeDistribute(double x, double sigma)
         {
-            var sigma = Math.Sqrt(n / 12.0);
             x /= sigma;
 
             var index = (int)(x * 100);
@@ -145,12 +144,9 @@ namespace AutoInority
         public static double Survive(double maxPoints, double minDamage, double maxDamage, float workProb, int count)
         {
             maxPoints -= 1.0;
-            if (maxPoints / maxDamage > count)
-            {
-                return 1.0;
-            }
-            var avgDamage = (maxDamage + minDamage) / 2;
-            var delta = maxDamage - minDamage;
+            maxPoints /= minDamage;
+            maxDamage /= minDamage;
+            var delta = maxDamage - 1;
 
             var r = 0.0;
             for (int i = 0; i <= count; i++)
@@ -160,14 +156,15 @@ namespace AutoInority
                 {
                     r += p;
                 }
-                else if (i * minDamage > maxPoints)
+                else if (i > maxPoints)
                 {
                     break;
                 }
                 else
                 {
-                    var x = (maxPoints - i * avgDamage) / delta * 2;
-                    var d = NormalizeDistribute(x, i);
+                    var x = (maxPoints - i) / delta;
+                    var sigma = Math.Sqrt(i / 12.0);
+                    var d = NormalizeDistribute(x - i / 2, sigma);
                     r += p * d;
                 }
             }
