@@ -36,17 +36,19 @@ namespace AutoInority
                 PatchAgentModel(mod);
 
                 PatchCreatureManager(mod);
-                PatchOrdealManager(mod);
-                PatchUseSkill(mod);
 
-                PatchSefiraManager(mod);
+                // PatchOrdealManager(mod);
+                PatchUseSkill(mod);
+                PatchIsolateRoom(mod);
+
+                // PatchSefiraManager(mod);
                 Log.Info("patch success");
             });
         }
 
-        public static void AgentModel_TakeDamage_Postfix(AgentModel __instance, DamageInfo dmg) => Invoke(() => Automaton.Instance.AgentTakeDamage(__instance, dmg));
-
         public static void AgentModel_AttachGift_Postfix(AgentModel __instance, EGOgiftModel gift) => Invoke(() => Automaton.Instance.AgentAttachEGOgift(__instance, gift));
+
+        public static void AgentModel_TakeDamage_Postfix(AgentModel __instance, DamageInfo dmg) => Invoke(() => Automaton.Instance.AgentTakeDamage(__instance, dmg));
 
         public static void CommandWindow_OnClick_Prefix(CommandWindow.CommandWindow __instance, AgentModel actor)
         {
@@ -85,6 +87,16 @@ namespace AutoInority
         public static void GameManager_EndGame()
         {
             Invoke(Automaton.Reset);
+        }
+
+        public static bool IsolateRoom_OnEnterRoom_Prefix(IsolateRoom __instance, AgentModel worker, UseSkill skill)
+        {
+            return Invoke(() => Automaton.Instance.OnEnterRoom(__instance, worker, skill));
+        }
+
+        public static bool IsolateRoom_OnExitRoom_Prefix(IsolateRoom __instance)
+        {
+            return Invoke(() => Automaton.Instance.OnExitRoom(__instance));
         }
 
         public static void OrdealManager_OnFixedUpdated_Postfix(OrdealManager __instance)
@@ -207,6 +219,12 @@ namespace AutoInority
             PatchPostfix(mod, typeof(GameManager), "UpdateGameSpeed", nameof(UpdateGameSpeed_Postfix));
         }
 
+        public void PatchIsolateRoom(HarmonyInstance mod)
+        {
+            PatchPrefix(mod, typeof(IsolateRoom), nameof(IsolateRoom.OnEnterRoom), nameof(IsolateRoom_OnEnterRoom_Prefix));
+            PatchPrefix(mod, typeof(IsolateRoom), nameof(IsolateRoom.OnExitRoom), nameof(IsolateRoom_OnExitRoom_Prefix));
+        }
+
         public void PatchOrdealManager(HarmonyInstance mod) => PatchPostfix(mod, typeof(OrdealManager), nameof(OrdealManager.OnFixedUpdate), nameof(OrdealManager_OnFixedUpdated_Postfix));
 
         public void PatchSefiraManager(HarmonyInstance mod) => PatchPrefix(mod, typeof(SefiraManager), nameof(SefiraManager.OnNotice), nameof(SefiraManager_OnNotice_Postfix));
@@ -227,6 +245,19 @@ namespace AutoInority
             {
                 Log.Error(e);
             }
+        }
+
+        private static bool Invoke(Func<bool> action)
+        {
+            try
+            {
+                return action();
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
+            return true;
         }
 
         private static void Invoke(Action action, string k, int interval, int offset = 0, bool random = false)
