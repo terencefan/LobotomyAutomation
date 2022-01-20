@@ -1,12 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 using AutoInority.Extentions;
+
+using UnityEngine;
 
 namespace AutoInority
 {
     internal partial class Automaton
     {
+        public const float FarmingAnimSpeed = 0.2f;
+
         private static Automaton _instance;
 
         public static Automaton Instance
@@ -155,6 +160,12 @@ namespace AutoInority
                 }
             }
 
+            // auto suppress ordeal creatures.
+            foreach (var creature in OrdealManager.instance.GetOrdealCreatureList())
+            {
+                SuppressOrdealCreature(creature);
+            }
+
             // parse macro / farm when handling ordeals.
             if (InEmergency)
             {
@@ -193,6 +204,43 @@ namespace AutoInority
             {
                 // TODO
             }
+        }
+
+        public bool OnEnterRoom(IsolateRoom room, AgentModel worker, UseSkill skill)
+        {
+            var animator = room.CurrentWorkRoot.GetComponent<Animator>();
+            animator.speed = 1f; // set play speed back to normal
+
+            if (FarmingCreatures.Where(x => x.Unit.room == room).Any())
+            {
+                var IsWorkAllocated = typeof(IsolateRoom).GetProperty("IsWorkAllocated", BindingFlags.NonPublic | BindingFlags.Instance);
+                var IsWorking = typeof(IsolateRoom).GetProperty("IsWorking", BindingFlags.NonPublic | BindingFlags.Instance);
+                var InitProcessText = typeof(IsolateRoom).GetMethod("InitProcessText", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                IsWorkAllocated.SetValue(room, false, null);
+                IsWorking.SetValue(room, true, null);
+                if (skill.skillTypeInfo.id != 5)
+                {
+                    room.DescController.Display(LocalizeTextDataModel.instance.GetText("WorkProcess_start_0"), -1);
+                    room.StartWorkDesc();
+                }
+                InitProcessText.Invoke(room, new object[] { skill.skillTypeInfo.rwbpType });
+                room.TurnOnRoomLight();
+                return false;
+            }
+            return true;
+        }
+
+        public bool OnExitRoom(IsolateRoom room)
+        {
+            if (FarmingCreatures.Where(x => x.Unit.room == room).Any())
+            {
+                var animator = room.CurrentWorkRoot.GetComponent<Animator>();
+                animator.speed = FarmingAnimSpeed;
+                room.StopWorkDesc();
+                return false;
+            }
+            return true;
         }
 
         public void Register(AgentModel agent, CreatureModel creature, SkillTypeInfo skill, bool forGift = false, bool forExp = false)
@@ -250,13 +298,22 @@ namespace AutoInority
         /// <param name="creature"></param>
         public void ToggleFarming(CreatureModel creature)
         {
+            var room = creature.Unit.room;
+
             if (FarmingCreatures.Remove(creature))
             {
+                room.TurnOnRoomLight();
                 var message = string.Format(Angela.Automaton.FarmOff, creature.Tag());
                 Angela.Log(message);
             }
             else
             {
+                room.CurrentWorkRoot.SetActive(value: true);
+                var animator = room.CurrentWorkRoot.GetComponent<Animator>();
+                animator.speed = FarmingAnimSpeed;
+                animator.SetTrigger("Run");
+                room.TurnOnRoomLight();
+
                 FarmingCreatures.Add(creature);
                 var message = string.Format(Angela.Automaton.FarmOn, creature.Tag());
                 Angela.Log(message);
@@ -349,8 +406,8 @@ namespace AutoInority
                 {
                     if (macro.IsAvailable())
                     {
-                        Log.Debug($"Run macro on {macro.Creature.metaInfo.name}");
                         macro.Apply();
+                        Log.Debug($"Repeat work on {macro.Creature.metaInfo.name}");
                         return true;
                     }
                 }
