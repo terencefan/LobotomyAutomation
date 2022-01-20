@@ -8,7 +8,7 @@ namespace AutoInority.Creature
 {
     internal class SnowQueenExt : GoodNormalExt
     {
-        private static readonly int DummyGiftId = 1021;
+        public static readonly int DummyGiftId = 1021;
 
         private static readonly int RealGiftId = 1023;
 
@@ -96,6 +96,15 @@ namespace AutoInority.Creature
         {
             gift = EquipmentTypeList.instance.GetData(RealGiftId);
             return gift != null;
+        }
+
+        public override bool FarmFilter(AgentModel agent)
+        {
+            if (IsFreezing)
+            {
+                return agent.fortitudeLevel == 5;
+            }
+            return !agent.HasEquipment(RealGiftId);
         }
     }
 }

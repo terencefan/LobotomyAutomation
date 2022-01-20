@@ -11,6 +11,8 @@ namespace AutoInority
 
         public CreatureModel Creature { get; private set; }
 
+        public int Distance { get; private set; }
+
         public float GoodConfidence { get; private set; }
 
         public bool HasEGOGift { get; private set; }
@@ -24,9 +26,15 @@ namespace AutoInority
             Agent = agent;
             Creature = creature;
             Skill = skill;
+            Distance = Graph.Distance(agent.GetActualSefira(), creature.sefira);
             GoodConfidence = creature.GetExtension().GoodConfidence(agent, skill);
             HasEGOGift = agent.HasEGOGift(creature, out _);
             HasReachedExpLimit = agent.HasReachedExpLimit(skill.rwbpType, out _);
+        }
+
+        public static int FarmComparer(Candidate x, Candidate y)
+        {
+            return (y.GoodConfidence - 0.05 * (y.Distance - x.Distance)).CompareTo(x.GoodConfidence);
         }
 
         public static int Comparer(Candidate x, Candidate y)
@@ -70,7 +78,6 @@ namespace AutoInority
                     }
                 }
             }
-            candidates.Sort(Comparer);
             return candidates;
         }
 

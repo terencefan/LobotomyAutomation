@@ -156,5 +156,10 @@ namespace AutoInority.Creature
             useSkill.skillTypeInfo = skillInfo;
             return useSkill;
         }
+
+        public virtual bool FarmFilter(AgentModel agent)
+        {
+            return agent.HasEGOGift(_creature, out _);
+        }
     }
 }
