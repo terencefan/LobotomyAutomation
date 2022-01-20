@@ -10,8 +10,7 @@
 4. Press `T` when selecting an creature to let Angela help you find candidates who don't have the EGO gift to work with the creature.
    - Press `T` again to toggle it off.
 6. Press `H` to send all agents back to their restroom.
-   - Press `Alt + H` to send all agents to the passage next to their restroom. Can be useful when handling Outter God Noon.
-   - Press `Shift + H` to send all agents to the top left elevator. Can be useful when handling Machine Midnight.
+
 9. Press `Shift` when selecting agents to cancel their automation works.
 10. Press `P` to pause all automation works.
 11. Press `V` to clear all automation works.
@@ -22,6 +21,8 @@
 
 1. Automatically suppress escaped creatures.
 1. Rescue agents that are in **CANNOT_CONTROL** and **PANIC** status.
+2. ress `Alt + H` to send all agents to the passage next to their restroom. Can be useful when handling Outter God Noon.
+3. Press `Shift + H` to send all agents to the top left elevator. Can be useful when handling Machine Midnight.
 
 ## Automation Strategy
 
