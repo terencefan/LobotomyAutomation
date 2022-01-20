@@ -317,7 +317,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is PinkCorps)
             {
-                return new PinkCorpsExt(model);
+                return new ArmyInBlackExt(model);
             }
             return new GoodNormalExt(model);
         }
