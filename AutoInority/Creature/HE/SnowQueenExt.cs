@@ -78,20 +78,6 @@ namespace AutoInority.Creature
             return base.CheckConfidence(agent, skill);
         }
 
-        public override IEnumerable<AgentModel> FindAgents(bool extend = false)
-        {
-            Log.Debug($"FindAgents, freezing status: {IsFreezing}, state: {_creature.state}");
-            if (IsFarming && !IsFreezing)
-            {
-                var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && x.HasEquipment(DummyGiftId));
-                if (agents.Any())
-                {
-                    return agents;
-                }
-            }
-            return base.FindAgents(extend);
-        }
-
         public override bool TryGetEGOGift(out EquipmentTypeInfo gift)
         {
             gift = EquipmentTypeList.instance.GetData(RealGiftId);
