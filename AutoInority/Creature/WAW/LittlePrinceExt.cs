@@ -4,13 +4,13 @@ using AutoInority.Extentions;
 
 namespace AutoInority.Creature
 {
-    internal class LittlePrince : BaseCreatureExt
+    internal class LittlePrinceExt : BaseCreatureExt
     {
         private const int AGENT_MAX = 3;
 
         private const int SKILL_MAX = 2;
 
-        public LittlePrince(CreatureModel creature) : base(creature)
+        public LittlePrinceExt(CreatureModel creature) : base(creature)
         {
         }
 
