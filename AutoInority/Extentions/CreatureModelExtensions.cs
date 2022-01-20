@@ -319,6 +319,10 @@ namespace AutoInority.Extentions
             {
                 return new ArmyInBlackExt(model);
             }
+            else if (model.script is Bald)
+            {
+                return new BaldExt(model);
+            }
             return new ExpectGoodAndNormalExt(model);
         }
     }
