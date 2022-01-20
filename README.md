@@ -70,7 +70,8 @@ Agents will not repeat the work work if:
 - Nameless Fetus
 - Red Shoes
 - Singing Machine
-- Snow Queen (Agent freezing will be treated as **Urgent**)
+- Snow Queen 
+  - Agent freezing will be treated as **Urgent**
 
 ### ![color](https://via.placeholder.com/15/7B2BF3/000000?text=+) WAW
 - Big Bird
