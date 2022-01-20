@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 
 using AutoInority.Creature;
+using AutoInority.Creature.WAW;
 
 using UnityEngine;
 
@@ -237,7 +238,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is YoungPrince)
             {
-                return new LittlePrince(model);
+                return new LittlePrinceExt(model);
             }
             else if (model.script is QueenBee)
             {
@@ -270,6 +271,18 @@ namespace AutoInority.Extentions
             else if (model.script is Shark)
             {
                 return new DreamingCurrent(model);
+            }
+            else if (model.script is KnightOfDespair)
+            {
+                return new KnightOfDespairExt(model);
+            }
+            else if (model.script is MagicalGirl_2)
+            {
+                return new KingOfGreedExt(model);
+            }
+            else if (model.script is Wraith)
+            {
+                return new DimensionExt(model);
             }
             else
             {

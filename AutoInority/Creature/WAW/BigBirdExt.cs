@@ -12,7 +12,7 @@
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            if (NormalConfidence(agent, skill) < Automaton.Instance.CreatureEscapeConfidence && _creature.qliphothCounter < 3)
+            if (QliphothCounter < 3 && NormalConfidence(agent, skill) < Automaton.Instance.CreatureEscapeConfidence)
             {
                 message = Message(Angela.Creature.BigBird, agent, skill);
                 return false;
