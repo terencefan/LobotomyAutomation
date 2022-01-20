@@ -90,4 +90,6 @@ Agents will not repeat the work work if:
 ### ![color](https://via.placeholder.com/15/ff0000/000000?text=+) ALEPH
 - 「CENSORED」
 - Nothing
-- White Night (Not with farm mode, Qliphoth counter < 3 will be treated as **Urgent**)
+- White Night
+  - Qliphoth counter < 3 will be treated as **Urgent**
+  - Farm with this creature is risky since you may not have enough success rate to raise it's Qliphoth counter before reaches next meltdown level.
