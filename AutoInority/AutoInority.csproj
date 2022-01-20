@@ -9,11 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AutoInority</RootNamespace>
     <AssemblyName>AutoInority</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -42,6 +41,7 @@
     <Compile Include="Creature\ALEPH\CensoredExt.cs" />
     <Compile Include="Creature\ALEPH\NothingExt.cs" />
     <Compile Include="Creature\ALEPH\WhiteNightExt.cs" />
+    <Compile Include="Creature\ALEPH\BlueStarExt.cs" />
     <Compile Include="Creature\BaseCreatureExt.cs" />
     <Compile Include="Creature\GoodNormalExt.cs" />
     <Compile Include="Creature\HE\ButterflyExt.cs" />
@@ -70,7 +70,9 @@
     <Compile Include="Creature\WAW\FireBirdExt.cs" />
     <Compile Include="Creature\WAW\HatredQueen.cs" />
     <Compile Include="Creature\WAW\JudgementBirdExt.cs" />
-    <Compile Include="Creature\WAW\LittlePrince.cs" />
+    <Compile Include="Creature\WAW\KnightOfDespairExt.cs" />
+    <Compile Include="Creature\WAW\KingOfGreedExt.cs" />
+    <Compile Include="Creature\WAW\LittlePrinceExt.cs" />
     <Compile Include="Creature\WAW\NakedNestExt.cs" />
     <Compile Include="Creature\WAW\QueenBeeExt.cs" />
     <Compile Include="Creature\WAW\SnowWhiteExt.cs" />

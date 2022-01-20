@@ -6,7 +6,7 @@ namespace AutoInority
 {
     internal class Log
     {
-        private static bool DEBUG = false;
+        private static readonly bool DEBUG = true;
 
         public static void Error(System.Exception e)
         {

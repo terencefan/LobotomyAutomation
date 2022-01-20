@@ -75,7 +75,7 @@ namespace AutoInority
 
         public static void CreatureManager_OnFixedUpdate_Postfix(CreatureManager __instance)
         {
-            Invoke(() => Automaton.Instance.ManageCreatures(__instance), nameof(CreatureManager), 15);
+            Invoke(() => Automaton.Instance.ManageCreatures(__instance), nameof(CreatureManager), 60);
         }
 
         public static void FinishWorkSuccessfully_Postfix(UseSkill __instance)
@@ -87,6 +87,11 @@ namespace AutoInority
         public static void GameManager_EndGame()
         {
             Invoke(Automaton.Reset);
+        }
+
+        public static void IsolateRoom_OnCancelWork_Prefix(IsolateRoom __instance)
+        {
+            Invoke(() => Automaton.Instance.OnCancelWork(__instance));
         }
 
         public static bool IsolateRoom_OnEnterRoom_Prefix(IsolateRoom __instance, AgentModel worker, UseSkill skill)
@@ -221,6 +226,7 @@ namespace AutoInority
 
         public void PatchIsolateRoom(HarmonyInstance mod)
         {
+            PatchPrefix(mod, typeof(IsolateRoom), nameof(IsolateRoom.OnCancelWork), nameof(IsolateRoom_OnCancelWork_Prefix));
             PatchPrefix(mod, typeof(IsolateRoom), nameof(IsolateRoom.OnEnterRoom), nameof(IsolateRoom_OnEnterRoom_Prefix));
             PatchPrefix(mod, typeof(IsolateRoom), nameof(IsolateRoom.OnExitRoom), nameof(IsolateRoom_OnExitRoom_Prefix));
         }
