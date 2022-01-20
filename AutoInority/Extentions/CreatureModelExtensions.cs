@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 
 using AutoInority.Creature;
-using AutoInority.Creature.WAW;
 
 using UnityEngine;
 
@@ -121,6 +120,10 @@ namespace AutoInority.Extentions
             else if (model.script is DeathAngel)
             {
                 return new WhiteNightExt(model);
+            }
+            else if (model.script is BlueStar)
+            {
+                return new BlueStarExt(model);
             }
             return new GoodNormalExt(model);
         }
