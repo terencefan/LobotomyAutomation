@@ -13,6 +13,10 @@ namespace AutoInority
 
         public float GoodConfidence { get; private set; }
 
+        public bool HasEGOGift { get; private set; }
+
+        public bool HasReachedExpLimit { get; private set; }
+
         public SkillTypeInfo Skill { get; private set; }
 
         public Candidate(AgentModel agent, CreatureModel creature, SkillTypeInfo skill)
@@ -21,21 +25,32 @@ namespace AutoInority
             Creature = creature;
             Skill = skill;
             GoodConfidence = creature.GetExtension().GoodConfidence(agent, skill);
+            HasEGOGift = agent.HasEGOGift(creature, out _);
+            HasReachedExpLimit = agent.HasReachedExpLimit(skill.rwbpType, out _);
         }
 
         public static int Comparer(Candidate x, Candidate y)
         {
-            var xExp = x.Agent.HasReachedExpLimit(x.Skill.rwbpType, out _);
-            var yExp = y.Agent.HasReachedExpLimit(y.Skill.rwbpType, out _);
-            if (xExp && !yExp && x.GoodConfidence > 0.9f)
+            if (!x.HasEGOGift && x.GoodConfidence > 0.9f)
             {
                 return -1;
             }
-            else if (yExp && !xExp && y.GoodConfidence > 0.9f)
+            else if (!y.HasEGOGift && y.GoodConfidence > 0.9f)
+            {
+                return 1;
+            }
+            else if (!x.HasReachedExpLimit && x.GoodConfidence > 0.9f)
             {
                 return -1;
             }
-            return y.GoodConfidence.CompareTo(x.GoodConfidence);
+            else if (!y.HasReachedExpLimit && y.GoodConfidence > 0.9f)
+            {
+                return 1;
+            }
+            else
+            {
+                return y.GoodConfidence.CompareTo(x.GoodConfidence);
+            }
         }
 
         public static List<Candidate> Suggest(IEnumerable<AgentModel> agents, IEnumerable<CreatureModel> creatures)

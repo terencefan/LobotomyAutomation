@@ -121,11 +121,11 @@ namespace AutoInority
             }
         }
 
-        public bool ManageCreatures(CreatureManager manager)
+        public void ManageCreatures(CreatureManager manager)
         {
             if (!Running)
             {
-                return true;
+                return;
             }
 
             // handle Qliphoth meltdown events (and some other urgent events)
@@ -138,7 +138,7 @@ namespace AutoInority
                 if (HandleCandidates(candidates, creatures))
                 {
                     Log.Debug($"handle emergency risk level {riskLevel}");
-                    return true;
+                    return;
                 }
 
                 // find from neighbor depts
@@ -146,14 +146,14 @@ namespace AutoInority
                 if (HandleCandidates(candidates, creatures))
                 {
                     Log.Debug($"handle emergency risk level {riskLevel}, extend");
-                    return true;
+                    return;
                 }
             }
 
             // auto suppress escaping creatures (only a few of them)
             foreach (var creature in manager.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
             {
-                Log.Debug($"{creature.metaInfo.name} is escaping");
+                Log.Debug($"{creature.metaInfo.name} escaped.");
                 if (creature.GetExtension().AutoSuppress)
                 {
                     creature.GetExtension().FindAgents().FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
@@ -170,11 +170,20 @@ namespace AutoInority
             if (InEmergency)
             {
                 Log.Debug($"In emergency");
-                return true;
+                return;
             }
 
-            // assign only one work per cycle.
-            return TryRunMacro() || TryFarm() || TryFarm(true);
+            // assign up to 5 works per cycle.
+            int i = 0;
+            for (; i < 5; i++)
+            {
+                var result = TryRunMacro() || TryFarm() || TryFarm(true);
+                if (!result)
+                {
+                    break;
+                }
+            }
+            Log.Debug($"{i} works assigned in this cycle.");
         }
 
         public void ManageOrdealCreatures(OrdealManager manager)
@@ -206,10 +215,19 @@ namespace AutoInority
             }
         }
 
+        public void OnCancelWork(IsolateRoom room)
+        {
+            FarmingCreatures.Remove(room.TargetUnit.model);
+            var animator = room.CurrentWorkRoot.GetComponent<Animator>();
+            animator.speed = 0.5f; // set play speed back to normal
+            animator.SetTrigger("Stop");
+            room.TurnOffRoomLight();
+        }
+
         public bool OnEnterRoom(IsolateRoom room, AgentModel worker, UseSkill skill)
         {
             var animator = room.CurrentWorkRoot.GetComponent<Animator>();
-            animator.speed = 1f; // set play speed back to normal
+            animator.speed = 0.5f; // set play speed back to normal
 
             if (FarmingCreatures.Where(x => x.Unit.room == room).Any())
             {
@@ -363,6 +381,7 @@ namespace AutoInority
                 case nameof(CircusNoon):
                 case nameof(MachineNoon):
                 case nameof(CircusDusk):
+                case nameof(MachineDusk):
                     var agents = sefira.FindNearestAgents().FilterCanSuppress(creature).ToList();
                     if (agents.Count > 0)
                     {
