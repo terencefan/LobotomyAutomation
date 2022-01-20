@@ -1,6 +1,6 @@
 ﻿namespace AutoInority.Creature
 {
-    internal class DerFreischutzExt : GoodNormalExt
+    internal class DerFreischutzExt : ExpectGoodAndNormalExt
     {
         public override SkillTypeInfo[] SkillSets { get; } =
         new SkillTypeInfo[] { Repression

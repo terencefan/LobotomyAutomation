@@ -1,6 +1,6 @@
 ﻿namespace AutoInority.Creature
 {
-    internal class ArmyInBlackExt : GoodNormalExt
+    internal class ArmyInBlackExt : ExpectNormalExt
     {
         public override SkillTypeInfo[] SkillSets => new SkillTypeInfo[] { Insight };
 

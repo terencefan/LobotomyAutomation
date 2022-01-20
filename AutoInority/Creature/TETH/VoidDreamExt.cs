@@ -1,6 +1,6 @@
 ﻿namespace AutoInority.Creature
 {
-    internal class VoidDreamExt : GoodNormalExt
+    internal class VoidDreamExt : ExpectGoodAndNormalExt
     {
         public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Insight, Attachment };
 

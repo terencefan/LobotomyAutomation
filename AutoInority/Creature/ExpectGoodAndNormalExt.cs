@@ -1,8 +1,8 @@
 ﻿namespace AutoInority.Creature
 {
-    internal class GoodNormalExt : BaseCreatureExt
+    internal class ExpectGoodAndNormalExt : BaseCreatureExt
     {
-        public GoodNormalExt(CreatureModel creature) : base(creature)
+        public ExpectGoodAndNormalExt(CreatureModel creature) : base(creature)
         {
         }
 

@@ -1,6 +1,6 @@
 ﻿namespace AutoInority.Creature
 {
-    internal class HatredQueen : GoodNormalExt
+    internal class HatredQueen : ExpectGoodAndNormalExt
     {
         public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Insight, Attachment };
 

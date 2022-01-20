@@ -125,7 +125,7 @@ namespace AutoInority.Extentions
             {
                 return new BlueStarExt(model);
             }
-            return new GoodNormalExt(model);
+            return new ExpectGoodAndNormalExt(model);
         }
 
         private static ICreatureExtension BuildExtension(CreatureModel model)
@@ -143,7 +143,7 @@ namespace AutoInority.Extentions
                 case 5:
                     return BuildAlephExt(model);
                 default:
-                    return new GoodNormalExt(model);
+                    return new ExpectGoodAndNormalExt(model);
             }
         }
 
@@ -181,7 +181,7 @@ namespace AutoInority.Extentions
             {
                 return new SnowQueenExt(model);
             }
-            return new GoodNormalExt(model);
+            return new ExpectGoodAndNormalExt(model);
         }
 
         private static ICreatureExtension BuildTethExt(CreatureModel model)
@@ -226,7 +226,7 @@ namespace AutoInority.Extentions
             {
                 return new OldLadyExt(model);
             }
-            return new GoodNormalExt(model);
+            return new ExpectGoodAndNormalExt(model);
         }
 
         private static ICreatureExtension BuildWawExt(CreatureModel model)
@@ -289,7 +289,7 @@ namespace AutoInority.Extentions
             }
             else
             {
-                return new GoodNormalExt(model);
+                return new ExpectGoodAndNormalExt(model);
             }
         }
 
@@ -319,7 +319,7 @@ namespace AutoInority.Extentions
             {
                 return new ArmyInBlackExt(model);
             }
-            return new GoodNormalExt(model);
+            return new ExpectGoodAndNormalExt(model);
         }
     }
 }

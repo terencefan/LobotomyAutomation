@@ -1,6 +1,6 @@
 ﻿namespace AutoInority.Creature
 {
-    internal class KingOfGreedExt : GoodNormalExt
+    internal class KingOfGreedExt : ExpectGoodAndNormalExt
     {
         public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Attachment, Repression };
 
