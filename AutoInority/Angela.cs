@@ -113,6 +113,10 @@ namespace AutoInority
             public const string Sakura = "本次对{1}的工作将会导致设施内的员工对其着魔，不过我相信你应该已经准备好镇压了。";
 
             public const string KnightOfDespair = "我只是提醒一下，{1}还没有祝福过任何员工。";
+
+            public const string BlueStarDie = "";
+
+            public const string BlueStarDecrease = "";
         }
     }
 }
