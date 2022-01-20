@@ -6,7 +6,7 @@ using AutoInority.Extentions;
 
 namespace AutoInority.Creature
 {
-    internal class SnowQueenExt : GoodNormalExt
+    internal class SnowQueenExt : ExpectGoodAndNormalExt
     {
         public static readonly int DummyGiftId = 1021;
 
