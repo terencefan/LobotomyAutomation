@@ -20,9 +20,9 @@
 ### Next Features
 
 1. Automatically suppress escaped creatures.
-1. Rescue agents that are in **CANNOT_CONTROL** and **PANIC** status.
-2. ress `Alt + H` to send all agents to the passage next to their restroom. Can be useful when handling Outter God Noon.
-3. Press `Shift + H` to send all agents to the top left elevator. Can be useful when handling Machine Midnight.
+1. Automatically rescue agents that are in **CANNOT_CONTROL** or **PANIC** status.
+3. Press `Alt + H` to send all agents to the passage next to their restroom. Can be useful when handling Outter God Noon.
+4. Press `Shift + H` to send all agents to the top left elevator. Can be useful when handling Machine Midnight.
 
 ## Automation Strategy
 
