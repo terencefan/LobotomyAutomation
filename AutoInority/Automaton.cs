@@ -137,6 +137,8 @@ namespace AutoInority
 
                 // find from current dtps
                 var candidates = creatures.FindCandidates();
+                candidates.Sort(Candidate.Comparer);
+
                 if (HandleCandidates(candidates, creatures))
                 {
                     Log.Debug($"handle emergency risk level {riskLevel}");
@@ -145,6 +147,7 @@ namespace AutoInority
 
                 // find from neighbor depts
                 candidates = creatures.FindCandidates(true);
+                candidates.Sort(Candidate.Comparer);
                 if (HandleCandidates(candidates, creatures))
                 {
                     Log.Debug($"handle emergency risk level {riskLevel}, extend");

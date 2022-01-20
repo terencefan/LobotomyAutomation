@@ -32,35 +32,19 @@ namespace AutoInority
             HasReachedExpLimit = agent.HasReachedExpLimit(skill.rwbpType, out _);
         }
 
-        public static int FarmComparer(Candidate x, Candidate y)
-        {
-            return (y.GoodConfidence - 0.05 * (y.Distance - x.Distance)).CompareTo(x.GoodConfidence);
-        }
-
         public static int Comparer(Candidate x, Candidate y)
         {
-            if (!x.HasEGOGift && x.GoodConfidence > 0.9f)
-            {
-                return -1;
-            }
-            else if (!y.HasEGOGift && y.GoodConfidence > 0.9f)
-            {
-                return 1;
-            }
-            else if (!x.HasReachedExpLimit && x.GoodConfidence > 0.9f)
-            {
-                return -1;
-            }
-            else if (!y.HasReachedExpLimit && y.GoodConfidence > 0.9f)
-            {
-                return 1;
-            }
-            else
-            {
-                return y.GoodConfidence.CompareTo(x.GoodConfidence);
-            }
+            var xConf = x.GoodConfidence - 0.05 * y.Distance - (x.HasReachedExpLimit ? 0.1 : 0) - (x.HasEGOGift ? 0.1 : 0);
+            var yConf = y.GoodConfidence - 0.05 * y.Distance - (y.HasReachedExpLimit ? 0.1 : 0) - (y.HasEGOGift ? 0.1 : 0);
+            return yConf.CompareTo(xConf);
         }
 
+        public static int FarmComparer(Candidate x, Candidate y)
+        {
+            var xConf = x.GoodConfidence - 0.05 * y.Distance - (x.HasReachedExpLimit ? 0.1 : 0);
+            var yConf = y.GoodConfidence - 0.05 * y.Distance - (y.HasReachedExpLimit ? 0.1 : 0);
+            return yConf.CompareTo(xConf);
+        }
         public static List<Candidate> Suggest(IEnumerable<AgentModel> agents, IEnumerable<CreatureModel> creatures)
         {
             var candidates = new List<Candidate>();
