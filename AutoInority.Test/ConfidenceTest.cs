@@ -45,7 +45,7 @@ namespace AutoInority.Test
             {
                 var expected = MonteCarlo(() => SurviveSimulate(maxPoints, damage, prob, count), repeatTimes);
                 var actual = Confidence.Survive(maxPoints, damage, prob, count);
-                Assert.Equal(expected, actual, 2);
+                Assert.InRange(actual, expected - 0.05, expected + 0.01);
             });
         }
 
@@ -75,7 +75,7 @@ namespace AutoInority.Test
             {
                 var expected = MonteCarlo(() => SurviveSimulate(maxPoints, minDamage, maxDamage, prob, count), repeatTimes);
                 var actual = Confidence.Survive(maxPoints, minDamage, maxDamage, prob, count);
-                Assert.Equal(expected, actual, 2);
+                Assert.InRange(actual, expected - 0.05, expected + 0.01);
             });
         }
 
@@ -95,7 +95,7 @@ namespace AutoInority.Test
             {
                 var expected = MonteCarlo(() => InRangeSimulate(count, prob, from, to), repeatTimes);
                 var actual = Confidence.InRange(count, prob, from, to);
-                Assert.Equal(expected, actual, 2);
+                Assert.InRange(actual, expected - 0.01, expected + 0.01);
             });
         }
 
@@ -110,7 +110,7 @@ namespace AutoInority.Test
                     action(repeatTimes);
                     return;
                 }
-                catch (AssertActualExpectedException e)
+                catch (Exception e)
                 {
                     repeatTimes <<= 2;
                     latest = e;
