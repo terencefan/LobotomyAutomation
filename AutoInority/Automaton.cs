@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
+using AutoInority.Creature;
 using AutoInority.Extentions;
 
 using UnityEngine;
@@ -67,7 +68,10 @@ namespace AutoInority
                 Log.Info($"slotName: {slotName}");
                 return;
             }
-            Angela.Log(string.Format(Angela.Agent.GotEGOGift, agent.Tag(), gift.metaInfo.Tag()));
+            else if (gift.metaInfo.id != SnowQueenExt.DummyGiftId)
+            {
+                Angela.Log(string.Format(Angela.Agent.GotEGOGift, agent.Tag(), gift.metaInfo.Tag()));
+            }
         }
 
         public void AgentTakeDamage(AgentModel agent, DamageInfo dmg)
@@ -107,8 +111,6 @@ namespace AutoInority
                     }
                     else if (macro.ForGift && agent.HasEGOGift(macro.Creature, out var gift))
                     {
-                        var message = string.Format(Angela.Agent.GotEGOGift, agent.Tag(), gift.Tag());
-                        Angela.Log(message);
                         Remove(agent);
                     }
                     else if (macro.ForExp && agent.HasReachedExpLimit(skill.rwbpType, out var skillName))
@@ -177,7 +179,7 @@ namespace AutoInority
             int i = 0;
             for (; i < 5; i++)
             {
-                var result = TryRunMacro() || TryFarm() || TryFarm(true);
+                var result = TryRunMacro() || TryFarm();
                 if (!result)
                 {
                     break;
@@ -396,20 +398,19 @@ namespace AutoInority
             }
         }
 
-        private bool TryFarm(bool extend = false)
+        private bool TryFarm()
         {
             foreach (var creature in FarmingCreatures.Where(x => x.IsAvailable()))
             {
-                var agents = creature.GetExtension().FindAgents(extend).FilterEGOGift(creature);
-
+                var agents = AgentManager.instance.GetAgentList().Where(x => creature.GetExtension().FarmFilter(x));
                 var candidates = Candidate.Suggest(agents, new[] { creature });
+                candidates.Sort(Candidate.FarmComparer);
 
                 foreach (var candidate in candidates)
                 {
                     if (candidate.Agent.IsAvailable() && candidate.Creature.IsAvailable())
                     {
                         candidate.Apply();
-                        Log.Debug($"Farm on {candidate.Creature.metaInfo.name}, extend: {extend}");
                         return true;
                     }
                 }
