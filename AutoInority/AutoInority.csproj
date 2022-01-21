@@ -43,7 +43,8 @@
     <Compile Include="Creature\ALEPH\WhiteNightExt.cs" />
     <Compile Include="Creature\ALEPH\BlueStarExt.cs" />
     <Compile Include="Creature\BaseCreatureExt.cs" />
-    <Compile Include="Creature\GoodNormalExt.cs" />
+    <Compile Include="Creature\ExpectGoodAndNormalExt.cs" />
+    <Compile Include="Creature\ExpectNormalExt.cs" />
     <Compile Include="Creature\HE\ButterflyExt.cs" />
     <Compile Include="Creature\HE\DerFreischutzExt.cs" />
     <Compile Include="Creature\HE\HappyTeddyExt.cs" />
@@ -76,9 +77,12 @@
     <Compile Include="Creature\WAW\NakedNestExt.cs" />
     <Compile Include="Creature\WAW\QueenBeeExt.cs" />
     <Compile Include="Creature\WAW\SnowWhiteExt.cs" />
+    <Compile Include="Creature\ZAYIN\ArmyInBlackExt.cs" />
+    <Compile Include="Creature\ZAYIN\BaldExt.cs" />
     <Compile Include="Creature\ZAYIN\DontTouchMeExt.cs" />
     <Compile Include="Creature\ZAYIN\FairyFestivalExt.cs" />
     <Compile Include="Creature\ZAYIN\OneBadManyGoodExt.cs" />
+    <Compile Include="Creature\ZAYIN\PinkCorpsExt.cs" />
     <Compile Include="Creature\ZAYIN\WellcheersExt.cs" />
     <Compile Include="Extentions\AgentModelExtensions.cs" />
     <Compile Include="Angela.cs" />
@@ -87,6 +91,7 @@
     <Compile Include="Extentions\EquipmentTypeInfoExtensions.cs" />
     <Compile Include="Extentions\SefiraExtensions.cs" />
     <Compile Include="Extentions\SkillTypeInfoExtensions.cs" />
+    <Compile Include="Graph.cs" />
     <Compile Include="Harmony_Patch.cs" />
     <Compile Include="Localization\ChineseSimplified.cs" />
     <Compile Include="Localization\ChineseTraditional.cs" />
