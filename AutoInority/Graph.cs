@@ -85,6 +85,7 @@ namespace AutoInority
                 }
             }
             _distance = f;
+            Log.Info("Graph module initialized.");
         }
 
         private static int GetNodeId(MapNode node)

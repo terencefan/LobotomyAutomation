@@ -109,6 +109,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Automaton.Farm.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
