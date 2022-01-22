@@ -13,6 +13,7 @@ namespace AutoInority
         public const float FarmingAnimSpeed = 0.2f;
 
         public const float NormalAnimSpeed = 0.5f;
+
         internal HashSet<CreatureModel> FarmingCreatures { get; } = new HashSet<CreatureModel>();
 
         private static MethodInfo InitProcessText { get; } = typeof(IsolateRoom).GetMethod("InitProcessText", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -21,14 +22,7 @@ namespace AutoInority
 
         private static PropertyInfo IsWorking { get; } = typeof(IsolateRoom).GetProperty("IsWorking", BindingFlags.NonPublic | BindingFlags.Instance);
 
-        public void OnCancelWork(IsolateRoom room)
-        {
-            FarmingCreatures.Remove(room.TargetUnit.model);
-            var animator = room.CurrentWorkRoot.GetComponent<Animator>();
-            animator.speed = NormalAnimSpeed; // set play speed back to normal
-            animator.SetTrigger("Stop");
-            room.TurnOffRoomLight();
-        }
+        public void OnCancelWork(IsolateRoom room) => CancelFarm(room);
 
         public bool OnEnterRoom(IsolateRoom room, AgentModel worker, UseSkill skill)
         {
@@ -77,9 +71,7 @@ namespace AutoInority
 
             if (FarmingCreatures.Remove(creature))
             {
-                room.TurnOnRoomLight();
-                var message = string.Format(Angela.Automaton.FarmOff, creature.Tag());
-                Angela.Log(message);
+                CancelFarm(room);
             }
             else
             {
@@ -95,6 +87,17 @@ namespace AutoInority
             }
         }
 
+        private void CancelFarm(IsolateRoom room)
+        {
+            FarmingCreatures.Remove(room.TargetUnit.model);
+            var animator = room.CurrentWorkRoot.GetComponent<Animator>();
+            animator.speed = NormalAnimSpeed; // set play speed back to normal
+            animator.SetTrigger("Stop");
+            room.TurnOffRoomLight();
+            var message = string.Format(Angela.Automaton.FarmOff, room.TargetUnit.model.Tag());
+            Angela.Log(message);
+        }
+
         private bool TryFarm()
         {
             foreach (var creature in FarmingCreatures.Where(x => x.IsAvailable()))
@@ -102,6 +105,8 @@ namespace AutoInority
                 var agents = AgentManager.instance.GetAgentList().Where(x => creature.GetExtension().FarmFilter(x));
                 var candidates = Candidate.Suggest(agents, new[] { creature });
                 candidates.Sort(Candidate.FarmComparer);
+
+                Log.Info($"Find {candidates.Count} for {creature.Tag()}");
 
                 foreach (var candidate in candidates)
                 {

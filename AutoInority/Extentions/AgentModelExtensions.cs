@@ -6,20 +6,9 @@ namespace AutoInority.Extentions
 {
     public static class AgentModelExtensions
     {
-        public static bool EGOSlotLocked(this AgentModel agent, EquipmentTypeInfo gift, out string slotName)
-        {
-            slotName = UnitEGOgiftSpace.GetRegionName(UnitEGOgiftSpace.GetRegionId(gift));
-            return agent.Equipment.gifts.GetLockState(gift);
-        }
-
         public static IEnumerable<AgentModel> FilterCanSuppress(this IEnumerable<AgentModel> agents, CreatureModel creature)
         {
             return agents.Where(x => x.IsAvailable() && x.IsCapableOfPressing(creature)).ToList();
-        }
-
-        public static IEnumerable<AgentModel> FilterEGOGift(this IEnumerable<AgentModel> agents, CreatureModel creature)
-        {
-            return agents.Where(x => !x.HasEGOGift(creature, out var gift) && !x.EGOSlotLocked(gift, out _));
         }
 
         public static Sefira GetActualSefira(this AgentModel agent)
@@ -42,10 +31,18 @@ namespace AutoInority.Extentions
             }
         }
 
-        public static bool HasEGOGift(this AgentModel agent, CreatureModel creature, out EquipmentTypeInfo gift)
+        public static bool HasAnotherGift(this AgentModel agent, EquipmentTypeInfo gift)
         {
-            return creature.GetExtension().TryGetEGOGift(out gift) && agent.Equipment.gifts.HasEquipment(gift.id);
+            var regionId = UnitEGOgiftSpace.GetRegionId(gift);
+            return agent.GetAllGifts().Where(x => UnitEGOgiftSpace.GetRegionId(x.metaInfo) == regionId).Any();
         }
+
+        public static bool HasGift(this AgentModel agent, CreatureModel creature, out EquipmentTypeInfo gift)
+        {
+            return creature.GetExtension().TryGetEGOGift(out gift) && agent.HasGift(gift);
+        }
+
+        public static bool HasGift(this AgentModel agent, EquipmentTypeInfo gift) => agent.Equipment.gifts.HasEquipment(gift.id);
 
         public static bool HasReachedExpLimit(this AgentModel agent, RwbpType type, out string name)
         {
@@ -76,6 +73,12 @@ namespace AutoInority.Extentions
         public static bool IsAvailable(this AgentModel agent)
         {
             return agent.hp == agent.maxHp && agent.mental == agent.maxMental && agent.GetState() == AgentAIState.IDLE;
+        }
+
+        public static bool IsRegionLocked(this AgentModel agent, EquipmentTypeInfo gift, out string slotName)
+        {
+            slotName = UnitEGOgiftSpace.GetRegionName(UnitEGOgiftSpace.GetRegionId(gift));
+            return agent.Equipment.gifts.GetLockState(gift);
         }
 
         public static void RemoveAutomatonBuff(this AgentModel agent)

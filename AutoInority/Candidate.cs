@@ -11,19 +11,19 @@ namespace AutoInority
 
         public CreatureModel Creature { get; private set; }
 
-        public int SefiraDistance { get; private set; }
-
         public float Distance { get; private set; }
+
+        public double FarmConfidence { get; private set; }
 
         public float GoodConfidence { get; private set; }
 
-        public bool HasEGOGift { get; private set; }
+        public bool HasAnotherGift { get; private set; }
+
+        public bool HasGift { get; private set; }
 
         public bool HasReachedExpLimit { get; private set; }
 
         public double ManageConfidence { get; private set; }
-
-        public double FarmConfidence { get; private set; }
 
         public SkillTypeInfo Skill { get; private set; }
 
@@ -32,19 +32,19 @@ namespace AutoInority
             Agent = agent;
             Creature = creature;
             Skill = skill;
-            SefiraDistance = Graph.Distance(agent.GetActualSefira(), creature.sefira);
             Distance = Graph.Distance(agent, creature);
             GoodConfidence = creature.GetExtension().GoodConfidence(agent, skill);
-            HasEGOGift = agent.HasEGOGift(creature, out _);
+            HasGift = agent.HasGift(creature, out var gift);
+            HasAnotherGift = agent.HasAnotherGift(gift);
             HasReachedExpLimit = agent.HasReachedExpLimit(skill.rwbpType, out _);
 
-            ManageConfidence = GoodConfidence - 0.002 * Distance - (HasReachedExpLimit ? 0.1 : 0) - (HasEGOGift ? 0.1 : 0);
-            FarmConfidence = GoodConfidence - 0.001 * Distance - (HasReachedExpLimit ? 0.2 : 0) - (HasEGOGift ? 0.5 : 0);
+            ManageConfidence = GoodConfidence - 0.002 * Distance - (HasReachedExpLimit ? 0.1 : 0) - (HasGift ? 0.1 : 0);
+            FarmConfidence = GoodConfidence - 0.001 * Distance - (HasReachedExpLimit ? 0.2 : 0) - (HasGift || HasAnotherGift ? 0.5 : 0);
         }
 
-        public static int ManageComparer(Candidate x, Candidate y) => y.ManageConfidence.CompareTo(x.ManageConfidence);
-
         public static int FarmComparer(Candidate x, Candidate y) => y.FarmConfidence.CompareTo(x.FarmConfidence);
+
+        public static int ManageComparer(Candidate x, Candidate y) => y.ManageConfidence.CompareTo(x.ManageConfidence);
 
         public static List<Candidate> Suggest(IEnumerable<AgentModel> agents, IEnumerable<CreatureModel> creatures)
         {
@@ -87,6 +87,6 @@ namespace AutoInority
             }
         }
 
-        public override string ToString() => $"{Agent.name} - {Creature.metaInfo.name}: {SefiraDistance}, {Distance}";
+        public override string ToString() => $"{Agent.name} - {Creature.metaInfo.name}: {Distance}";
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace AutoInority.Creature
+﻿namespace AutoInority.Creature
 {
     internal class WhiteNightExt : BaseCreatureExt
     {
@@ -15,11 +13,6 @@ namespace AutoInority.Creature
         public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
         {
             return NormalConfidence(agent, skill) > Automaton.Instance.DeadConfidence && base.CheckConfidence(agent, skill);
-        }
-
-        public override IEnumerable<AgentModel> FindAgents(bool extend = false)
-        {
-            return AgentManager.instance.GetAgentList();
         }
     }
 }

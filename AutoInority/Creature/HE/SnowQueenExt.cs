@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
-using AutoInority.Extentions;
+﻿using System.Reflection;
 
 namespace AutoInority.Creature
 {

@@ -51,7 +51,7 @@ namespace AutoInority
 
         public void AgentAttachEGOgift(AgentModel agent, EGOgiftModel gift)
         {
-            if (agent.EGOSlotLocked(gift.metaInfo, out var slotName))
+            if (agent.IsRegionLocked(gift.metaInfo, out var slotName))
             {
                 return;
             }
@@ -96,7 +96,7 @@ namespace AutoInority
                     {
                         continue;
                     }
-                    else if (macro.ForGift && agent.HasEGOGift(macro.Creature, out var gift))
+                    else if (macro.ForGift && agent.HasGift(macro.Creature, out var gift))
                     {
                         Remove(agent);
                     }
@@ -123,7 +123,7 @@ namespace AutoInority
                 var creatures = new HashSet<CreatureModel>(manager.GetCreatureList().FilterUrgent(riskLevel));
 
                 // find from current dtps
-                var candidates = creatures.FindCandidates();
+                var candidates = creatures.FindCandidates(80);
                 candidates.Sort(Candidate.ManageComparer);
 
                 if (HandleCandidates(candidates, creatures))
@@ -133,7 +133,7 @@ namespace AutoInority
                 }
 
                 // find from neighbor depts
-                candidates = creatures.FindCandidates(true);
+                candidates = creatures.FindCandidates(1000);
                 candidates.Sort(Candidate.ManageComparer);
                 if (HandleCandidates(candidates, creatures))
                 {
@@ -148,7 +148,7 @@ namespace AutoInority
                 Log.Debug($"{creature.metaInfo.name} escaped.");
                 if (creature.GetExtension().AutoSuppress)
                 {
-                    creature.GetExtension().FindAgents().FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
+                    creature.GetExtension().FindAgents(100).FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
                 }
             }
 

@@ -1,7 +1,6 @@
 using System;
 
 using Xunit;
-using Xunit.Sdk;
 
 namespace AutoInority.Test
 {
