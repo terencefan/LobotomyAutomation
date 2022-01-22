@@ -40,6 +40,7 @@ namespace AutoInority
                 // PatchOrdealManager(mod);
                 PatchUseSkill(mod);
                 PatchIsolateRoom(mod);
+                PatchMapGraph(mod);
 
                 // PatchSefiraManager(mod);
                 Log.Info("patch success");
@@ -104,14 +105,14 @@ namespace AutoInority
             return Invoke(() => Automaton.Instance.OnExitRoom(__instance));
         }
 
+        public static void Initialize_Graph(GameManager __instance)
+        {
+            Invoke(Graph.Initialize);
+        }
+
         public static void OrdealManager_OnFixedUpdated_Postfix(OrdealManager __instance)
         {
             Invoke(() => Automaton.Instance.ManageOrdealCreatures(__instance), nameof(OrdealManager), 60);
-        }
-
-        public static void PatchCastOverload_Prefix()
-        {
-            Invoke(Automaton.IncreaseOverloadLevel);
         }
 
         public static void SefiraManager_OnNotice_Postfix(SefiraManager __instance, string notice, params object[] param)
@@ -127,14 +128,6 @@ namespace AutoInority
             if (Input.GetKeyDown(KeyCode.P))
             {
                 Invoke(Automaton.Instance.Toggle);
-            }
-            else if (Input.GetKeyDown(KeyCode.F))
-            {
-                var currentWindow = CommandWindow.CommandWindow.CurrentWindow;
-                if (currentWindow.enabled && currentWindow.IsEnabled && currentWindow.CurrentTarget is CreatureModel creature)
-                {
-                    Log.Info($"{creature.metaInfo.name} enter farm mode");
-                }
             }
             else if (Input.GetKeyDown(KeyCode.LeftShift))
             {
@@ -158,11 +151,11 @@ namespace AutoInority
             }
             else if (Input.GetKeyDown(KeyCode.H))
             {
-                if (Input.GetKeyDown(KeyCode.LeftShift))
+                if (Input.GetKey(KeyCode.LeftShift))
                 {
                     Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.MoveToNeighborPassage()));
                 }
-                else if (Input.GetKeyDown(KeyCode.LeftAlt))
+                else if (Input.GetKey(KeyCode.LeftAlt))
                 {
                     Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.MoveToNetzachElevator()));
                 }
@@ -231,6 +224,11 @@ namespace AutoInority
             PatchPrefix(mod, typeof(IsolateRoom), nameof(IsolateRoom.OnExitRoom), nameof(IsolateRoom_OnExitRoom_Prefix));
         }
 
+        public void PatchMapGraph(HarmonyInstance mod)
+        {
+            PatchPostfix(mod, typeof(GameManager), nameof(GameManager.StartGame), nameof(Initialize_Graph));
+        }
+
         public void PatchOrdealManager(HarmonyInstance mod) => PatchPostfix(mod, typeof(OrdealManager), nameof(OrdealManager.OnFixedUpdate), nameof(OrdealManager_OnFixedUpdated_Postfix));
 
         public void PatchSefiraManager(HarmonyInstance mod) => PatchPrefix(mod, typeof(SefiraManager), nameof(SefiraManager.OnNotice), nameof(SefiraManager_OnNotice_Postfix));
@@ -238,8 +236,6 @@ namespace AutoInority
         public void PatchUnitMouseEventManager(HarmonyInstance mod) => PatchPostfix(mod, typeof(UnitMouseEventManager), "Update", nameof(UnitMouseEventManager_Update));
 
         public void PatchUseSkill(HarmonyInstance mod) => PatchPostfix(mod, typeof(UseSkill), "FinishWorkSuccessfully", nameof(FinishWorkSuccessfully_Postfix));
-
-        public void PatchWaveOverload(HarmonyInstance mod) => PatchPrefix(mod, typeof(WaveOverload), nameof(WaveOverload.CastOverload), nameof(PatchCastOverload_Prefix));
 
         private static void Invoke(Action action)
         {

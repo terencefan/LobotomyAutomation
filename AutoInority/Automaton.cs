@@ -51,11 +51,6 @@ namespace AutoInority
 
         private bool Running { get; set; } = true;
 
-        public static void IncreaseOverloadLevel()
-        {
-            Log.Info("increase overload level");
-        }
-
         public static void Reset()
         {
             _instance = null;
@@ -65,7 +60,6 @@ namespace AutoInority
         {
             if (agent.EGOSlotLocked(gift.metaInfo, out var slotName))
             {
-                Log.Info($"slotName: {slotName}");
                 return;
             }
             else if (gift.metaInfo.id != SnowQueenExt.DummyGiftId)

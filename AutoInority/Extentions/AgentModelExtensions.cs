@@ -37,7 +37,7 @@ namespace AutoInority.Extentions
             catch (Exception e)
             {
                 Log.Error(e);
-                Log.Info($"ageng: {agent.name}, node: {node == null}, passage: {passage == null}, sefira: {sefira == null}");
+                Log.Info($"agent: {agent.name}, node: {node == null}, passage: {passage == null}, sefira: {sefira == null}");
                 return agent.GetCurrentSefira();
             }
         }
