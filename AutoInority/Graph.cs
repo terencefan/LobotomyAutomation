@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Xml;
 
 namespace AutoInority
 {
     internal class Graph
     {
         private static readonly int[][] _sefiraDistance = new int[][]
-        {
+                {
             new int[]{ 0, 1, 1, 1, 2, 3, 3, 3, 4, 4}, // Control
             new int[]{ 1, 0, 1, 1, 2, 3, 3, 3, 4, 4}, // Information
             new int[]{ 1, 1, 0, 2, 2, 3, 3, 3, 4, 4}, // Training
@@ -19,9 +21,13 @@ namespace AutoInority
             new int[]{ 4, 3, 4, 4, 2, 2, 3, 1, 4, 0}, // Record
         };
 
-        private static float[,] _distance;
+        private static readonly Dictionary<string, int> _sid2id = new Dictionary<string, int>
+        {
+        };
 
-        private static Dictionary<string, int> _sid2id = new Dictionary<string, int>();
+        private static float[,] _distance = new float[,]
+        {
+        };
 
         public static int Distance(Sefira a, Sefira b)
         {
@@ -42,49 +48,36 @@ namespace AutoInority
 
         public static void Initialize()
         {
-            var nodes = MapGraph.instance.GetGraphNodes();
-            var edges = MapGraph.instance.GetGraphEdges();
+            Assembly a = Assembly.GetExecutingAssembly();
 
-            var count = nodes.Length;
-
-            var f = new float[count, count];
-            for (int i = 0; i < count; i++)
+            foreach (var name in a.GetManifestResourceNames())
             {
-                for (int j = 0; j < count; j++)
-                {
-                    f[i, j] = float.MaxValue / 10;
-                }
-            }
-            var id = 0;
-            foreach (var node in nodes)
-            {
-                _sid2id[node.GetId()] = id;
-                id++;
+                Log.Info(name);
             }
 
-            foreach (var edge in edges)
+            Stream s = a.GetManifestResourceStream("AutoInority.Graph.xml");
+
+            XmlDocument doc = new XmlDocument();
+            XmlTextReader reader = new XmlTextReader(s);
+            doc.Load(reader);
+
+            foreach (XmlNode node in doc.SelectNodes("/root/nodes/node"))
             {
-                var id1 = GetNodeId(edge.node1);
-                var id2 = GetNodeId(edge.node2);
-                var length = Math.Abs(edge.node1.GetPosition().x - edge.node2.GetPosition().x);
-                f[id1, id2] = length;
-                f[id2, id1] = length;
+                var name = node.Attributes["name"]?.InnerText;
+                var id = int.Parse(node.Attributes["id"]?.InnerText);
+                _sid2id[name] = id;
+                Log.Info($"{name}, {id}");
             }
 
-            for (int k = 0; k < count; k++)
+            _distance = new float[_sid2id.Count, _sid2id.Count];
+            foreach (XmlNode node in doc.SelectNodes("/root/items/item"))
             {
-                for (int i = 0; i < count; i++)
-                {
-                    for (int j = 0; j < count; j++)
-                    {
-                        if (f[i, j] > f[i, k] + f[j, k])
-                        {
-                            f[i, j] = f[i, k] + f[j, k];
-                        }
-                    }
-                }
+                var from = int.Parse(node.Attributes["from"]?.InnerText);
+                var to = int.Parse(node.Attributes["to"]?.InnerText);
+                var distance = float.Parse(node.Attributes["distance"]?.InnerText);
+                _distance[from, to] = distance;
             }
-            _distance = f;
+
             Log.Info("Graph module initialized.");
         }
 

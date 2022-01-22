@@ -87,6 +87,16 @@ namespace AutoInority.Creature
             return false;
         }
 
+        public virtual bool FarmFilter(AgentModel agent)
+        {
+            return !agent.HasGift(_creature, out var gift) && !agent.IsRegionLocked(gift, out _);
+        }
+
+        public virtual IEnumerable<AgentModel> FindAgents(int distance)
+        {
+            return AllAgents.Where(x => x.IsAvailable() && Graph.Distance(x, _creature) < distance);
+        }
+
         public float GoodConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), _creature.GoodBound());
 
         public float NormalConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), _creature.NormalBound());
@@ -96,17 +106,6 @@ namespace AutoInority.Creature
             gift = _creature.metaInfo.equipMakeInfos.Find((x) => x.equipTypeInfo.type == EquipmentTypeInfo.EquipmentType.SPECIAL)?.equipTypeInfo;
             return gift != null;
         }
-
-        public virtual IEnumerable<AgentModel> FindAgents(bool extend = false)
-        {
-            var s = new HashSet<SefiraEnum>() { _creature.sefira.sefiraEnum };
-            if (extend)
-            {
-                s.UnionWith(SefiraExtensions.GetNeighborEnums(_creature.sefira.sefiraEnum));
-            }
-            return AllAgents.Where(x => x.IsAvailable() && s.Contains(x.GetActualSefira().sefiraEnum));
-        }
-
         protected virtual float CalculateWorkSuccessProb(AgentModel agent, SkillTypeInfo skill)
         {
             return _creature.CalculateWorkSuccessProb(agent, skill);
@@ -155,11 +154,6 @@ namespace AutoInority.Creature
             useSkill.startAgentMental = agent.mental;
             useSkill.skillTypeInfo = skillInfo;
             return useSkill;
-        }
-
-        public virtual bool FarmFilter(AgentModel agent)
-        {
-            return agent.HasEGOGift(_creature, out _);
         }
     }
 }

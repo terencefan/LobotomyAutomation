@@ -4,8 +4,6 @@ using System.Reflection;
 
 using AutoInority.Extentions;
 
-using BinahBoss;
-
 using Harmony;
 
 using UnityEngine;
@@ -292,13 +290,13 @@ namespace AutoInority
             }
             else if (Input.GetKey(KeyCode.LeftControl))
             {
-                if (actor.HasEGOGift(creature, out var gift))
+                if (actor.HasGift(creature, out var gift))
                 {
                     message = string.Format(Angela.Agent.HasEGOGift, actor.name, gift.Name);
                     Angela.Say(message);
                     return;
                 }
-                else if (actor.EGOSlotLocked(gift, out var slotName))
+                else if (actor.IsRegionLocked(gift, out var slotName))
                 {
                     message = string.Format(Angela.Agent.SlotLocked, actor.name, slotName);
                     Angela.Say(message);

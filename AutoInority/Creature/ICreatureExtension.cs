@@ -26,6 +26,6 @@ namespace AutoInority.Creature
 
         bool FarmFilter(AgentModel agent);
 
-        IEnumerable<AgentModel> FindAgents(bool extend = false);
+        IEnumerable<AgentModel> FindAgents(int distance);
     }
 }
