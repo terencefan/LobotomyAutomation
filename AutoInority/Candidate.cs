@@ -11,7 +11,9 @@ namespace AutoInority
 
         public CreatureModel Creature { get; private set; }
 
-        public int Distance { get; private set; }
+        public int SefiraDistance { get; private set; }
+
+        public float Distance { get; private set; }
 
         public float GoodConfidence { get; private set; }
 
@@ -26,7 +28,8 @@ namespace AutoInority
             Agent = agent;
             Creature = creature;
             Skill = skill;
-            Distance = Graph.Distance(agent.GetActualSefira(), creature.sefira);
+            SefiraDistance = Graph.Distance(agent.GetActualSefira(), creature.sefira);
+            Distance = Graph.Distance(agent, creature);
             GoodConfidence = creature.GetExtension().GoodConfidence(agent, skill);
             HasEGOGift = agent.HasEGOGift(creature, out _);
             HasReachedExpLimit = agent.HasReachedExpLimit(skill.rwbpType, out _);
@@ -34,15 +37,15 @@ namespace AutoInority
 
         public static int Comparer(Candidate x, Candidate y)
         {
-            var xConf = x.GoodConfidence - 0.05 * y.Distance - (x.HasReachedExpLimit ? 0.1 : 0) - (x.HasEGOGift ? 0.1 : 0);
-            var yConf = y.GoodConfidence - 0.05 * y.Distance - (y.HasReachedExpLimit ? 0.1 : 0) - (y.HasEGOGift ? 0.1 : 0);
+            var xConf = x.GoodConfidence - 0.05 * y.SefiraDistance - (x.HasReachedExpLimit ? 0.1 : 0) - (x.HasEGOGift ? 0.1 : 0);
+            var yConf = y.GoodConfidence - 0.05 * y.SefiraDistance - (y.HasReachedExpLimit ? 0.1 : 0) - (y.HasEGOGift ? 0.1 : 0);
             return yConf.CompareTo(xConf);
         }
 
         public static int FarmComparer(Candidate x, Candidate y)
         {
-            var xConf = x.GoodConfidence - 0.05 * y.Distance - (x.HasReachedExpLimit ? 0.1 : 0);
-            var yConf = y.GoodConfidence - 0.05 * y.Distance - (y.HasReachedExpLimit ? 0.1 : 0);
+            var xConf = x.GoodConfidence - 0.05 * y.SefiraDistance - (x.HasReachedExpLimit ? 0.1 : 0);
+            var yConf = y.GoodConfidence - 0.05 * y.SefiraDistance - (y.HasReachedExpLimit ? 0.1 : 0);
             return yConf.CompareTo(xConf);
         }
         public static List<Candidate> Suggest(IEnumerable<AgentModel> agents, IEnumerable<CreatureModel> creatures)
@@ -86,6 +89,6 @@ namespace AutoInority
             }
         }
 
-        public override string ToString() => $"{Agent.name} - {Creature.metaInfo.name} - {Skill.calledName}: {GoodConfidence}";
+        public override string ToString() => $"{Agent.name} - {Creature.metaInfo.name}: {SefiraDistance}, {Distance}";
     }
 }
