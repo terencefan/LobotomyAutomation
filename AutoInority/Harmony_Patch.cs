@@ -90,6 +90,11 @@ namespace AutoInority
             Invoke(Automaton.Reset);
         }
 
+        public static void Initialize_Graph(GameManager __instance)
+        {
+            Invoke(Graph.Initialize);
+        }
+
         public static void IsolateRoom_OnCancelWork_Prefix(IsolateRoom __instance)
         {
             Invoke(() => Automaton.Instance.OnCancelWork(__instance));
@@ -104,12 +109,6 @@ namespace AutoInority
         {
             return Invoke(() => Automaton.Instance.OnExitRoom(__instance));
         }
-
-        public static void Initialize_Graph(GameManager __instance)
-        {
-            Invoke(Graph.Initialize);
-        }
-
         public static void OrdealManager_OnFixedUpdated_Postfix(OrdealManager __instance)
         {
             Invoke(() => Automaton.Instance.ManageOrdealCreatures(__instance), nameof(OrdealManager), 60);
@@ -226,7 +225,7 @@ namespace AutoInority
 
         public void PatchMapGraph(HarmonyInstance mod)
         {
-            PatchPostfix(mod, typeof(GameManager), nameof(GameManager.StartGame), nameof(Initialize_Graph));
+            PatchPostfix(mod, typeof(GameManager), nameof(GameManager.InitGame), nameof(Initialize_Graph));
         }
 
         public void PatchOrdealManager(HarmonyInstance mod) => PatchPostfix(mod, typeof(OrdealManager), nameof(OrdealManager.OnFixedUpdate), nameof(OrdealManager_OnFixedUpdated_Postfix));

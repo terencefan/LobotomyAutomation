@@ -21,6 +21,10 @@ namespace AutoInority
 
         public bool HasReachedExpLimit { get; private set; }
 
+        public double ManageConfidence { get; private set; }
+
+        public double FarmConfidence { get; private set; }
+
         public SkillTypeInfo Skill { get; private set; }
 
         public Candidate(AgentModel agent, CreatureModel creature, SkillTypeInfo skill)
@@ -33,21 +37,15 @@ namespace AutoInority
             GoodConfidence = creature.GetExtension().GoodConfidence(agent, skill);
             HasEGOGift = agent.HasEGOGift(creature, out _);
             HasReachedExpLimit = agent.HasReachedExpLimit(skill.rwbpType, out _);
+
+            ManageConfidence = GoodConfidence - 0.002 * Distance - (HasReachedExpLimit ? 0.1 : 0) - (HasEGOGift ? 0.1 : 0);
+            FarmConfidence = GoodConfidence - 0.001 * Distance - (HasReachedExpLimit ? 0.2 : 0) - (HasEGOGift ? 0.5 : 0);
         }
 
-        public static int Comparer(Candidate x, Candidate y)
-        {
-            var xConf = x.GoodConfidence - 0.05 * y.SefiraDistance - (x.HasReachedExpLimit ? 0.1 : 0) - (x.HasEGOGift ? 0.1 : 0);
-            var yConf = y.GoodConfidence - 0.05 * y.SefiraDistance - (y.HasReachedExpLimit ? 0.1 : 0) - (y.HasEGOGift ? 0.1 : 0);
-            return yConf.CompareTo(xConf);
-        }
+        public static int ManageComparer(Candidate x, Candidate y) => y.ManageConfidence.CompareTo(x.ManageConfidence);
 
-        public static int FarmComparer(Candidate x, Candidate y)
-        {
-            var xConf = x.GoodConfidence - 0.05 * y.SefiraDistance - (x.HasReachedExpLimit ? 0.1 : 0);
-            var yConf = y.GoodConfidence - 0.05 * y.SefiraDistance - (y.HasReachedExpLimit ? 0.1 : 0);
-            return yConf.CompareTo(xConf);
-        }
+        public static int FarmComparer(Candidate x, Candidate y) => y.FarmConfidence.CompareTo(x.FarmConfidence);
+
         public static List<Candidate> Suggest(IEnumerable<AgentModel> agents, IEnumerable<CreatureModel> creatures)
         {
             var candidates = new List<Candidate>();
