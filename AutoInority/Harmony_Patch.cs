@@ -107,6 +107,7 @@ namespace AutoInority
         {
             return Invoke(() => Automaton.Instance.OnExitRoom(__instance));
         }
+
         public static void OrdealManager_OnFixedUpdated_Postfix(OrdealManager __instance)
         {
             Invoke(() => Automaton.Instance.ManageOrdealCreatures(__instance), nameof(OrdealManager), 60);
@@ -136,6 +137,14 @@ namespace AutoInority
                 if (currentWindow.enabled && currentWindow.IsEnabled && currentWindow.CurrentTarget is CreatureModel creature)
                 {
                     Invoke(() => Automaton.Instance.ToggleFarming(creature));
+                }
+            }
+            else if (Input.GetKeyDown(KeyCode.X))
+            {
+                var currentWindow = CommandWindow.CommandWindow.CurrentWindow;
+                if (currentWindow.enabled && currentWindow.IsEnabled && currentWindow.CurrentTarget is CreatureModel creature)
+                {
+                    Invoke(() => Automaton.Instance.AssignWork(creature));
                 }
             }
             else if (Input.GetKeyDown(KeyCode.V))
@@ -293,6 +302,12 @@ namespace AutoInority
                 if (actor.HasGift(creature, out var gift))
                 {
                     message = string.Format(Angela.Agent.HasEGOGift, actor.name, gift.Name);
+                    Angela.Say(message);
+                    return;
+                }
+                else if (gift == null)
+                {
+                    message = string.Format(Angela.Agent.NoEgoGift, creature.metaInfo.name);
                     Angela.Say(message);
                     return;
                 }

@@ -16,10 +16,12 @@ namespace AutoInority.Localization
 
         public override string Agent_Conv_HasEGOGift => "I think {0} already have the EGO gift: {1}, the task is meaningless.";
 
-        public override string Agent_Conv_SlotLocked => "I think {0} has locked his {1}, the task is meaningless.";
+        public override string Agent_Conv_SlotLocked => "I think {0} has locked his {1} equipment slot, he will never get the EGO gift under this condition.";
 
         public override string Agent_Log_GotEGOGift => "{0} got the EGO gift: {1}";
 
         public override string Agent_Log_ReachMaxExp => "{0} exploited his potential of {1}";
+
+        public override string Agent_Conv_NoEGOGift => "{0} don't have any EGO gift, I don't think this is a meaningfull arrangement.";
     }
 }

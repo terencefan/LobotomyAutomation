@@ -51,7 +51,7 @@ namespace AutoInority
 
         public void AgentAttachEGOgift(AgentModel agent, EGOgiftModel gift)
         {
-            if (agent.IsRegionLocked(gift.metaInfo, out var slotName))
+            if (agent.IsRegionLocked(gift.metaInfo, out var _))
             {
                 return;
             }
@@ -63,9 +63,17 @@ namespace AutoInority
 
         public void AgentTakeDamage(AgentModel agent, DamageInfo dmg)
         {
-            if (agent.GetState() == AgentAIState.SUPPRESS_CREATURE && agent.hp < 0.25 * agent.maxHp || agent.mental < 0.25 * agent.maxMental)
-            {
-                agent.ReturnToSefira();
+            var state = agent.GetState();
+
+            switch (state) {
+                case AgentAIState.SUPPRESS_CREATURE:
+                case AgentAIState.SUPPRESS_WORKER:
+                    Log.Info("taking damage");
+                    if (agent.hp < 0.25 * agent.maxHp || agent.mental < 0.25 * agent.maxMental)
+                    {
+                        agent.ReturnToSefira();
+                    }
+                    return;
             }
         }
 
@@ -75,7 +83,7 @@ namespace AutoInority
         public void Clear()
         {
             MacroCreatures.Clear();
-            FarmingCreatures.Clear();
+            FarmingCreatures.ToList().ForEach(x => CancelFarm(x.Unit.room));
             AgentManager.instance.GetAgentList().ToList().ForEach(x => x.RemoveAutomatonBuff());
         }
 

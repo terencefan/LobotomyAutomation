@@ -87,6 +87,6 @@ namespace AutoInority
             }
         }
 
-        public override string ToString() => $"{Agent.name} - {Creature.metaInfo.name}: {Distance}";
+        public override string ToString() => $"{Agent.name}: {GoodConfidence}, Distance: {Distance}, HasGift: {HasGift}, HasAnotherGift: {HasAnotherGift}, Exp: {HasReachedExpLimit}";
     }
 }

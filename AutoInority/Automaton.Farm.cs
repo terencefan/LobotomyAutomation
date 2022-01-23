@@ -22,6 +22,29 @@ namespace AutoInority
 
         private static PropertyInfo IsWorking { get; } = typeof(IsolateRoom).GetProperty("IsWorking", BindingFlags.NonPublic | BindingFlags.Instance);
 
+        public void AssignWork(CreatureModel creature)
+        {
+            var agents = AgentManager.instance.GetAgentList().Where(x => creature.GetExtension().FarmFilter(x));
+            var candidates = Candidate.Suggest(agents, new[] { creature });
+            candidates.Sort(Candidate.FarmComparer);
+
+            Log.Info($"Find {candidates.Count} for {creature.Tag()}");
+
+            foreach (var candidate in candidates)
+            {
+                Log.Info(candidate.ToString());
+            }
+
+            foreach (var candidate in candidates)
+            {
+                if (candidate.Agent.IsAvailable() && candidate.Creature.IsAvailable())
+                {
+                    candidate.Apply();
+                    return;
+                }
+            }
+        }
+
         public void OnCancelWork(IsolateRoom room) => CancelFarm(room);
 
         public bool OnEnterRoom(IsolateRoom room, AgentModel worker, UseSkill skill)
@@ -60,7 +83,6 @@ namespace AutoInority
             }
             return true;
         }
-
         /// <summary>
         /// Enter farm mode
         /// </summary>
@@ -105,8 +127,6 @@ namespace AutoInority
                 var agents = AgentManager.instance.GetAgentList().Where(x => creature.GetExtension().FarmFilter(x));
                 var candidates = Candidate.Suggest(agents, new[] { creature });
                 candidates.Sort(Candidate.FarmComparer);
-
-                Log.Info($"Find {candidates.Count} for {creature.Tag()}");
 
                 foreach (var candidate in candidates)
                 {
