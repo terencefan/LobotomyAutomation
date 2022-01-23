@@ -88,6 +88,8 @@ namespace AutoInority.Creature
             return false;
         }
 
+        public virtual float ConfidencePenalty(AgentModel agent, SkillTypeInfo skill) => 0f;
+
         public virtual bool FarmFilter(AgentModel agent)
         {
             return !agent.HasGift(_creature, out var gift) && gift != null && !agent.IsRegionLocked(gift, out _);

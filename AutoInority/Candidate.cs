@@ -38,8 +38,9 @@ namespace AutoInority
             HasAnotherGift = agent.HasAnotherGift(gift);
             HasReachedExpLimit = agent.HasReachedExpLimit(skill.rwbpType, out _);
 
-            ManageConfidence = GoodConfidence - 0.002 * Distance - (HasReachedExpLimit ? 0.1 : 0) - (HasGift ? 0.1 : 0);
-            FarmConfidence = GoodConfidence - 0.001 * Distance - (HasReachedExpLimit ? 0.2 : 0) - (HasGift || HasAnotherGift ? 0.5 : 0);
+            var ext = creature.GetExtension();
+            ManageConfidence = GoodConfidence - 0.002 * Distance - (HasReachedExpLimit ? 0.1 : 0) - (HasGift ? 0.1 : 0) - ext.ConfidencePenalty(agent, skill);
+            FarmConfidence = GoodConfidence - 0.001 * Distance - (HasReachedExpLimit ? 0.2 : 0) - (HasGift || HasAnotherGift ? 0.5 : 0) - ext.ConfidencePenalty(agent, skill);
         }
 
         public static int FarmComparer(Candidate x, Candidate y) => y.FarmConfidence.CompareTo(x.FarmConfidence);

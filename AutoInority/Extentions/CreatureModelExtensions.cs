@@ -181,6 +181,10 @@ namespace AutoInority.Extentions
             {
                 return new SnowQueenExt(model);
             }
+            else if (model.script is Scarecrow)
+            {
+                return new ScarecrowExt(model);
+            }
             return new ExpectGoodAndNormalExt(model);
         }
 
@@ -225,6 +229,10 @@ namespace AutoInority.Extentions
             else if (model.script is OldLady)
             {
                 return new OldLadyExt(model);
+            }
+            else if (model.script is LadyLookingAtWall)
+            {
+                return new LadyLookingAtWallExt(model);
             }
             return new ExpectGoodAndNormalExt(model);
         }

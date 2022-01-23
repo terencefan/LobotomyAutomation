@@ -6,19 +6,13 @@
 
         public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Insight, Repression };
 
-        private bool IsFarming => Automaton.Instance.FarmingCreatures.Contains(_creature);
-
         public ButterflyExt(CreatureModel creature) : base(creature)
         {
         }
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            if (IsFarming)
-            {
-                return base.CanWorkWith(agent, skill, out message);
-            }
-            else if (agent.Rstat > 3 || agent.Pstat < 3)
+            if (agent.justiceLevel < 3)
             {
                 message = Message(Angela.Creature.Butterfly, agent, skill);
                 return false;
@@ -30,5 +24,7 @@
         {
             return NormalConfidence(agent, skill) > CreatureEscapeConfidence && base.CheckConfidence(agent, skill);
         }
+
+        public override float ConfidencePenalty(AgentModel agent, SkillTypeInfo skill) => agent.fortitudeLevel > 3 ? 0.2f : 0;
     }
 }

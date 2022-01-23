@@ -56,11 +56,13 @@
     <Compile Include="Creature\HE\LaetitiaExt.cs" />
     <Compile Include="Creature\HE\NamelessFetusExt.cs" />
     <Compile Include="Creature\HE\RedShoesExt.cs" />
+    <Compile Include="Creature\HE\ScarecrowExt.cs" />
     <Compile Include="Creature\HE\SingingMachineExt.cs" />
     <Compile Include="Creature\HE\SnowQueenExt.cs" />
     <Compile Include="Creature\ICreatureExtension.cs" />
     <Compile Include="Creature\TETH\BeautyBeastExt.cs" />
     <Compile Include="Creature\TETH\BloodBathExt.cs" />
+    <Compile Include="Creature\TETH\LadyLookingAtWallExt.cs" />
     <Compile Include="Creature\TETH\OldLadyExt.cs" />
     <Compile Include="Creature\TETH\PunishingBirdExt.cs" />
     <Compile Include="Creature\TETH\SakuraExt.cs" />
