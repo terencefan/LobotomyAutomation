@@ -66,7 +66,8 @@ namespace AutoInority.Creature
             DamageInfo damageInfo = _creature.metaInfo.workDamage.Copy() * GetDamageMultiplierInWork(agent, skill);
             var attackMultiplifier = UnitModel.GetDmgMultiplierByEgoLevel(_creature.GetAttackLevel(), agent.GetDefenseLevel());
             var defenseMultiplifier = agent.defense.GetMultiplier(damageInfo.type);
-            var multiplier = attackMultiplifier * defenseMultiplifier;
+            var bufDamageMultiplifier = agent.GetBufDamageMultiplier(_creature, damageInfo);
+            var multiplier = attackMultiplifier * defenseMultiplifier * bufDamageMultiplifier;
 
             var minDamage = damageInfo.min * multiplier;
             var maxDamage = damageInfo.max * multiplier;
