@@ -33,6 +33,10 @@ namespace AutoInority.Extentions
 
         public static bool HasAnotherGift(this AgentModel agent, EquipmentTypeInfo gift)
         {
+            if (gift == null)
+            {
+                return false;
+            }
             var regionId = UnitEGOgiftSpace.GetRegionId(gift);
             return agent.GetAllGifts().Where(x => UnitEGOgiftSpace.GetRegionId(x.metaInfo) == regionId).Any();
         }

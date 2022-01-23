@@ -90,7 +90,7 @@ namespace AutoInority.Creature
 
         public virtual bool FarmFilter(AgentModel agent)
         {
-            return !agent.HasGift(_creature, out var gift) && !agent.IsRegionLocked(gift, out _);
+            return !agent.HasGift(_creature, out var gift) && gift != null && !agent.IsRegionLocked(gift, out _);
         }
 
         public virtual IEnumerable<AgentModel> FindAgents(int distance)
@@ -107,6 +107,7 @@ namespace AutoInority.Creature
             gift = _creature.metaInfo.equipMakeInfos.Find((x) => x.equipTypeInfo.type == EquipmentTypeInfo.EquipmentType.SPECIAL)?.equipTypeInfo;
             return gift != null;
         }
+
         protected virtual float CalculateWorkSuccessProb(AgentModel agent, SkillTypeInfo skill)
         {
             return _creature.CalculateWorkSuccessProb(agent, skill);
