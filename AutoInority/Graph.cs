@@ -66,7 +66,6 @@ namespace AutoInority
                 var name = node.Attributes["name"]?.InnerText;
                 var id = int.Parse(node.Attributes["id"]?.InnerText);
                 _sid2id[name] = id;
-                Log.Info($"{name}, {id}");
             }
 
             _distance = new float[_sid2id.Count, _sid2id.Count];
