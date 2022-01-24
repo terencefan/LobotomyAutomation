@@ -60,6 +60,7 @@
     <Compile Include="Creature\HE\SingingMachineExt.cs" />
     <Compile Include="Creature\HE\SnowQueenExt.cs" />
     <Compile Include="Creature\ICreatureExtension.cs" />
+    <Compile Include="Creature\TETH\CrumblingArmorExt.cs" />
     <Compile Include="Creature\TETH\BeautyBeastExt.cs" />
     <Compile Include="Creature\TETH\BloodBathExt.cs" />
     <Compile Include="Creature\TETH\LadyLookingAtWallExt.cs" />
