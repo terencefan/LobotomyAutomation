@@ -65,7 +65,8 @@ namespace AutoInority
         {
             var state = agent.GetState();
 
-            switch (state) {
+            switch (state)
+            {
                 case AgentAIState.SUPPRESS_CREATURE:
                 case AgentAIState.SUPPRESS_WORKER:
                     Log.Info("taking damage");
@@ -125,6 +126,12 @@ namespace AutoInority
                 return;
             }
 
+            // handle Qliphoth meltdown events for kits
+            foreach (var kit in manager.GetCreatureList().Where(x => x.IsKit()))
+            {
+                HandleKit(kit);
+            }
+
             // handle Qliphoth meltdown events (and some other urgent events)
             for (int riskLevel = 5; riskLevel > 0; riskLevel--)
             {
@@ -147,6 +154,11 @@ namespace AutoInority
                 {
                     Log.Debug($"handle emergency risk level {riskLevel}, extend");
                     return;
+                }
+
+                foreach (var creature in creatures)
+                {
+                    Log.Info($"Cannot find candidates for {creature.metaInfo.name}");
                 }
             }
 
@@ -286,6 +298,16 @@ namespace AutoInority
                 }
             }
             return count > 0;
+        }
+
+        private void HandleKit(CreatureModel kit)
+        {
+            var ext = kit.GetKitExtension();
+            if (kit.isOverloaded && kit.IsAvailable())
+            {
+                ext.Handle();
+            }
+            ext.OnFixedUpdate();
         }
 
         private void SuppressOrdealCreature(OrdealCreatureModel creature)

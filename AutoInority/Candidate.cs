@@ -39,7 +39,7 @@ namespace AutoInority
             HasReachedExpLimit = agent.HasReachedExpLimit(skill.rwbpType, out _);
 
             var ext = creature.GetExtension();
-            ManageConfidence = GoodConfidence - 0.002 * Distance - (HasReachedExpLimit ? 0.1 : 0) - (HasGift ? 0.1 : 0) - ext.ConfidencePenalty(agent, skill);
+            ManageConfidence = GoodConfidence - 0.002 * Distance - ext.ConfidencePenalty(agent, skill);
             FarmConfidence = GoodConfidence - 0.001 * Distance - (HasReachedExpLimit ? 0.2 : 0) - (HasGift || HasAnotherGift ? 0.5 : 0) - ext.ConfidencePenalty(agent, skill);
         }
 
@@ -57,7 +57,10 @@ namespace AutoInority
                 {
                     foreach (var skill in ext.SkillSets)
                     {
-                        if (ext.CanWorkWith(agent, skill, out _) && ext.CheckConfidence(agent, skill))
+                        var b1 = ext.CanWorkWith(agent, skill, out _);
+                        var b2 = ext.CheckConfidence(agent, skill);
+                        Log.Debug($"{creature.metaInfo.name}, b1: {b1}, b2: {b2}");
+                        if (b1 && b2)
                         {
                             candidates.Add(new Candidate(agent, creature, skill));
                         }

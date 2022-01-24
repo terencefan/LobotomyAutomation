@@ -24,11 +24,12 @@ namespace AutoInority
 
         public void AssignWork(CreatureModel creature)
         {
-            var agents = AgentManager.instance.GetAgentList().Where(x => creature.GetExtension().FarmFilter(x));
-            var candidates = Candidate.Suggest(agents, new[] { creature });
-            candidates.Sort(Candidate.FarmComparer);
+            var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable());
 
-            Log.Info($"Find {candidates.Count} for {creature.Tag()}");
+            var candidates = Candidate.Suggest(agents, new[] { creature });
+            candidates.Sort(Candidate.ManageComparer);
+
+            Log.Info($"Found {agents.Count()} agents for {creature.Tag()}, candidates: {candidates.Count}");
 
             foreach (var candidate in candidates)
             {
@@ -83,6 +84,7 @@ namespace AutoInority
             }
             return true;
         }
+
         /// <summary>
         /// Enter farm mode
         /// </summary>

@@ -15,6 +15,8 @@ namespace AutoInority.Extentions
     {
         private static Dictionary<CreatureModel, ICreatureExtension> _dict = new Dictionary<CreatureModel, ICreatureExtension>();
 
+        private static Dictionary<CreatureModel, ICreatureKitExtension> _kitDict = new Dictionary<CreatureModel, ICreatureKitExtension>();
+
         public static float CalculateWorkSuccessProb(this CreatureModel creature, AgentModel agent, SkillTypeInfo skill)
         {
             float prob = creature.GetWorkSuccessProb(agent, skill);
@@ -63,12 +65,30 @@ namespace AutoInority.Extentions
             return candidates;
         }
 
-        public static ICreatureExtension GetExtension(this CreatureModel creature)
+        public static ICreatureExtension GetExtension(this CreatureModel model)
         {
-            if (!_dict.TryGetValue(creature, out var ext))
+            if (model.IsKit())
             {
-                ext = BuildExtension(creature);
-                _dict[creature] = ext;
+                throw new ArgumentException($"{model.metaInfo.name} is not a creature");
+            }
+            if (!_dict.TryGetValue(model, out var ext))
+            {
+                ext = BuildExtension(model);
+                _dict[model] = ext;
+            }
+            return ext;
+        }
+
+        public static ICreatureKitExtension GetKitExtension(this CreatureModel model)
+        {
+            if (!model.IsKit())
+            {
+                throw new ArgumentException($"{model.metaInfo.name} is not a kit");
+            }
+            if (!_kitDict.TryGetValue(model, out var ext))
+            {
+                ext = BuildKitExtension(model);
+                _kitDict[model] = ext;
             }
             return ext;
         }
@@ -85,6 +105,7 @@ namespace AutoInority.Extentions
         public static bool IsCreature(this CreatureModel creature) => creature.metaInfo.creatureWorkType == CreatureWorkType.NORMAL;
 
         public static bool IsKit(this CreatureModel creature) => creature.metaInfo.creatureWorkType == CreatureWorkType.KIT;
+
         public static bool IsUrgent(this CreatureModel creature)
         {
             return creature.isOverloaded || creature.GetExtension().IsUrgent;
@@ -187,6 +208,69 @@ namespace AutoInority.Extentions
                 return new ScarecrowExt(model);
             }
             return new ExpectGoodAndNormalExt(model);
+        }
+
+        private static ICreatureKitExtension BuildKitExtension(this CreatureModel model)
+        {
+            var script = model.script;
+            if (script is BigTreeSap) // won't support
+            {
+            }
+            else if (script is DesireHeart)
+            {
+            }
+            else if (script is HealthBracelet)
+            {
+                return new LuminousBraceletExt(model);
+            }
+            else if (script is HellTrain)
+            {
+            }
+            else if (script is IronMaiden) // won't support
+            {
+            }
+            else if (script is JusticeReceiver)
+            {
+                return new BehaviorExt(model);
+            }
+            else if (script is MeatIdol)
+            {
+                return new MeatIdolExt(model);
+            }
+            else if (script is OtherWorldPortrait)
+            {
+            }
+            else if (script is PromiseAndFaith)
+            {
+            }
+            else if (script is ProphecyOfSkin)
+            {
+            }
+            else if (script is ResearcherNote)
+            {
+                return new ResearcherNoteExt(model);
+            }
+            else if (script is ResetMirror)
+            {
+            }
+            else if (script is ReverseClock)
+            {
+            }
+            else if (script is Shelter)
+            {
+                return new ShelterExt(model);
+            }
+            else if (script is Theresia)
+            {
+            }
+            else if (script is Yang)
+            {
+            }
+            else if (script is YouMustHappy)
+            {
+                return new YouMustBeHappyExt(model);
+            }
+            return new BaseKitExt(model);
         }
 
         private static ICreatureExtension BuildTethExt(CreatureModel model)

@@ -147,6 +147,10 @@ namespace AutoInority
                     Invoke(() => Automaton.Instance.AssignWork(creature));
                 }
             }
+            else if (Input.GetKeyDown(KeyCode.Z))
+            {
+                Invoke(() => Log.DebugEnabled = !Log.DebugEnabled);
+            }
             else if (Input.GetKeyDown(KeyCode.V))
             {
                 Invoke(Automaton.Instance.Clear);

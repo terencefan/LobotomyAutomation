@@ -88,6 +88,7 @@ namespace AutoInority
             {
                 r += P(count, i, prob);
             }
+            Log.Debug($"{count}, {prob}, {from}, {to}: {r}");
             return r;
         }
 
@@ -171,6 +172,7 @@ namespace AutoInority
                     r += p * d;
                 }
             }
+            Log.Debug($"{maxPoints}, {minDamage}, {maxDamage}, {workProb}, {count}: {r}");
             return r;
         }
     }
