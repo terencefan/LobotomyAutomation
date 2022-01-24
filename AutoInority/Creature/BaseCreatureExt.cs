@@ -43,15 +43,35 @@ namespace AutoInority.Creature
         public virtual bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
             message = null;
-            if (agent.HasUnitBuf(UnitBufType.LITTLEWITCH_HEART) && !(_creature.script is LittleWitch))
+            var script = _creature.script;
+
+            // Laetitia
+            if (!(script is LittleWitch) && agent.HasUnitBuf(UnitBufType.LITTLEWITCH_HEART))
             {
                 message = string.Format(Angela.Creature.Laetitia, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
             }
-            if (agent.GetUnitBufList().Where(x => x is FairyBuf).Any() && !(_creature.script is Fairy))
+
+            // Fairy
+            if (!(script is Fairy) && agent.GetUnitBufList().Where(x => x is FairyBuf).Any())
             {
                 message = string.Format(Angela.Creature.Fairy, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
+            }
+
+            // Armor
+            if (agent.HasEquipment(CrumblingArmorExt.GIFT))
+            {
+                if (skill.rwbpType == RwbpType.P)
+                {
+                    message = Message(Angela.Creature.ArmorWarning, agent, skill);
+                    return false;
+                }
+                else if (skill.rwbpType == RwbpType.B)
+                {
+                    message = Message(Angela.Creature.ArmorKill, agent, skill);
+                    return false;
+                }
             }
             return true;
         }

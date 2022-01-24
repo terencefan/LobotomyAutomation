@@ -122,6 +122,10 @@ namespace AutoInority
             public const string YoungPrinceHasBuf = "我注意到{0}已经连续对{1}进行了三次工作，建议立即安排{0}进行其他异想体的工作以避免彻底的感染。";
 
             public const string YoungPrinceTwice = "对{1}连续进行洞察以外的工作会强制减少{1}的逆卡巴拉计数器，我很难相信你是故意这么做的。";
+
+            public const string ArmorWarning = "指派{0}对{1}进行{2}会导致其无法再完成其他的沟通和压迫工作，以他目前的能力值来看，我认为他还没有准备好。";
+
+            public const string ArmorKill = "我相信{1}并不喜欢弱小的员工，这可能是我们最后一次见到{0}了。";
         }
     }
 }

@@ -234,6 +234,10 @@ namespace AutoInority.Extentions
             {
                 return new LadyLookingAtWallExt(model);
             }
+            else if (model.script is ArmorCreature)
+            {
+                return new CrumblingArmorExt(model);
+            }
             return new ExpectGoodAndNormalExt(model);
         }
 
