@@ -2,7 +2,7 @@
 
 namespace AutoInority.Creature
 {
-    internal class SnowQueenExt : ExpectGoodAndNormalExt
+    internal class SnowQueenExt : BaseCreatureExt
     {
         public static readonly int DummyGiftId = 1021;
 
@@ -31,8 +31,6 @@ namespace AutoInority.Creature
             }
         }
 
-        private bool IsFarming => Automaton.Instance.FarmingCreatures.Contains(_creature);
-
         private bool IsFreezing => (bool)_field.GetValue(_creature.script);
 
         public SnowQueenExt(CreatureModel creature) : base(creature)
@@ -49,7 +47,6 @@ namespace AutoInority.Creature
                     message = Message(Angela.Creature.SnowQueenDual, agent, skill);
                     return false;
                 }
-                Log.Debug($"[{agent.name}]Can work with");
             }
             else if (IsFarming) // a tricky way to get her buff.
             {
@@ -64,22 +61,6 @@ namespace AutoInority.Creature
             return base.CanWorkWith(agent, skill, out message);
         }
 
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
-        {
-            if (IsFarming)
-            {
-                Log.Debug($"[{agent.name}]CheckConfidence, freezing status: {IsFreezing}");
-                return CheckSurvive(agent, skill);
-            }
-            return base.CheckConfidence(agent, skill);
-        }
-
-        public override bool TryGetEGOGift(out EquipmentTypeInfo gift)
-        {
-            gift = EquipmentTypeList.instance.GetData(RealGiftId);
-            return gift != null;
-        }
-
         public override bool FarmFilter(AgentModel agent)
         {
             if (IsFreezing)
@@ -87,6 +68,12 @@ namespace AutoInority.Creature
                 return agent.fortitudeLevel == 5;
             }
             return !agent.HasEquipment(RealGiftId);
+        }
+
+        public override bool TryGetEGOGift(out EquipmentTypeInfo gift)
+        {
+            gift = EquipmentTypeList.instance.GetData(RealGiftId);
+            return gift != null;
         }
     }
 }

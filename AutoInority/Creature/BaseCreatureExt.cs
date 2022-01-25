@@ -33,7 +33,13 @@ namespace AutoInority.Creature
 
         protected float DeadConfidence => Automaton.Instance.DeadConfidence;
 
+        protected bool IsFarming => Automaton.Instance.FarmingCreatures.Contains(_creature);
+
+        protected virtual bool IsOverloaded => _creature.isOverloaded;
+
         protected int QliphothCounter => _creature.qliphothCounter;
+
+        protected CreatureBase Script => _creature.script;
 
         public BaseCreatureExt(CreatureModel creature)
         {
@@ -43,17 +49,16 @@ namespace AutoInority.Creature
         public virtual bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
             message = null;
-            var script = _creature.script;
 
             // Laetitia
-            if (!(script is LittleWitch) && agent.HasUnitBuf(UnitBufType.LITTLEWITCH_HEART))
+            if (!(Script is LittleWitch) && agent.HasUnitBuf(UnitBufType.LITTLEWITCH_HEART))
             {
                 message = string.Format(Angela.Creature.Laetitia, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
             }
 
             // Fairy
-            if (!(script is Fairy) && agent.GetUnitBufList().Where(x => x is FairyBuf).Any())
+            if (!(Script is Fairy) && agent.GetUnitBufList().Where(x => x is FairyBuf).Any())
             {
                 message = string.Format(Angela.Creature.Fairy, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
@@ -120,9 +125,11 @@ namespace AutoInority.Creature
             return AllAgents.Where(x => x.IsAvailable() && Graph.Distance(x, _creature) < distance);
         }
 
-        public float GoodConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), _creature.GoodBound());
+        public float GoodConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), _creature.GoodBound() + 1);
 
-        public float NormalConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), _creature.NormalBound());
+        public float LessThanGoodConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), 0, _creature.GoodBound());
+
+        public float NormalConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), _creature.NormalBound() + 1);
 
         public virtual bool TryGetEGOGift(out EquipmentTypeInfo gift)
         {
@@ -148,7 +155,7 @@ namespace AutoInority.Creature
         protected virtual float GetDamageMultiplierInWork(AgentModel agent, SkillTypeInfo skill)
         {
             var useSkill = FakeUseSkill(skill, agent);
-            return _creature.script.GetDamageMultiplierInWork(useSkill);
+            return Script.GetDamageMultiplierInWork(useSkill);
         }
 
         protected virtual float MentalFix(float mental) => mental;

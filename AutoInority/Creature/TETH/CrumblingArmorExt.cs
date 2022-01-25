@@ -8,8 +8,6 @@ namespace AutoInority.Creature
 
         public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Repression };
 
-        private bool IsFarming => Automaton.Instance.FarmingCreatures.Contains(_creature);
-
         public CrumblingArmorExt(CreatureModel creature) : base(creature)
         {
         }

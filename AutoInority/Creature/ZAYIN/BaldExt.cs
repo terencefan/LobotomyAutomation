@@ -13,11 +13,11 @@ namespace AutoInority.Creature
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            if (_creature.isOverloaded)
+            if (IsOverloaded)
             {
                 return base.CanWorkWith(agent, skill, out message);
             }
-            return base.CanWorkWith(agent, skill, out message) && (bool)_isBald.Invoke(_creature.script, new object[] { agent });
+            return base.CanWorkWith(agent, skill, out message) && (bool)_isBald.Invoke(Script, new object[] { agent });
         }
     }
 }
