@@ -49,9 +49,9 @@ namespace AutoInority.Extentions
             return prob > 0 ? prob : 0;
         }
 
-        public static IEnumerable<CreatureModel> FilterUrgent(this IEnumerable<CreatureModel> creatures, int riskLevel)
+        public static IEnumerable<CreatureModel> FilterUrgent(this IEnumerable<CreatureModel> creatures)
         {
-            return creatures.Where(x => x.IsCreature() && x.GetRiskLevel() == riskLevel && x.IsUrgent() && x.IsAvailable());
+            return creatures.Where(x => x.IsCreature() && x.IsUrgent() && x.IsAvailable());
         }
 
         public static List<Candidate> FindCandidates(this IEnumerable<CreatureModel> creatures, int distance)
