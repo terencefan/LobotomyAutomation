@@ -45,7 +45,7 @@
     <Compile Include="Candidate.cs" />
     <Compile Include="CenterBrain.cs" />
     <Compile Include="Creature\ALEPH\CensoredExt.cs" />
-    <Compile Include="Creature\ALEPH\NothingExt.cs" />
+    <Compile Include="Creature\ALEPH\NothingThereExt.cs" />
     <Compile Include="Creature\ALEPH\WhiteNightExt.cs" />
     <Compile Include="Creature\ALEPH\BlueStarExt.cs" />
     <Compile Include="Creature\BaseCreatureExt.cs" />
@@ -95,7 +95,7 @@
     <Compile Include="Creature\WAW\MeatIdolExt.cs" />
     <Compile Include="Creature\WAW\NakedNestExt.cs" />
     <Compile Include="Creature\WAW\QueenBeeExt.cs" />
-    <Compile Include="Creature\WAW\SnowWhiteExt.cs" />
+    <Compile Include="Creature\WAW\SnowWhiteAppleExt.cs" />
     <Compile Include="Creature\ZAYIN\ArmyInBlackExt.cs" />
     <Compile Include="Creature\ZAYIN\BaldExt.cs" />
     <Compile Include="Creature\ZAYIN\DontTouchMeExt.cs" />

@@ -131,21 +131,37 @@ namespace AutoInority.Extentions
             {
                 throw new Exception("Risk level mismatch");
             }
-            else if (model.script is Nothing)
+            else if (model.script is BossBird)
             {
-                return new NothingExt(model);
+                // TODO
+            }
+            else if (model.script is BlueStar)
+            {
+                return new BlueStarExt(model);
             }
             else if (model.script is Censored)
             {
                 return new CensoredExt(model);
             }
+            else if (model.script is SlimeGirl)
+            {
+                // TODO Melting Love
+            }
+            else if (model.script is Nothing)
+            {
+                return new NothingThereExt(model);
+            }
+            else if (model.script is DangoCreature)
+            {
+                // TODO The Mountain of Smiling Bodies
+            }
+            else if (model.script is SilentOrchestra)
+            {
+                // TODO
+            }
             else if (model.script is DeathAngel)
             {
                 return new WhiteNightExt(model);
-            }
-            else if (model.script is BlueStar)
-            {
-                return new BlueStarExt(model);
             }
             return new ExpectGoodAndNormalExt(model);
         }
@@ -175,6 +191,14 @@ namespace AutoInority.Extentions
             {
                 throw new Exception("Risk level mismatch");
             }
+            else if (model.script is Freischutz)
+            {
+                return new DerFreischutzExt(model);
+            }
+            else if (model.script is Butterfly)
+            {
+                return new ButterflyExt(model);
+            }
             else if (model.script is HappyTeddy)
             {
                 return new HappyTeddyExt(model);
@@ -183,29 +207,50 @@ namespace AutoInority.Extentions
             {
                 return new LaetitiaExt(model);
             }
+            else if (model.script is Helper)
+            {
+                // TODO All-Around Helper
+            }
+            else if (model.script is NamelessFetus)
+            {
+                return new NamelessFetusExt(model);
+            }
+            else if (model.script is Porccu)
+            {
+                // TODO Porccubus
+            }
             else if (model.script is RedShoes)
             {
                 return new RedShoesExt(model);
+            }
+            else if (model.script is Rudolph)
+            {
+                // TODO Rudolta of the Sleigh
+            }
+            else if (model.script is Scarecrow)
+            {
+                return new ScarecrowExt(model);
+            }
+
+            else if (model.script is LookAtMe)
+            {
+                // TODO Schadenfreude
             }
             else if (model.script is SingingMachine)
             {
                 return new SingingMachineExt(model);
             }
-            else if (model.script is Butterfly)
+            else if (model.script is GalaxyBoy)
             {
-                return new ButterflyExt(model);
-            }
-            else if (model.script is Freischutz)
-            {
-                return new DerFreischutzExt(model);
+                // TODO The Child of Galaxy
             }
             else if (model.script is SnowQueen)
             {
                 return new SnowQueenExt(model);
             }
-            else if (model.script is Scarecrow)
+            else if (model.script is Lumberjack)
             {
-                return new ScarecrowExt(model);
+                // TODO Warm-Hearted Woodsman
             }
             return new ExpectGoodAndNormalExt(model);
         }
@@ -279,49 +324,69 @@ namespace AutoInority.Extentions
             {
                 throw new Exception("Risk level mismatch");
             }
-            else if (model.script is ShyThing)
+            else if (model.script is Mhz_1_76)
             {
-                return new ShyLook(model);
+                // TODO 1.76 MHz
             }
             else if (model.script is BeautyBeast)
             {
                 return new BeautyBeastExt(model);
             }
+            else if (model.script is BloodBath)
+            {
+                return new BloodBathExt(model);
+            }
+            else if (model.script is ArmorCreature)
+            {
+                return new CrumblingArmorExt(model);
+            }
             else if (model.script is StraitJacket)
             {
                 return new MurdererExt(model);
             }
-            else if (model.script is MatchGirl)
+            else if (model.script is Cosmos)
             {
-                return new ScorchedGirlExt(model);
-            }
-            else if (model.script is Baku)
-            {
-                return new VoidDreamExt(model);
-            }
-            else if (model.script is BloodBath)
-            {
-                return new BloodBathExt(model);
+                // TODO Fragment of the Universe
             }
             else if (model.script is Sakura)
             {
                 return new SakuraExt(model);
             }
-            else if (model.script is SmallBird)
+            else if (model.script is Bunny)
             {
-                return new PunishingBirdExt(model);
+                // TODO Meat Lantern
             }
             else if (model.script is OldLady)
             {
                 return new OldLadyExt(model);
             }
+            else if (model.script is Ppodae)
+            {
+                // TODO Ppodae
+            }
+            else if (model.script is SmallBird)
+            {
+                return new PunishingBirdExt(model);
+            }
+            else if (model.script is MatchGirl)
+            {
+                return new ScorchedGirlExt(model);
+            }
+            else if (model.script is ShyThing)
+            {
+                return new ShyLook(model);
+            }
+            else if (model.script is SpiderMom)
+            {
+                // TODO Spider Bud
+            }
+            else if (model.script is Baku)
+            {
+                return new VoidDreamExt(model);
+            }
             else if (model.script is LadyLookingAtWall)
             {
                 return new LadyLookingAtWallExt(model);
-            }
-            else if (model.script is ArmorCreature)
-            {
-                return new CrumblingArmorExt(model);
             }
             return new ExpectGoodAndNormalExt(model);
         }
@@ -332,17 +397,77 @@ namespace AutoInority.Extentions
             {
                 throw new Exception("Risk level mismatch");
             }
+            else if (model.script is Alriune)
+            {
+                // TODO
+            }
+            else if (model.script is BigBadWolf)
+            {
+                // TODO
+            }
+            else if (model.script is BigBird)
+            {
+                // TODO
+            }
+            else if (model.script is LongBird)
+            {
+                return new JudgementBirdExt(model);
+            }
+            else if (model.script is Wraith)
+            {
+                return new DimensionExt(model);
+            }
             else if (model.script is BlackSwan)
             {
                 return new BlackSwanExt(model);
             }
-            else if (model.script is YoungPrince)
+            else if (model.script is FireBird)
             {
-                return new LittlePrinceExt(model);
+                return new FireBirdExt(model);
+            }
+            else if (model.script is FengYun)
+            {
+                return new CloudedMonkExt(model);
+            }
+            else if (model.script is Piano)
+            {
+                // TODO
+            }
+            else if (model.script is RedHood)
+            {
+                // TODO
+            }
+            else if (model.script is Yggdrasil)
+            {
+                // TODO Parasite Tree
             }
             else if (model.script is QueenBee)
             {
                 return new QueenBeeExt(model);
+            }
+            else if (model.script is SnowWhite)
+            {
+                return new SnowWhiteAppleExt(model);
+            }
+            else if (model.script is BloodyTree)
+            {
+                // TODO The Burrowing Heaven
+            }
+            else if (model.script is Shark)
+            {
+                return new DreamingCurrent(model);
+            }
+            else if (model.script is MagicalGirl_2)
+            {
+                return new KingOfGreedExt(model);
+            }
+            else if (model.script is KnightOfDespair)
+            {
+                return new KnightOfDespairExt(model);
+            }
+            else if (model.script is YoungPrince)
+            {
+                return new LittlePrinceExt(model);
             }
             else if (model.script is ViscusSnake)
             {
@@ -352,42 +477,11 @@ namespace AutoInority.Extentions
             {
                 return new HatredQueen(model);
             }
-            else if (model.script is SnowWhite)
+            else if (model.script is Yin)
             {
-                return new SnowWhiteExt(model);
+                // TODO
             }
-            else if (model.script is LongBird)
-            {
-                return new JudgementBirdExt(model);
-            }
-            else if (model.script is FengYun)
-            {
-                return new CloudedMonkExt(model);
-            }
-            else if (model.script is FireBird)
-            {
-                return new FireBirdExt(model);
-            }
-            else if (model.script is Shark)
-            {
-                return new DreamingCurrent(model);
-            }
-            else if (model.script is KnightOfDespair)
-            {
-                return new KnightOfDespairExt(model);
-            }
-            else if (model.script is MagicalGirl_2)
-            {
-                return new KingOfGreedExt(model);
-            }
-            else if (model.script is Wraith)
-            {
-                return new DimensionExt(model);
-            }
-            else
-            {
-                return new ExpectGoodAndNormalExt(model);
-            }
+            return new ExpectGoodAndNormalExt(model);
         }
 
         private static ICreatureExtension BuildZayinExt(CreatureModel model)
@@ -396,13 +490,9 @@ namespace AutoInority.Extentions
             {
                 throw new Exception("Risk level mismatch");
             }
-            else if (model.script is OneBadManyGood)
+            else if (model.script is PinkCorps)
             {
-                return new OneBadManyGoodExt(model);
-            }
-            else if (model.script is Wellcheers)
-            {
-                return new WellcheersExt(model);
+                return new ArmyInBlackExt(model);
             }
             else if (model.script is DontTouchMe)
             {
@@ -412,9 +502,17 @@ namespace AutoInority.Extentions
             {
                 return new FairyFestivalExt(model);
             }
-            else if (model.script is PinkCorps)
+            else if (model.script is OneBadManyGood)
             {
-                return new ArmyInBlackExt(model);
+                return new OneBadManyGoodExt(model);
+            }
+            else if (model.script is PlagueDoctor)
+            {
+                // TODO
+            }
+            else if (model.script is Wellcheers)
+            {
+                return new WellcheersExt(model);
             }
             else if (model.script is Bald)
             {
