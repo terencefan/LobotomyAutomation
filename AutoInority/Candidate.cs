@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using AutoInority.Extentions;
 
@@ -47,15 +48,17 @@ namespace AutoInority
 
         public static int ManageComparer(Candidate x, Candidate y) => y.ManageConfidence.CompareTo(x.ManageConfidence);
 
-        public static List<Candidate> Suggest(IEnumerable<AgentModel> agents, IEnumerable<CreatureModel> creatures)
+        public static List<Candidate> Suggest(IEnumerable<AgentModel> agents, IEnumerable<CreatureModel> creatures, HashSet<RwbpType> types = null)
         {
             var candidates = new List<Candidate>();
             foreach (var creature in creatures)
             {
                 var ext = creature.GetExtension();
+                var skillSets = ext.SkillSets.Where(x => types == null || types.Contains(x.rwbpType));
+
                 foreach (var agent in agents)
                 {
-                    foreach (var skill in ext.SkillSets)
+                    foreach (var skill in skillSets)
                     {
                         var b1 = ext.CanWorkWith(agent, skill, out _);
                         var b2 = ext.CheckConfidence(agent, skill);
@@ -70,9 +73,11 @@ namespace AutoInority
             return candidates;
         }
 
-        public static List<Candidate> Suggest(AgentModel agent, IEnumerable<CreatureModel> creatures) => Suggest(new[] { agent }, creatures);
+        public static List<Candidate> Suggest(AgentModel agent, IEnumerable<CreatureModel> creatures, HashSet<RwbpType> types = null) => Suggest(new[] { agent }, creatures, types);
 
         public static List<Candidate> Suggest(IEnumerable<AgentModel> agents, CreatureModel creature) => Suggest(agents, new[] { creature });
+
+        public static int TrainComparer(AgentModel x, AgentModel y) => x.TotalStats().CompareTo(y.TotalStats());
 
         public void Apply()
         {
@@ -90,6 +95,8 @@ namespace AutoInority
                 Log.Error(e);
             }
         }
+
+        public bool IsAvailable() => Agent.IsAvailable() && Creature.IsAvailable();
 
         public override string ToString() => $"{Agent.name}: {GoodConfidence}, Distance: {Distance}, HasGift: {HasGift}, HasAnotherGift: {HasAnotherGift}, Exp: {HasReachedExpLimit}";
     }

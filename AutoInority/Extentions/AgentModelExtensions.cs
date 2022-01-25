@@ -6,6 +6,8 @@ namespace AutoInority.Extentions
 {
     public static class AgentModelExtensions
     {
+        private static readonly RwbpType[] AllTypes = new RwbpType[] { RwbpType.P, RwbpType.R, RwbpType.W, RwbpType.B };
+
         public static IEnumerable<AgentModel> FilterCanSuppress(this IEnumerable<AgentModel> agents, CreatureModel creature)
         {
             return agents.Where(x => x.IsAvailable() && x.IsCapableOfPressing(creature)).ToList();
@@ -47,6 +49,19 @@ namespace AutoInority.Extentions
         }
 
         public static bool HasGift(this AgentModel agent, EquipmentTypeInfo gift) => agent.Equipment.gifts.HasEquipment(gift.id);
+
+        public static bool HasReachedExpLimit(this AgentModel agent, out HashSet<RwbpType> types)
+        {
+            types = new HashSet<RwbpType>();
+            foreach (var type in AllTypes)
+            {
+                if (!agent.HasReachedExpLimit(type, out _))
+                {
+                    types.Add(type);
+                }
+            }
+            return types.Count > 0;
+        }
 
         public static bool HasReachedExpLimit(this AgentModel agent, RwbpType type, out string name)
         {
@@ -95,6 +110,14 @@ namespace AutoInority.Extentions
         }
 
         public static string Tag(this AgentModel agent) => $"<color=#66bfcd>{agent.name}</color>";
+
+        public static int TotalStats(this AgentModel agent)
+        {
+            return Math.Min(WorkerPrimaryStat.MaxStatR(), (int)(agent.primaryStat.maxHP + agent.primaryStatExp.hp))
+                   + Math.Min(WorkerPrimaryStat.MaxStatW(), (int)(agent.primaryStat.maxMental + agent.primaryStatExp.mental))
+                   + Math.Min(WorkerPrimaryStat.MaxStatB(), (int)(agent.primaryStat.work + agent.primaryStatExp.work))
+                   + Math.Min(WorkerPrimaryStat.MaxStatP(), (int)(agent.primaryStat.battle + agent.primaryStatExp.battle));
+        }
 
         private static bool IsCapableOfPressing(this AgentModel agent, CreatureModel creature)
         {

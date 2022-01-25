@@ -244,42 +244,6 @@ namespace AutoInority
             Angela.Say(message);
         }
 
-        private bool HandleCreatureUrgentEvents()
-        {
-            var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable());
-            var creatures = CreatureManager.instance.GetCreatureList().FilterUrgent();
-            var candidates = Candidate.Suggest(agents, creatures);
-            candidates.Sort(Candidate.ManageComparer);
-
-            int count = 0;
-            foreach (var candidate in candidates)
-            {
-                if (candidate.Agent.IsAvailable() && candidate.Creature.IsAvailable())
-                {
-                    candidate.Apply();
-                    count++;
-                }
-            }
-
-            foreach (var creature in CreatureManager.instance.GetCreatureList().FilterUrgent())
-            {
-                Log.Info($"Cannot find candidates for {creature.metaInfo.name}");
-            }
-            return count > 0;
-        }
-
-        private void SuppressEscapedCreatures()
-        {
-            foreach (var creature in CreatureManager.instance.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
-            {
-                Log.Debug($"{creature.metaInfo.name} escaped.");
-                if (creature.GetExtension().AutoSuppress)
-                {
-                    creature.GetExtension().FindAgents(100).FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
-                }
-            }
-        }
-
         private string AutomationMessage() => Running ? Angela.Automaton.On : Angela.Automaton.Off;
 
         private bool HandleCandidates(IEnumerable<Candidate> candidates, HashSet<CreatureModel> creatures)
@@ -304,6 +268,30 @@ namespace AutoInority
             return count > 0;
         }
 
+        private bool HandleCreatureUrgentEvents()
+        {
+            var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable());
+            var creatures = CreatureManager.instance.GetCreatureList().FilterUrgent();
+            var candidates = Candidate.Suggest(agents, creatures);
+            candidates.Sort(Candidate.ManageComparer);
+
+            int count = 0;
+            foreach (var candidate in candidates)
+            {
+                if (candidate.Agent.IsAvailable() && candidate.Creature.IsAvailable())
+                {
+                    candidate.Apply();
+                    count++;
+                }
+            }
+
+            foreach (var creature in CreatureManager.instance.GetCreatureList().FilterUrgent())
+            {
+                Log.Info($"Cannot find candidates for {creature.metaInfo.name}");
+            }
+            return count > 0;
+        }
+
         private void HandleKitEvents(CreatureModel kit)
         {
             var ext = kit.GetKitExtension();
@@ -314,6 +302,17 @@ namespace AutoInority
             ext.OnFixedUpdate();
         }
 
+        private void SuppressEscapedCreatures()
+        {
+            foreach (var creature in CreatureManager.instance.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
+            {
+                Log.Debug($"{creature.metaInfo.name} escaped.");
+                if (creature.GetExtension().AutoSuppress)
+                {
+                    creature.GetExtension().FindAgents(100).FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
+                }
+            }
+        }
         private void SuppressOrdealCreature(OrdealCreatureModel creature)
         {
             if (creature.state == CreatureState.SUPPRESSED || creature.state == CreatureState.SUPPRESSED_RETURN)

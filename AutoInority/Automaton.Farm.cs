@@ -111,6 +111,37 @@ namespace AutoInority
             }
         }
 
+        public void TryTrain(IEnumerable<AgentModel> agents)
+        {
+        }
+
+        public void TryTrain()
+        {
+            var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable()).ToList();
+            agents.Sort(Candidate.TrainComparer);
+
+            foreach (var agent in agents)
+            {
+                if (agent.HasReachedExpLimit(out var types))
+                {
+                    continue;
+                }
+
+                var creatures = CreatureManager.instance.GetCreatureList().Where(x => x.IsCreature() && x.IsAvailable());
+                var candidates = Candidate.Suggest(agent, creatures, types);
+                candidates.Sort(Candidate.FarmComparer);
+
+                foreach (var candidate in candidates)
+                {
+                    if (candidate.IsAvailable())
+                    {
+                        candidate.Apply();
+                        return;
+                    }
+                }
+            }
+        }
+
         private void CancelFarm(IsolateRoom room)
         {
             FarmingCreatures.Remove(room.TargetUnit.model);

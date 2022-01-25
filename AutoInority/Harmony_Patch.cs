@@ -146,6 +146,10 @@ namespace AutoInority
                 {
                     Invoke(() => Automaton.Instance.AssignWork(creature));
                 }
+                else
+                {
+                    Invoke(() => Automaton.Instance.TryTrain());
+                }
             }
             else if (Input.GetKeyDown(KeyCode.Z))
             {
