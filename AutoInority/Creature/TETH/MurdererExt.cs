@@ -10,7 +10,7 @@
 
         public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
         {
-            return NormalConfidence(agent, skill) > Automaton.Instance.CreatureEscapeConfidence && base.CheckConfidence(agent, skill);
+            return (IsOverloaded || NormalConfidence(agent, skill) > Automaton.Instance.CreatureEscapeConfidence) && base.CheckConfidence(agent, skill);
         }
     }
 }
