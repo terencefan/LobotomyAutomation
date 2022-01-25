@@ -32,11 +32,11 @@ namespace AutoInority
         {
             get
             {
-                if (OrdealManager.instance.GetOrdealCreatureList().Where(x => x.state != CreatureState.SUPPRESSED).Any())
-                {
-                    return true;
-                }
-                return false;
+                var b1 = OrdealManager.instance.GetOrdealCreatureList().Where(x => x.state != CreatureState.SUPPRESSED).Any();
+                Log.Debug("Suppressing ordeal creatures.");
+                var b2 = CreatureManager.instance.GetCreatureList().Where(x => x.IsAvailable() && x.isOverloaded).Any();
+                Log.Debug("Handling qliphoth meltdowns.");
+                return b1 && b2;
             }
         }
 
@@ -129,48 +129,17 @@ namespace AutoInority
             // handle Qliphoth meltdown events for kits
             foreach (var kit in manager.GetCreatureList().Where(x => x.IsKit()))
             {
-                HandleKit(kit);
+                HandleKitEvents(kit);
             }
 
-            // handle Qliphoth meltdown events (and some other urgent events)
-            for (int riskLevel = 5; riskLevel > 0; riskLevel--)
+            // handle Qliphoth meltdown events and other ugent events for creatures.
+            if (HandleCreatureUrgentEvents())
             {
-                var creatures = new HashSet<CreatureModel>(manager.GetCreatureList().FilterUrgent(riskLevel));
-
-                // find from current dtps
-                var candidates = creatures.FindCandidates(80);
-                candidates.Sort(Candidate.ManageComparer);
-
-                if (HandleCandidates(candidates, creatures))
-                {
-                    Log.Debug($"handle emergency risk level {riskLevel}");
-                    return;
-                }
-
-                // find from neighbor depts
-                candidates = creatures.FindCandidates(1000);
-                candidates.Sort(Candidate.ManageComparer);
-                if (HandleCandidates(candidates, creatures))
-                {
-                    Log.Debug($"handle emergency risk level {riskLevel}, extend");
-                    return;
-                }
-
-                foreach (var creature in creatures)
-                {
-                    Log.Info($"Cannot find candidates for {creature.metaInfo.name}");
-                }
+                return;
             }
 
-            // auto suppress escaping creatures (only a few of them)
-            foreach (var creature in manager.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
-            {
-                Log.Debug($"{creature.metaInfo.name} escaped.");
-                if (creature.GetExtension().AutoSuppress)
-                {
-                    creature.GetExtension().FindAgents(100).FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
-                }
-            }
+            // auto suppress escaped creatures (only a few of them)
+            SuppressEscapedCreatures();
 
             // auto suppress ordeal creatures.
             foreach (var creature in OrdealManager.instance.GetOrdealCreatureList())
@@ -181,7 +150,6 @@ namespace AutoInority
             // parse macro / farm when handling ordeals.
             if (InEmergency)
             {
-                Log.Debug($"In emergency");
                 return;
             }
 
@@ -276,6 +244,42 @@ namespace AutoInority
             Angela.Say(message);
         }
 
+        private bool HandleCreatureUrgentEvents()
+        {
+            var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable());
+            var creatures = CreatureManager.instance.GetCreatureList().FilterUrgent();
+            var candidates = Candidate.Suggest(agents, creatures);
+            candidates.Sort(Candidate.ManageComparer);
+
+            int count = 0;
+            foreach (var candidate in candidates)
+            {
+                if (candidate.Agent.IsAvailable() && candidate.Creature.IsAvailable())
+                {
+                    candidate.Apply();
+                    count++;
+                }
+            }
+
+            foreach (var creature in CreatureManager.instance.GetCreatureList().FilterUrgent())
+            {
+                Log.Info($"Cannot find candidates for {creature.metaInfo.name}");
+            }
+            return count > 0;
+        }
+
+        private void SuppressEscapedCreatures()
+        {
+            foreach (var creature in CreatureManager.instance.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
+            {
+                Log.Debug($"{creature.metaInfo.name} escaped.");
+                if (creature.GetExtension().AutoSuppress)
+                {
+                    creature.GetExtension().FindAgents(100).FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
+                }
+            }
+        }
+
         private string AutomationMessage() => Running ? Angela.Automaton.On : Angela.Automaton.Off;
 
         private bool HandleCandidates(IEnumerable<Candidate> candidates, HashSet<CreatureModel> creatures)
@@ -300,7 +304,7 @@ namespace AutoInority
             return count > 0;
         }
 
-        private void HandleKit(CreatureModel kit)
+        private void HandleKitEvents(CreatureModel kit)
         {
             var ext = kit.GetKitExtension();
             if (kit.isOverloaded && kit.IsAvailable())
