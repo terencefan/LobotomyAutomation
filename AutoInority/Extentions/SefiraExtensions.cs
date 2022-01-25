@@ -39,7 +39,7 @@ namespace AutoInority.Extentions
 
         public static IEnumerable<CreatureModel> Creatures(this Sefira sefira)
         {
-            return sefira.creatureList.Where(x => !x.IsKit() && x.IsAvailable());
+            return sefira.creatureList.Where(x => x.IsCreature() && x.IsAvailable());
         }
 
         public static int GetPriority(this Sefira sefira)

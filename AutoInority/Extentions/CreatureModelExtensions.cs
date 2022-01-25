@@ -44,12 +44,12 @@ namespace AutoInority.Extentions
             {
                 prob -= 0.5f;
             }
-            return prob;
+            return prob > 0 ? prob : 0;
         }
 
         public static IEnumerable<CreatureModel> FilterUrgent(this IEnumerable<CreatureModel> creatures, int riskLevel)
         {
-            return creatures.Where(x => !x.IsKit() && x.GetRiskLevel() == riskLevel && x.IsUrgent() && x.IsAvailable());
+            return creatures.Where(x => x.IsCreature() && x.GetRiskLevel() == riskLevel && x.IsUrgent() && x.IsAvailable());
         }
 
         public static List<Candidate> FindCandidates(this IEnumerable<CreatureModel> creatures, int distance)
@@ -82,8 +82,9 @@ namespace AutoInority.Extentions
             return creature.state == CreatureState.WAIT && creature.feelingState == CreatureFeelingState.NONE && !IsWorkAllocated;
         }
 
-        public static bool IsKit(this CreatureModel creature) => creature.metaInfo.creatureWorkType == CreatureWorkType.KIT;
+        public static bool IsCreature(this CreatureModel creature) => creature.metaInfo.creatureWorkType == CreatureWorkType.NORMAL;
 
+        public static bool IsKit(this CreatureModel creature) => creature.metaInfo.creatureWorkType == CreatureWorkType.KIT;
         public static bool IsUrgent(this CreatureModel creature)
         {
             return creature.isOverloaded || creature.GetExtension().IsUrgent;
