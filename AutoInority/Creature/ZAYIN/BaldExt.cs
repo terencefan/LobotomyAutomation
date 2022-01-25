@@ -4,11 +4,10 @@ namespace AutoInority.Creature
 {
     internal class BaldExt : BaseCreatureExt
     {
-        private readonly MethodInfo _isBald;
+        private readonly MethodInfo _isBald = typeof(Bald).GetMethod("IsBald", BindingFlags.NonPublic | BindingFlags.Instance);
 
         public BaldExt(CreatureModel creature) : base(creature)
         {
-            _isBald = typeof(Bald).GetMethod("IsBald");
         }
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
