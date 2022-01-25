@@ -231,7 +231,6 @@ namespace AutoInority.Extentions
             {
                 return new ScarecrowExt(model);
             }
-
             else if (model.script is LookAtMe)
             {
                 // TODO Schadenfreude
@@ -258,8 +257,9 @@ namespace AutoInority.Extentions
         private static ICreatureKitExtension BuildKitExtension(this CreatureModel model)
         {
             var script = model.script;
-            if (script is BigTreeSap) // won't support
+            if (script is BigTreeSap) 
             {
+                return new NeverUseKitExt(model);
             }
             else if (script is DesireHeart)
             {
@@ -270,9 +270,11 @@ namespace AutoInority.Extentions
             }
             else if (script is HellTrain)
             {
+                return new HellTrainExt(model);
             }
-            else if (script is IronMaiden) // won't support
+            else if (script is IronMaiden) 
             {
+                return new NeverUseKitExt(model);
             }
             else if (script is JusticeReceiver)
             {
@@ -307,6 +309,7 @@ namespace AutoInority.Extentions
             }
             else if (script is Theresia)
             {
+                return new TheresiaExt(model);
             }
             else if (script is Yang)
             {
@@ -315,7 +318,7 @@ namespace AutoInority.Extentions
             {
                 return new YouMustBeHappyExt(model);
             }
-            return new BaseKitExt(model);
+            return new NeverUseKitExt(model);
         }
 
         private static ICreatureExtension BuildTethExt(CreatureModel model)

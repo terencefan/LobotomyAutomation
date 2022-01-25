@@ -5,16 +5,15 @@ using AutoInority.Extentions;
 
 namespace AutoInority.Creature
 {
-    internal class BaseKitExt : ICreatureKitExtension
+    internal abstract class BaseKitExt : ICreatureKitExtension
     {
         protected readonly CreatureModel _kit;
 
-        protected readonly CreatureBase _script;
+        protected CreatureBase Script => _kit.script;
 
         public BaseKitExt(CreatureModel kit)
         {
             _kit = kit;
-            _script = kit.script;
         }
 
         public virtual bool CanUse(AgentModel agent) => false;
@@ -31,7 +30,6 @@ namespace AutoInority.Creature
             var agents = FindAgents().ToList();
             if (agents.Any())
             {
-                agents.Sort((x, y) => Graph.Distance(x, _kit).CompareTo(Graph.Distance(y, _kit)));
                 var agent = agents.First();
                 agent.ManageKitCreature(_kit);
                 agent.counterAttackEnabled = false;
@@ -49,7 +47,7 @@ namespace AutoInority.Creature
         {
             var d1 = Graph.Distance(x, _kit);
             var d2 = Graph.Distance(y, _kit);
-            return d2.CompareTo(d1);
+            return d1.CompareTo(d2);
         }
     }
 }

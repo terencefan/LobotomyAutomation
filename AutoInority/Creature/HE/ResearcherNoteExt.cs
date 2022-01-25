@@ -21,15 +21,15 @@ namespace AutoInority.Creature
 
         public override bool CanReturn(AgentModel agent)
         {
-            var elapsed = (float)_equipElapsedTime.GetValue(_script.kitEvent);
-            var managed = (bool)_creatureManaged.GetValue(_script.kitEvent);
+            var elapsed = (float)_equipElapsedTime.GetValue(Script.kitEvent);
+            var managed = (bool)_creatureManaged.GetValue(Script.kitEvent);
             return managed && elapsed > 30;
         }
 
         public override void OnFixedUpdate()
         {
             var agent = _kit.kitEquipOwner;
-            var managed = (bool)_creatureManaged.GetValue(_script.kitEvent);
+            var managed = (bool)_creatureManaged.GetValue(Script.kitEvent);
 
             if (agent != null && agent.IsAvailable() && !managed)
             {

@@ -13,7 +13,7 @@ namespace AutoInority.Creature
 
         public override bool CanReturn(AgentModel agent)
         {
-            return (float)_equipElapsedTime.GetValue(_script.kitEvent) > 30;
+            return (float)_equipElapsedTime.GetValue(Script.kitEvent) > 30;
         }
     }
 }

@@ -67,6 +67,7 @@
     <Compile Include="Creature\ICreatureExtension.cs" />
     <Compile Include="Creature\ICreatureKitExtension.cs" />
     <Compile Include="Creature\BaseKitExt.cs" />
+    <Compile Include="Creature\NeverUseKitExt.cs" />
     <Compile Include="Creature\TETH\BehaviorExt.cs" />
     <Compile Include="Creature\TETH\CrumblingArmorExt.cs" />
     <Compile Include="Creature\TETH\BeautyBeastExt.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="Creature\WAW\DreamingCurrent.cs" />
     <Compile Include="Creature\WAW\FireBirdExt.cs" />
     <Compile Include="Creature\WAW\HatredQueen.cs" />
+    <Compile Include="Creature\WAW\HellTrainExt.cs" />
     <Compile Include="Creature\WAW\JudgementBirdExt.cs" />
     <Compile Include="Creature\WAW\KnightOfDespairExt.cs" />
     <Compile Include="Creature\WAW\KingOfGreedExt.cs" />

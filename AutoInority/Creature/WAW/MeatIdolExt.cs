@@ -12,7 +12,7 @@ namespace AutoInority.Creature
 
         public override bool CanStop()
         {
-            return ((Timer)_damageTimer.GetValue(_script)).elapsed > 20;
+            return ((Timer)_damageTimer.GetValue(Script)).elapsed > 20;
         }
 
         public override bool CanUse(AgentModel agent)
