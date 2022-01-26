@@ -117,6 +117,8 @@ namespace AutoInority
 
             public const string SnowQueenDual = "你真的相信{0}能在与{1}的决斗中取胜？至少我不是这么认为的。";
 
+            public const string SnowQueenFire = "我想水火不相容这种浅显的道理，应该不需要我提醒您吧？";
+
             public const string VoidDream = "我相信{0}在进入{1}的收容单位后会陷入永久的睡眠，你真的有看过观察资料吗？";
 
             public const string YoungPrinceHasBuf = "我注意到{0}已经连续对{1}进行了三次工作，建议立即安排{0}进行其他异想体的工作以避免彻底的感染。";
@@ -126,6 +128,8 @@ namespace AutoInority
             public const string ArmorWarning = "指派{0}对{1}进行{2}会导致其无法再完成其他的沟通和压迫工作，以他目前的能力值来看，我认为他还没有准备好。";
 
             public const string ArmorKill = "我相信{1}并不喜欢弱小的员工，这可能是我们最后一次见到{0}了。";
+
+            public const string Spider = "我想{0}在完成{1}的{2}后就会被变成茧吧，主管，您真的有在认真读观察记录吗？ ";
         }
     }
 }

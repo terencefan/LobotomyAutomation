@@ -17,6 +17,8 @@ namespace AutoInority.Extentions
 
         private static Dictionary<CreatureModel, ICreatureKitExtension> _kitDict = new Dictionary<CreatureModel, ICreatureKitExtension>();
 
+        public static float CalculateWorkSpeed(this CreatureModel creature, AgentModel agent) => creature.GetCubeSpeed() * (1f + (creature.GetObserveBonusSpeed() + agent.workSpeed) / 100f);
+
         public static float CalculateWorkSuccessProb(this CreatureModel creature, AgentModel agent, SkillTypeInfo skill)
         {
             float prob = creature.GetWorkSuccessProb(agent, skill);
@@ -48,6 +50,8 @@ namespace AutoInority.Extentions
             }
             return prob > 0 ? prob : 0;
         }
+
+        public static float CalculateWorkTime(this CreatureModel creature, AgentModel agent) => creature.metaInfo.feelingStateCubeBounds.GetLastBound() / creature.CalculateWorkSpeed(agent);
 
         public static IEnumerable<CreatureModel> FilterUrgent(this IEnumerable<CreatureModel> creatures)
         {
@@ -257,7 +261,7 @@ namespace AutoInority.Extentions
         private static ICreatureKitExtension BuildKitExtension(this CreatureModel model)
         {
             var script = model.script;
-            if (script is BigTreeSap) 
+            if (script is BigTreeSap)
             {
                 return new NeverUseKitExt(model);
             }
@@ -272,7 +276,7 @@ namespace AutoInority.Extentions
             {
                 return new HellTrainExt(model);
             }
-            else if (script is IronMaiden) 
+            else if (script is IronMaiden)
             {
                 return new NeverUseKitExt(model);
             }
@@ -357,7 +361,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is Bunny)
             {
-                // TODO Meat Lantern
+                return new MeatLanternExt(model);
             }
             else if (model.script is OldLady)
             {
@@ -381,7 +385,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is SpiderMom)
             {
-                // TODO Spider Bud
+                return new SpiderBudExt(model);
             }
             else if (model.script is Baku)
             {
@@ -454,7 +458,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is BloodyTree)
             {
-                // TODO The Burrowing Heaven
+                return new BloodyTreeExt(model);
             }
             else if (model.script is Shark)
             {
