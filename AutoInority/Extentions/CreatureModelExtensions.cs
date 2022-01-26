@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 
 using AutoInority.Creature;
+using AutoInority.Creature.TETH;
 
 using UnityEngine;
 
@@ -213,7 +214,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is Helper)
             {
-                // TODO All-Around Helper
+                return new HelperExt(model);
             }
             else if (model.script is NamelessFetus)
             {
@@ -221,7 +222,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is Porccu)
             {
-                // TODO Porccubus
+                return new PorccubusExt(model);
             }
             else if (model.script is RedShoes)
             {
@@ -229,7 +230,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is Rudolph)
             {
-                // TODO Rudolta of the Sleigh
+                return new RudolphExt(model);
             }
             else if (model.script is Scarecrow)
             {
@@ -237,7 +238,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is LookAtMe)
             {
-                // TODO Schadenfreude
+                return new SchadenfreudeExt(model);
             }
             else if (model.script is SingingMachine)
             {
@@ -253,7 +254,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is Lumberjack)
             {
-                // TODO Warm-Hearted Woodsman
+                return new WoodsmanExt(model);
             }
             return new ExpectGoodAndNormalExt(model);
         }
@@ -333,7 +334,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is Mhz_1_76)
             {
-                // TODO 1.76 MHz
+                return new Mhz_1_76Ext(model);
             }
             else if (model.script is BeautyBeast)
             {
@@ -353,7 +354,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is Cosmos)
             {
-                // TODO Fragment of the Universe
+                return new CosmosExt(model);
             }
             else if (model.script is Sakura)
             {
@@ -369,7 +370,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is Ppodae)
             {
-                // TODO Ppodae
+                return new PpodaeExt(model);
             }
             else if (model.script is SmallBird)
             {

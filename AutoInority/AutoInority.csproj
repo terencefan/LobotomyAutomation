@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AutoInority</RootNamespace>
     <AssemblyName>inority_Automation_MOD</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile>Unity Full v3.5</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -55,26 +56,34 @@
     <Compile Include="Creature\HE\ButterflyExt.cs" />
     <Compile Include="Creature\HE\DerFreischutzExt.cs" />
     <Compile Include="Creature\HE\HappyTeddyExt.cs" />
+    <Compile Include="Creature\HE\HelperExt.cs" />
     <Compile Include="Creature\HE\LaetitiaExt.cs" />
+    <Compile Include="Creature\HE\Porccubus.cs" />
     <Compile Include="Creature\HE\NamelessFetusExt.cs" />
     <Compile Include="Creature\HE\ResearcherNoteExt.cs" />
     <Compile Include="Creature\HE\RedShoesExt.cs" />
+    <Compile Include="Creature\HE\RudolphExt.cs" />
     <Compile Include="Creature\HE\ScarecrowExt.cs" />
+    <Compile Include="Creature\HE\SchadenfreudeExt.cs" />
     <Compile Include="Creature\HE\ShelterExt.cs" />
     <Compile Include="Creature\HE\SingingMachineExt.cs" />
     <Compile Include="Creature\HE\SnowQueenExt.cs" />
+    <Compile Include="Creature\HE\WoodsmanExt.cs" />
     <Compile Include="Creature\ICreatureExtension.cs" />
     <Compile Include="Creature\ICreatureKitExtension.cs" />
     <Compile Include="Creature\BaseKitExt.cs" />
     <Compile Include="Creature\NeverUseKitExt.cs" />
     <Compile Include="Creature\TETH\BehaviorExt.cs" />
+    <Compile Include="Creature\TETH\CosmosExt.cs" />
     <Compile Include="Creature\TETH\CrumblingArmorExt.cs" />
     <Compile Include="Creature\TETH\BeautyBeastExt.cs" />
     <Compile Include="Creature\TETH\BloodBathExt.cs" />
     <Compile Include="Creature\TETH\LadyLookingAtWallExt.cs" />
     <Compile Include="Creature\TETH\LuminousBraceletExt.cs" />
-    <Compile Include="Creature\TETH\MeatLantern.cs" />
+    <Compile Include="Creature\TETH\MeatLanternExt.cs" />
+    <Compile Include="Creature\TETH\Mhz_1_76Ext.cs" />
     <Compile Include="Creature\TETH\OldLadyExt.cs" />
+    <Compile Include="Creature\TETH\PpodaeExt.cs" />
     <Compile Include="Creature\TETH\PunishingBirdExt.cs" />
     <Compile Include="Creature\TETH\SakuraExt.cs" />
     <Compile Include="Creature\TETH\ScorchedGirlExt.cs" />
