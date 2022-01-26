@@ -2,7 +2,7 @@
 
 namespace AutoInority.Creature
 {
-    internal class CensoredExt : BaseCreatureExt
+    internal class CensoredExt : ExpectNormalExt
     {
         public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Insight, Attachment };
 
@@ -20,18 +20,6 @@ namespace AutoInority.Creature
             return base.CanWorkWith(agent, skill, out message);
         }
 
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
-        {
-            var normalConfidence = NormalConfidence(agent, skill);
-            if (normalConfidence < Automaton.Instance.CounterDecreaseConfidence)
-            {
-                return false;
-            }
-            else if (_creature.qliphothCounter == 1)
-            {
-                return normalConfidence > Automaton.Instance.CreatureEscapeConfidence;
-            }
-            return base.CheckConfidence(agent, skill);
-        }
+        protected override float MentalFix(float mental) => 0.4f * mental;
     }
 }

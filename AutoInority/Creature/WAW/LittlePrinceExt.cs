@@ -4,7 +4,7 @@ using AutoInority.Extentions;
 
 namespace AutoInority.Creature
 {
-    internal class LittlePrinceExt : BaseCreatureExt
+    internal class LittlePrinceExt : ExpectNormalExt
     {
         private const int AGENT_MAX = 3;
 
@@ -32,11 +32,6 @@ namespace AutoInority.Creature
                 }
             }
             return base.CanWorkWith(agent, skill, out message);
-        }
-
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
-        {
-            return CheckNormal(agent, skill) && base.CheckConfidence(agent, skill);
         }
     }
 }

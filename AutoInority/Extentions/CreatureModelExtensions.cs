@@ -268,6 +268,7 @@ namespace AutoInority.Extentions
             }
             else if (script is DesireHeart)
             {
+                // TODO
             }
             else if (script is HealthBracelet)
             {
@@ -291,12 +292,15 @@ namespace AutoInority.Extentions
             }
             else if (script is OtherWorldPortrait)
             {
+                // TODO
             }
             else if (script is PromiseAndFaith)
             {
+                // TODO
             }
             else if (script is ProphecyOfSkin)
             {
+                // TODO
             }
             else if (script is ResearcherNote)
             {
@@ -304,9 +308,11 @@ namespace AutoInority.Extentions
             }
             else if (script is ResetMirror)
             {
+                // TODO
             }
             else if (script is ReverseClock)
             {
+                // TODO
             }
             else if (script is Shelter)
             {
@@ -318,6 +324,7 @@ namespace AutoInority.Extentions
             }
             else if (script is Yang)
             {
+                // TODO
             }
             else if (script is YouMustHappy)
             {
@@ -415,7 +422,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is BigBird)
             {
-                // TODO
+                return new BigBirdExt(model);
             }
             else if (model.script is LongBird)
             {

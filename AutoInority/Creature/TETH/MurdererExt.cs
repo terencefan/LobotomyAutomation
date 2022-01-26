@@ -14,7 +14,7 @@
             {
                 return base.CheckConfidence(agent, skill);
             }
-            return NormalConfidence(agent, skill) > Automaton.Instance.CreatureEscapeConfidence;
+            return NormalConfidence(agent, skill) > CreatureEscapeConfidence;
         }
     }
 }

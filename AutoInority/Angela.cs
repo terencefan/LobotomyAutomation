@@ -77,11 +77,7 @@ namespace AutoInority
         {
             public const string BeautyBeast = "根据我们已经获得的资料显示，对虚弱状态下的{1}进行{2}会导致{0}死亡，你是否应该重新审视你的决定？";
 
-            public const string BigBird = "{1}的逆卡巴拉计数器已经很低了，我认为这一工作安排结果的风险很大。";
-
             public const string BloodBath = "将{0}送入{1}中以提高能量产出确实是一个不错的主意，如果你也这么认为的话。";
-
-            public const string BlueStarDecrease = "";
 
             public const string BlueStarDie = "";
 

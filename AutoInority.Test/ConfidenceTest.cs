@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 using Xunit;
 
@@ -96,6 +97,34 @@ namespace AutoInority.Test
                 var actual = Confidence.InRange(count, prob, from, to);
                 Assert.InRange(actual, expected - 0.01, expected + 0.01);
             });
+        }
+
+        [Theory]
+        [InlineData(22, 0.45, 8, 15)]
+        [InlineData(22, 0.5, 8, 15)]
+        [InlineData(22, 0.52, 8, 15)]
+        [InlineData(22, 0.53, 8, 15)]
+        [InlineData(22, 0.55, 8, 15)]
+        [InlineData(22, 0.6, 8, 15)]
+        public void RangeConfidenceTestAlriune(int count, float prob, int from, int to)
+        {
+            var actual = Confidence.InRange(count, prob, from, to);
+            Assert.Equal(0.1, actual);
+        }
+
+        [Theory]
+        [InlineData(30, 0.45, 13, 18)]
+        [InlineData(30, 0.5, 13, 18)]
+        [InlineData(30, 0.52, 13, 18)]
+        [InlineData(30, 0.53, 13, 18)]
+        [InlineData(30, 0.55, 13, 18)]
+        [InlineData(30, 0.58, 13, 18)]
+        [InlineData(30, 0.59, 13, 18)]
+        [InlineData(30, 0.6, 13, 18)]
+        public void RangeConfidenceTestSilent(int count, float prob, int from, int to)
+        {
+            var actual = Confidence.InRange(count, prob, from, to);
+            Assert.Equal(0.1, actual);
         }
 
         private void RetryAssert(Action<int> action)

@@ -2,7 +2,7 @@
 
 namespace AutoInority.Creature
 {
-    internal class RedShoesExt : BaseCreatureExt
+    internal class RedShoesExt : ExpectGoodAndNormalExt
     {
         public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Insight, Attachment };
 
@@ -18,11 +18,6 @@ namespace AutoInority.Creature
                 return false;
             }
             return base.CanWorkWith(agent, skill, out message);
-        }
-
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
-        {
-            return GoodConfidence(agent, skill) > Automaton.Instance.CreatureEscapeConfidence && base.CheckConfidence(agent, skill);
         }
     }
 }

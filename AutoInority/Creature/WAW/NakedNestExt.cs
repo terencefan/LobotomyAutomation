@@ -8,16 +8,19 @@
         {
         }
 
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
+        public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            if (IsOverloaded)
+            if (IsOverloaded && NormalConfidence(agent, skill) < DeadConfidence)
             {
-                return NormalConfidence(agent, skill) > Automaton.Instance.DeadConfidence && base.CheckConfidence(agent, skill);
+                message = "";
+                return false;
             }
-            else
+            else if (GoodConfidence(agent, skill) < DeadConfidence)
             {
-                return GoodConfidence(agent, skill) > Automaton.Instance.DeadConfidence && base.CheckConfidence(agent, skill);
+                message = "";
+                return false;
             }
+            return base.CanWorkWith(agent, skill, out message);
         }
     }
 }
