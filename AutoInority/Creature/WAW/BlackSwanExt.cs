@@ -2,7 +2,7 @@
 {
     internal class BlackSwanExt : ExpectGoodAndNormalExt
     {
-        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Insight, Repression };
+        protected override SkillTypeInfo[] NormalSkillSets { get; } = { Instinct, Insight, Repression };
 
         public BlackSwanExt(CreatureModel creature) : base(creature)
         {

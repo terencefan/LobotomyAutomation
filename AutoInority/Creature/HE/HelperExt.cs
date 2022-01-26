@@ -2,7 +2,7 @@
 {
     internal class HelperExt : ExpectGoodAndNormalExt
     {
-        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Repression };
+        protected override SkillTypeInfo[] NormalSkillSets { get; } = new SkillTypeInfo[] { Instinct, Repression };
 
         public HelperExt(CreatureModel creature) : base(creature)
         {

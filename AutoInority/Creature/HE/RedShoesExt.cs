@@ -4,7 +4,7 @@ namespace AutoInority.Creature
 {
     internal class RedShoesExt : ExpectGoodAndNormalExt
     {
-        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Insight, Attachment };
+        protected override SkillTypeInfo[] NormalSkillSets { get; } = {Instinct, Insight, Attachment };
 
         public RedShoesExt(CreatureModel creature) : base(creature)
         {

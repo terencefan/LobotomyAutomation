@@ -2,9 +2,9 @@
 {
     internal class DerFreischutzExt : ExpectGoodAndNormalExt
     {
-        public override SkillTypeInfo[] SkillSets { get; } =
-        new SkillTypeInfo[] { Repression
-    };
+        protected override SkillTypeInfo[] NormalSkillSets { get; } = { Instinct, Insight, Repression };
+
+        protected override SkillTypeInfo[] GoodSkillSets { get; } = { Repression };
 
         public DerFreischutzExt(CreatureModel creature) : base(creature)
         {

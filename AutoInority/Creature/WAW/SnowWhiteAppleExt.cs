@@ -2,7 +2,9 @@
 {
     internal class SnowWhiteAppleExt : ExpectGoodAndNormalExt
     {
-        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Insight, Repression };
+        protected override SkillTypeInfo[] NormalSkillSets { get; } = { Instinct, Insight, Repression };
+
+        protected override SkillTypeInfo[] GoodSkillSets { get; } = { Repression };
 
         public SnowWhiteAppleExt(CreatureModel creature) : base(creature)
         {

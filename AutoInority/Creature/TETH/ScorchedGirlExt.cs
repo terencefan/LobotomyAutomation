@@ -2,7 +2,7 @@
 {
     internal class ScorchedGirlExt : ExpectGoodAndNormalExt
     {
-        public override SkillTypeInfo[] SkillSets => new SkillTypeInfo[] { Instinct, Insight, Repression };
+        protected override SkillTypeInfo[] NormalSkillSets { get; } = { Instinct, Insight, Repression };
 
         public ScorchedGirlExt(CreatureModel creature) : base(creature)
         {

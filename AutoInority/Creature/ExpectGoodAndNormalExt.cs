@@ -2,6 +2,12 @@
 {
     internal class ExpectGoodAndNormalExt : BaseCreatureExt
     {
+        public override sealed SkillTypeInfo[] SkillSets => QliphothCounter > 1 ? NormalSkillSets : GoodSkillSets;
+
+        protected virtual SkillTypeInfo[] NormalSkillSets { get; } = All;
+
+        protected virtual SkillTypeInfo[] GoodSkillSets => NormalSkillSets;
+
         public ExpectGoodAndNormalExt(CreatureModel creature) : base(creature)
         {
         }
