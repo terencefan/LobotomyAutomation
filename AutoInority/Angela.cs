@@ -113,7 +113,7 @@ namespace AutoInority
 
             public const string SiningMachine = "我相信{0}在结束工作后就会跳进{1}中，这将会是公司的一笔重大财务损失。";
 
-            public const string SnowQueen = "本次对{1}的{2}有可能会导致{0}被冰封，请准备解救工作";
+            public const string SnowQueen = "本次对{1}的{2}有可能会导致{0}被冰封，请准备解救工作。";
 
             public const string SnowQueenDual = "你真的相信{0}能在与{1}的决斗中取胜？至少我不是这么认为的。";
 
@@ -130,6 +130,12 @@ namespace AutoInority
             public const string ArmorKill = "我相信{1}并不喜欢弱小的员工，这可能是我们最后一次见到{0}了。";
 
             public const string Spider = "我想{0}在完成{1}的{2}后就会被变成茧吧，主管，您真的有在认真读观察记录吗？ ";
+
+            public const string Ppodae = "{1}并不喜欢{2}，恐怕这一工作安排恐怕会导致{1}的出逃，希望你已经准备好了。";
+
+            public const string Porccubus = "以{0}的自律能力应该无法抵挡来自{1}的死亡诱惑吧，你应该开始这位员工的善后准备了。";
+
+            public const string Woodsman = "没有心脏的{1}将会斩首任何接近他的员工，而{0}将会成为因你而死的受害者。";
         }
     }
 }
