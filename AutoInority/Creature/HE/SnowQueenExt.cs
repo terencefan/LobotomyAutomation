@@ -8,6 +8,8 @@ namespace AutoInority.Creature
 
         private static readonly int RealGiftId = 1023;
 
+        private static readonly int FireBirdArmor = 300061;
+
         private readonly FieldInfo _field;
 
         public override bool IsUrgent => IsFreezing;
@@ -40,7 +42,12 @@ namespace AutoInority.Creature
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            if (IsFreezing)
+            if (agent.HasEquipment(FireBirdArmor))
+            {
+                message = Message(Angela.Creature.SnowQueenFire, agent, skill);
+                return false;
+            }
+            else if (IsFreezing)
             {
                 if (agent.fortitudeLevel < 5)
                 {
