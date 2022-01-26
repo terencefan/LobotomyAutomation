@@ -2,7 +2,7 @@
 
 namespace AutoInority.Creature
 {
-    internal class MeatLanternExt : BaseCreatureExt
+    internal class MeatLanternExt : ExpectNormalExt
     {
         public MeatLanternExt(CreatureModel creature) : base(creature)
         {
@@ -16,18 +16,6 @@ namespace AutoInority.Creature
                 return false;
             }
             return base.CanWorkWith(agent, skill, out message);
-        }
-
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
-        {
-            if (QliphothCounter > 1)
-            {
-                return NormalConfidence(agent, skill) > Automaton.Instance.CounterDecreaseConfidence && base.CheckConfidence(agent, skill);
-            }
-            else
-            {
-                return NormalConfidence(agent, skill) > Automaton.Instance.CreatureEscapeConfidence && base.CheckConfidence(agent, skill);
-            }
         }
     }
 }

@@ -17,7 +17,7 @@
             {
                 return NormalConfidence(agent, skill) > Automaton.Instance.CounterDecreaseConfidence;
             }
-            return IsOverloaded || GoodConfidence(agent, skill) > Automaton.Instance.CreatureEscapeConfidence;
+            return IsOverloaded || GoodConfidence(agent, skill) > CreatureEscapeConfidence;
         }
     }
 }

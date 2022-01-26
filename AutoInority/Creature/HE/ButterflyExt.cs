@@ -1,6 +1,6 @@
 ﻿namespace AutoInority.Creature
 {
-    internal class ButterflyExt : BaseCreatureExt
+    internal class ButterflyExt : ExpectNormalExt
     {
         public override bool AutoSuppress => true;
 
@@ -18,11 +18,6 @@
                 return false;
             }
             return base.CanWorkWith(agent, skill, out message);
-        }
-
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
-        {
-            return NormalConfidence(agent, skill) > CreatureEscapeConfidence && base.CheckConfidence(agent, skill);
         }
 
         public override float ConfidencePenalty(AgentModel agent, SkillTypeInfo skill) => agent.fortitudeLevel > 3 ? 0.2f : 0;

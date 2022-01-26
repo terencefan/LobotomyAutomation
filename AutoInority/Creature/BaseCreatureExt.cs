@@ -27,8 +27,6 @@ namespace AutoInority.Creature
 
         protected IEnumerable<AgentModel> AllAgents => AgentManager.instance.GetAgentList();
 
-        protected float CounterDecreaseConfidence => Automaton.Instance.CounterDecreaseConfidence;
-
         protected float CreatureEscapeConfidence => Automaton.Instance.CreatureEscapeConfidence;
 
         protected float DeadConfidence => Automaton.Instance.DeadConfidence;
@@ -140,16 +138,6 @@ namespace AutoInority.Creature
         protected virtual float CalculateWorkSuccessProb(AgentModel agent, SkillTypeInfo skill)
         {
             return _creature.CalculateWorkSuccessProb(agent, skill);
-        }
-
-        protected virtual bool CheckNormal(AgentModel agent, SkillTypeInfo skill)
-        {
-            var confidence = NormalConfidence(agent, skill);
-            if (_creature.qliphothCounter > 1)
-            {
-                return confidence > Automaton.Instance.CounterDecreaseConfidence;
-            }
-            return confidence > Automaton.Instance.CreatureEscapeConfidence;
         }
 
         protected virtual float GetDamageMultiplierInWork(AgentModel agent, SkillTypeInfo skill)

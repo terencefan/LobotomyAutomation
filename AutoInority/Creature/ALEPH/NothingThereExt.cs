@@ -17,11 +17,7 @@ namespace AutoInority.Creature
                 message = string.Format(Angela.Creature.Nothing, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
             }
-
-            var workSuccessProb = CalculateWorkSuccessProb(agent, skill);
-            var confidence = Confidence.InRange(_creature.MaxCube(), workSuccessProb, _creature.NormalBound());
-
-            if (confidence < Automaton.Instance.DeadConfidence)
+            else if (NormalConfidence(agent, skill) < DeadConfidence)
             {
                 message = string.Format(Angela.Creature.Nothing, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;

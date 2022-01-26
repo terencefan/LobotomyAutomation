@@ -13,12 +13,16 @@
                 message = Message(Angela.Creature.BlueStarDie, agent, skill);
                 return false;
             }
-            else if (agent.prudenceLevel < 5)
+            return base.CanWorkWith(agent, skill, out message);
+        }
+
+        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
+        {
+            if (agent.prudenceLevel < 5)
             {
-                message = Message(Angela.Creature.BlueStarDecrease, agent, skill);
                 return false;
             }
-            return base.CanWorkWith(agent, skill, out message);
+            return base.CheckConfidence(agent, skill);
         }
     }
 }
