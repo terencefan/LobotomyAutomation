@@ -2,9 +2,9 @@
 {
     internal class BigBirdExt : ExpectGoodAndNormalExt
     {
-        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Attachment };
-
         public override bool IsUrgent => QliphothCounter < 5;
+
+        protected override SkillTypeInfo[] NormalSkillSets { get; } = { Instinct, Attachment };
 
         public BigBirdExt(CreatureModel creature) : base(creature)
         {

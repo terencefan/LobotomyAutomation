@@ -2,7 +2,7 @@
 {
     internal class CloudedMonkExt : ExpectGoodAndNormalExt
     {
-        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Insight, Attachment, Repression };
+        protected override SkillTypeInfo[] NormalSkillSets { get; } = { Insight, Attachment, Repression };
 
         public CloudedMonkExt(CreatureModel creature) : base(creature)
         {

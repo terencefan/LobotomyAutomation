@@ -2,11 +2,9 @@
 {
     internal class PorccubusExt : ExpectGoodAndNormalExt
     {
-        private static SkillTypeInfo[] TypeNormal { get; } = { Instinct, Insight, Attachment };
+        protected override SkillTypeInfo[] NormalSkillSets { get; } = { Instinct, Insight, Attachment };
 
-        private static SkillTypeInfo[] TypeGood { get; } = { Instinct };
-
-        public override SkillTypeInfo[] SkillSets => QliphothCounter == 1 ? TypeGood : TypeNormal;
+        protected override SkillTypeInfo[] GoodSkillSets { get; } = { Instinct };
 
         public PorccubusExt(CreatureModel creature) : base(creature)
         {

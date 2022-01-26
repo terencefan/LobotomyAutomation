@@ -2,7 +2,7 @@
 {
     internal class KingOfGreedExt : ExpectGoodAndNormalExt
     {
-        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Attachment, Repression };
+        protected override SkillTypeInfo[] NormalSkillSets { get; } = { Instinct, Attachment, Repression };
 
         public KingOfGreedExt(CreatureModel creature) : base(creature)
         {

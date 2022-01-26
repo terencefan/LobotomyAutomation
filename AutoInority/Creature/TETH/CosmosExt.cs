@@ -2,7 +2,7 @@
 {
     internal class CosmosExt : ExpectGoodAndNormalExt
     {
-        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Attachment, Repression };
+        protected override SkillTypeInfo[] NormalSkillSets { get; } = { Attachment, Repression };
 
         public CosmosExt(CreatureModel creature) : base(creature)
         {

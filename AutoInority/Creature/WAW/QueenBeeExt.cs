@@ -2,7 +2,7 @@
 {
     internal class QueenBeeExt : ExpectGoodAndNormalExt
     {
-        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Insight, Attachment };
+        protected override SkillTypeInfo[] NormalSkillSets { get; } = { Insight };
 
         public QueenBeeExt(CreatureModel creature) : base(creature)
         {

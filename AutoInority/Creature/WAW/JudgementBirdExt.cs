@@ -2,7 +2,7 @@
 {
     internal class JudgementBirdExt : ExpectGoodAndNormalExt
     {
-        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Instinct, Insight, Attachment };
+        protected override SkillTypeInfo[] NormalSkillSets { get; } = { Instinct, Insight, Attachment };
 
         public JudgementBirdExt(CreatureModel creature) : base(creature)
         {
