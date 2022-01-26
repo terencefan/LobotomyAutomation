@@ -15,6 +15,8 @@ namespace AutoInority.Creature
 
         protected static readonly SkillTypeInfo Repression = SkillTypeList.instance.GetData((long)RwbpType.P);
 
+        protected static readonly SkillTypeInfo[] All = new SkillTypeInfo[] { Instinct, Insight, Attachment, Repression };
+
         protected readonly CreatureModel _creature;
 
         public virtual bool AutoSuppress => _creature.GetRiskLevel() < 4;
@@ -23,17 +25,13 @@ namespace AutoInority.Creature
 
         public virtual SkillTypeInfo[] SkillSets { get; } = All;
 
-        protected static SkillTypeInfo[] All => new SkillTypeInfo[] { Instinct, Insight, Attachment, Repression };
-
-        protected IEnumerable<AgentModel> AllAgents => AgentManager.instance.GetAgentList();
-
         protected float CreatureEscapeConfidence => Automaton.Instance.CreatureEscapeConfidence;
 
         protected float DeadConfidence => Automaton.Instance.DeadConfidence;
 
         protected bool IsFarming => Automaton.Instance.FarmingCreatures.Contains(_creature);
 
-        protected virtual bool IsOverloaded => _creature.isOverloaded;
+        protected bool IsOverloaded => _creature.isOverloaded;
 
         protected int QliphothCounter => _creature.qliphothCounter;
 
@@ -120,7 +118,7 @@ namespace AutoInority.Creature
 
         public virtual IEnumerable<AgentModel> FindAgents(int distance)
         {
-            return AllAgents.Where(x => x.IsAvailable() && Graph.Distance(x, _creature) < distance);
+            return AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && Graph.Distance(x, _creature) < distance);
         }
 
         public float GoodConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), _creature.GoodBound() + 1);

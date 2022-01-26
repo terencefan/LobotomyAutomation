@@ -10,7 +10,7 @@
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            if (_creature.isOverloaded)
+            if (IsOverloaded)
             {
                 // Randomly pick an agent when overloaded.
                 return base.CanWorkWith(agent, skill, out message);
