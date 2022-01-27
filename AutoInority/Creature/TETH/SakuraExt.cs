@@ -8,7 +8,7 @@
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            if (IsOverloaded)
+            if (IsOverloaded || IsFarming)
             {
                 return base.CanWorkWith(agent, skill, out message);
             }

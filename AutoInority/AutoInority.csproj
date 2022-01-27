@@ -106,6 +106,7 @@
     <Compile Include="Creature\WAW\LittlePrinceExt.cs" />
     <Compile Include="Creature\WAW\MeatIdolExt.cs" />
     <Compile Include="Creature\WAW\NakedNestExt.cs" />
+    <Compile Include="Creature\WAW\ParasiteTreeExt.cs" />
     <Compile Include="Creature\WAW\QueenBeeExt.cs" />
     <Compile Include="Creature\WAW\SnowWhiteAppleExt.cs" />
     <Compile Include="Creature\ZAYIN\ArmyInBlackExt.cs" />

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 
 using AutoInority.Extentions;
 
@@ -7,8 +6,6 @@ namespace AutoInority.Creature
 {
     public abstract class BaseCreatureExt : ICreatureExtension
     {
-        protected static readonly SkillTypeInfo[] All = new SkillTypeInfo[] { Instinct, Insight, Attachment, Repression };
-
         protected static readonly SkillTypeInfo Attachment = SkillTypeList.instance.GetData((long)RwbpType.B);
 
         protected static readonly SkillTypeInfo Insight = SkillTypeList.instance.GetData((long)RwbpType.W);
@@ -23,7 +20,7 @@ namespace AutoInority.Creature
 
         public virtual bool IsUrgent => false;
 
-        public virtual SkillTypeInfo[] SkillSets { get; } = All;
+        public virtual SkillTypeInfo[] SkillSets { get; } = { Attachment, Insight, Instinct, Repression };
 
         protected float CreatureEscapeConfidence => Automaton.Instance.CreatureEscapeConfidence;
 

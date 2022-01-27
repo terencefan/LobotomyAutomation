@@ -165,17 +165,9 @@ namespace AutoInority
                 {
                     if (candidate.Agent.IsAvailable() && candidate.Creature.IsAvailable())
                     {
-                        var node1 = candidate.Creature.GetWorkspaceNode();
-                        Log.Debug($"{node1.GetId()}");
-                        var nodes = node1.GetEdges().Select(x => x.ConnectedNode(node1));
-                        foreach (var node in nodes)
-                        {
-                            Log.Debug($"{node.GetId()}");
-                        }
-
-                        var target = MapGraph.instance.GetNodeById(node1.GetId().Split('@')[0]);
-                        candidate.Agent.SetWaitingPassage(target.GetAttachedPassage());
-
+                        var workspaceNode = candidate.Creature.GetWorkspaceNode();
+                        var passageNode = MapGraph.instance.GetNodeById(workspaceNode.GetId().Split('@')[0]);
+                        candidate.Agent.SetWaitingPassage(passageNode.GetAttachedPassage());
                         candidate.Apply();
                         return true;
                     }

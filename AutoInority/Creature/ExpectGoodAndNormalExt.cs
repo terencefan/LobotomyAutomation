@@ -6,7 +6,7 @@
 
         protected virtual SkillTypeInfo[] GoodSkillSets => NormalSkillSets;
 
-        protected virtual SkillTypeInfo[] NormalSkillSets { get; } = All;
+        protected virtual SkillTypeInfo[] NormalSkillSets { get; } = { Instinct, Insight, Attachment, Repression };
 
         public ExpectGoodAndNormalExt(CreatureModel creature) : base(creature)
         {
