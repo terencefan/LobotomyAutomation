@@ -7,6 +7,8 @@ namespace AutoInority.Creature
 {
     public abstract class BaseCreatureExt : ICreatureExtension
     {
+        protected static readonly SkillTypeInfo[] All = new SkillTypeInfo[] { Instinct, Insight, Attachment, Repression };
+
         protected static readonly SkillTypeInfo Attachment = SkillTypeList.instance.GetData((long)RwbpType.B);
 
         protected static readonly SkillTypeInfo Insight = SkillTypeList.instance.GetData((long)RwbpType.W);
@@ -15,11 +17,9 @@ namespace AutoInority.Creature
 
         protected static readonly SkillTypeInfo Repression = SkillTypeList.instance.GetData((long)RwbpType.P);
 
-        protected static readonly SkillTypeInfo[] All = new SkillTypeInfo[] { Instinct, Insight, Attachment, Repression };
-
         protected readonly CreatureModel _creature;
 
-        public virtual bool AutoSuppress => _creature.GetRiskLevel() < 4;
+        public virtual bool AutoSuppress => _creature.GetRiskLevel() < (int)RiskLevel.WAW;
 
         public virtual bool IsUrgent => false;
 
@@ -116,11 +116,6 @@ namespace AutoInority.Creature
             return !agent.HasGift(_creature, out var gift) && gift != null && !agent.IsRegionLocked(gift, out _);
         }
 
-        public virtual IEnumerable<AgentModel> FindAgents(int distance)
-        {
-            return AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && Graph.Distance(x, _creature) < distance);
-        }
-
         public float GoodConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), _creature.GoodBound() + 1);
 
         public float LessThanGoodConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), 0, _creature.GoodBound());
@@ -135,8 +130,38 @@ namespace AutoInority.Creature
 
         protected virtual float CalculateWorkSuccessProb(AgentModel agent, SkillTypeInfo skill)
         {
-            return _creature.CalculateWorkSuccessProb(agent, skill);
+            Log.Debug(_creature.metaInfo.name);
+            float prob = _creature.GetWorkSuccessProb(agent, skill);
+            prob += _creature.GetObserveBonusProb() / 100f;
+            prob += _creature.script.OnBonusWorkProb() / 100f;
+            prob += agent.workProb / 500f;
+            prob += agent.Equipment.GetWorkProbSpecialBonus(agent, skill) / 500f;
+
+            if (agent.GetUnitBufList().Count > 0)
+            {
+                foreach (UnitBuf unitBuf in agent.GetUnitBufList())
+                {
+                    prob += unitBuf.GetWorkProbSpecialBonus(agent, skill) / 100f;
+                }
+            }
+
+            prob = _creature.script.TranformWorkProb(prob);
+            if (prob > 0.95f)
+            {
+                prob = 0.95f;
+            }
+
+            float num = _creature.GetRedusedWorkProbByCounter() / 100f;
+            float num2 = _creature.ProbReductionValue / 100f;
+            prob = !(num2 > 0f) ? prob - num : prob - num2;
+            if (_creature.sefira.agentDeadPenaltyActivated)
+            {
+                prob -= 0.5f;
+            }
+            return prob > 0 ? prob : 0;
         }
+
+        protected float CalculateWorkTime(AgentModel agent) => _creature.metaInfo.feelingStateCubeBounds.GetLastBound() / _creature.CalculateWorkSpeed(agent);
 
         protected virtual float GetDamageMultiplierInWork(AgentModel agent, SkillTypeInfo skill)
         {

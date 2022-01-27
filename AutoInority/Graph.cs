@@ -42,7 +42,7 @@ namespace AutoInority
         public static float Distance(AgentModel agent, CreatureModel creature)
         {
             var node1 = agent.GetCurrentNode() ?? agent.GetCurrentEdge().node1;
-            var node2 = creature.GetWorkspaceNode();
+            var node2 = creature.state == CreatureState.ESCAPE ? (creature.GetCurrentNode() ?? creature.GetCurrentEdge().node1) : creature.GetWorkspaceNode();
             return NodeDistance(node1, node2);
         }
 

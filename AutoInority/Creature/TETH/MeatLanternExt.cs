@@ -1,6 +1,4 @@
-﻿using AutoInority.Extentions;
-
-namespace AutoInority.Creature
+﻿namespace AutoInority.Creature
 {
     internal class MeatLanternExt : ExpectNormalExt
     {
@@ -10,7 +8,7 @@ namespace AutoInority.Creature
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            if (_creature.CalculateWorkTime(agent) < 41)
+            if (CalculateWorkTime(agent) < 41)
             {
                 message = "";
                 return false;

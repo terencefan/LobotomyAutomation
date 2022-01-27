@@ -14,45 +14,11 @@ namespace AutoInority.Extentions
 {
     public static class CreatureModelExtensions
     {
-        private static Dictionary<CreatureModel, ICreatureExtension> _dict = new Dictionary<CreatureModel, ICreatureExtension>();
+        private static readonly Dictionary<CreatureModel, ICreatureExtension> _dict = new Dictionary<CreatureModel, ICreatureExtension>();
 
-        private static Dictionary<CreatureModel, ICreatureKitExtension> _kitDict = new Dictionary<CreatureModel, ICreatureKitExtension>();
+        private static readonly Dictionary<CreatureModel, ICreatureKitExtension> _kitDict = new Dictionary<CreatureModel, ICreatureKitExtension>();
 
         public static float CalculateWorkSpeed(this CreatureModel creature, AgentModel agent) => creature.GetCubeSpeed() * (1f + (creature.GetObserveBonusSpeed() + agent.workSpeed) / 100f);
-
-        public static float CalculateWorkSuccessProb(this CreatureModel creature, AgentModel agent, SkillTypeInfo skill)
-        {
-            float prob = creature.GetWorkSuccessProb(agent, skill);
-            prob += creature.GetObserveBonusProb() / 100f;
-            prob += creature.script.OnBonusWorkProb() / 100f;
-            prob += agent.workProb / 500f;
-            prob += agent.Equipment.GetWorkProbSpecialBonus(agent, skill) / 500f;
-
-            if (agent.GetUnitBufList().Count > 0)
-            {
-                foreach (UnitBuf unitBuf in agent.GetUnitBufList())
-                {
-                    prob += unitBuf.GetWorkProbSpecialBonus(agent, skill) / 100f;
-                }
-            }
-
-            prob = creature.script.TranformWorkProb(prob);
-            if (prob > 0.95f)
-            {
-                prob = 0.95f;
-            }
-
-            float num = creature.GetRedusedWorkProbByCounter() / 100f;
-            float num2 = creature.ProbReductionValue / 100f;
-            prob = !(num2 > 0f) ? prob - num : prob - num2;
-            if (creature.sefira.agentDeadPenaltyActivated)
-            {
-                prob -= 0.5f;
-            }
-            return prob > 0 ? prob : 0;
-        }
-
-        public static float CalculateWorkTime(this CreatureModel creature, AgentModel agent) => creature.metaInfo.feelingStateCubeBounds.GetLastBound() / creature.CalculateWorkSpeed(agent);
 
         public static IEnumerable<CreatureModel> FilterUrgent(this IEnumerable<CreatureModel> creatures)
         {
@@ -64,10 +30,15 @@ namespace AutoInority.Extentions
             var candidates = new List<Candidate>();
             foreach (var creature in creatures)
             {
-                var agents = creature.GetExtension().FindAgents(distance);
+                var agents = creature.FindAgents(distance);
                 candidates.AddRange(Candidate.Suggest(agents, creature));
             }
             return candidates;
+        }
+
+        public static IEnumerable<AgentModel> FindAgents(this CreatureModel creature, int distance = 80)
+        {
+            return AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && Graph.Distance(x, creature) < distance);
         }
 
         public static ICreatureExtension GetExtension(this CreatureModel model)

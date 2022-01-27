@@ -109,6 +109,26 @@ namespace AutoInority.Extentions
             }
         }
 
+        public static void SetWaitingPassage(this AgentModel agent, PassageObjectModel passage = null)
+        {
+            if (passage == null)
+            {
+                var node = MapGraph.instance.GetSepiraNodeByRandom(agent.currentSefira);
+                passage = node?.GetAttachedPassage();
+            }
+            if (passage == null)
+            {
+                return;
+            }
+            agent.SetWaitingPassage(passage);
+            var passageObject = SefiraMapLayer.instance.GetPassageObject(passage);
+            if (passageObject != null)
+            {
+                passageObject.OnPointEnter();
+                passageObject.OnPointerClick();
+            }
+        }
+
         public static string Tag(this AgentModel agent) => $"<color=#66bfcd>{agent.name}</color>";
 
         public static int TotalStats(this AgentModel agent)

@@ -8,7 +8,10 @@
 
         public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
         {
-            // TODO check work time
+            if (CalculateWorkTime(agent) > 40)
+            {
+                return false;
+            }
             return base.CheckConfidence(agent, skill);
         }
     }

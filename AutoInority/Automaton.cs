@@ -107,6 +107,7 @@ namespace AutoInority
                     }
                     else if (macro.ForGift && agent.HasGift(macro.Creature, out var gift))
                     {
+                        agent.ResetWaitingPassage();
                         Remove(agent);
                     }
                     else if (macro.ForExp && agent.HasReachedExpLimit(skill.rwbpType, out var skillName))
@@ -150,6 +151,7 @@ namespace AutoInority
             // parse macro / farm when handling ordeals.
             if (InEmergency)
             {
+                AgentManager.instance.GetAgentList().ToList().ForEach(x => x.SetWaitingPassage());
                 return;
             }
 
@@ -309,10 +311,11 @@ namespace AutoInority
                 Log.Debug($"{creature.metaInfo.name} escaped.");
                 if (creature.GetExtension().AutoSuppress)
                 {
-                    creature.GetExtension().FindAgents(100).FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
+                    creature.FindAgents(100).FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
                 }
             }
         }
+
         private void SuppressOrdealCreature(OrdealCreatureModel creature)
         {
             if (creature.state == CreatureState.SUPPRESSED || creature.state == CreatureState.SUPPRESSED_RETURN)
@@ -333,14 +336,14 @@ namespace AutoInority
                 case nameof(MachineNoon):
                 case nameof(CircusDusk):
                 case nameof(MachineDusk):
-                    var agents = sefira.FindNearestAgents().FilterCanSuppress(creature).ToList();
+                    var agents = creature.FindAgents(80).FilterCanSuppress(creature).ToList();
                     if (agents.Count > 0)
                     {
                         agents.ForEach(x => x.Suppress(creature));
                     }
                     else
                     {
-                        agents = sefira.FindNearestAgents(true).FilterCanSuppress(creature).ToList();
+                        agents = creature.FindAgents(200).FilterCanSuppress(creature).ToList();
                         agents.ForEach(x => x.Suppress(creature));
                     }
                     return;

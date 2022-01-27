@@ -80,15 +80,5 @@ namespace AutoInority.Extentions
             var elevator = passages.Where(x => x.isActivate && x.GetSrc() == "Map/Passage/Yesod/PassageYesodElevator" && x.passageGroup == "1").First();
             sefira.agentList.ForEach(x => x.SetWaitingPassage(elevator));
         }
-
-        public static IEnumerable<AgentModel> FindNearestAgents(this Sefira sefira, bool extend = false)
-        {
-            var s = new HashSet<SefiraEnum>() { sefira.sefiraEnum };
-            if (extend)
-            {
-                s.UnionWith(GetNeighborEnums(sefira.sefiraEnum));
-            }
-            return AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && s.Contains(x.GetActualSefira().sefiraEnum));
-        }
     }
 }

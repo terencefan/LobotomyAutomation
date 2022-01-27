@@ -1,6 +1,6 @@
 ﻿namespace AutoInority.Creature
 {
-    class TheresiaExt : ChannelKitExt
+    internal class TheresiaExt : ChannelKitExt
     {
         public TheresiaExt(CreatureModel kit) : base(kit)
         {

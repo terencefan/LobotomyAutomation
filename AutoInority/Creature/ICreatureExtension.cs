@@ -26,8 +26,6 @@ namespace AutoInority.Creature
 
         bool FarmFilter(AgentModel agent);
 
-        IEnumerable<AgentModel> FindAgents(int distance);
-
         bool TryGetEGOGift(out EquipmentTypeInfo gift);
     }
 }
