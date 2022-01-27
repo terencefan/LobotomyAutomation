@@ -120,7 +120,34 @@ namespace AutoInority
             }
         }
 
-        public void ManageCreatures(CreatureManager manager)
+        public void HandleUncontrollable()
+        {
+            foreach (var model in WorkerManager.instance.GetWorkerList().Where(x => x.unconAction != null))
+            {
+                if (model.unconAction is Uncontrollable_RedShoesAttract)
+                {
+                    model.unconAction.OnClick();
+                }
+                else if (model.unconAction is Uncontrollable_Yggdrasil)
+                {
+                    model.unconAction.OnClick();
+                }
+                else if (model.unconAction is Uncontrollable_Baku)
+                {
+                    model.unconAction.OnClick();
+                }
+                else if (model.unconAction is Uncontrollable_YoungPrince)
+                {
+                    model.unconAction.OnClick();
+                }
+                else if (model.unconAction is Uncontrollable_Sakura)
+                {
+                    model.unconAction.OnClick();
+                }
+            }
+        }
+
+        public void ManageCreatures()
         {
             if (!Running)
             {
@@ -128,7 +155,7 @@ namespace AutoInority
             }
 
             // handle Qliphoth meltdown events for kits
-            foreach (var kit in manager.GetCreatureList().Where(x => x.IsKit()))
+            foreach (var kit in CreatureManager.instance.GetCreatureList().Where(x => x.IsKit()))
             {
                 HandleKitEvents(kit);
             }

@@ -425,7 +425,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is Yggdrasil)
             {
-                // TODO Parasite Tree
+                return new ParasiteTreeExt(model);
             }
             else if (model.script is QueenBee)
             {

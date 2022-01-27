@@ -103,7 +103,7 @@ namespace AutoInority
 
             public const string RedShoes = "我不认为安排{0}去对{1}进行{2}是一个好主意，很明显{0}还不如您自律。";
 
-            public const string Sakura = "本次对{1}的工作将会导致设施内的员工对其着魔，不过我相信你应该已经准备好镇压了。";
+            public const string Sakura = "本次对{1}的工作将会导致数名设施内的员工对其着魔，不过我相信你应该已经准备好镇压了。";
 
             public const string Shark = "安排{0}对{1}进行{2}是非常不明智的行为，你是不是应该多思考一下。";
 
@@ -132,6 +132,8 @@ namespace AutoInority
             public const string Porccubus = "以{0}的自律能力应该无法抵挡来自{1}的死亡诱惑吧，你应该开始这位员工的善后准备了。";
 
             public const string Woodsman = "没有心脏的{1}将会斩首任何接近他的员工，而{0}将会成为因你而死的受害者。";
+
+            public const string ParasiteTree = "{1}已经祝福过你的四个员工了，我相信你不会想看到第五个员工被它祝福。";
         }
     }
 }
