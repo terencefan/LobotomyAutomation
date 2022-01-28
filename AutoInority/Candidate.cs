@@ -16,8 +16,6 @@ namespace AutoInority
 
         public double FarmConfidence { get; private set; }
 
-        public float GoodConfidence { get; private set; }
-
         public bool HasAnotherGift { get; private set; }
 
         public bool HasGift { get; private set; }
@@ -34,19 +32,24 @@ namespace AutoInority
             Creature = creature;
             Skill = skill;
             Distance = Graph.Distance(agent, creature);
-            GoodConfidence = creature.GetExtension().GoodConfidence(agent, skill);
             HasGift = agent.HasGift(creature, out var gift);
             HasAnotherGift = agent.HasAnotherGift(gift);
             HasReachedExpLimit = agent.HasReachedExpLimit(skill.rwbpType, out _);
 
             var ext = creature.GetExtension();
-            ManageConfidence = GoodConfidence - 0.002 * Distance - ext.ConfidencePenalty(agent, skill);
-            FarmConfidence = GoodConfidence - 0.001 * Distance - (HasReachedExpLimit ? 0.2 : 0) - (HasGift || HasAnotherGift ? 0.5 : 0) - ext.ConfidencePenalty(agent, skill);
+            var confidence = ext.GetConfidence(agent, skill);
+            ManageConfidence = confidence * (1 - 0.002 * Distance) * ext.ConfidenceMultiplifier(agent, skill);
+            FarmConfidence = confidence * (1 - 0.001 * Distance) * (HasReachedExpLimit ? 0.8 : 1) * (HasGift || HasAnotherGift ? 0.5 : 1) * ext.ConfidenceMultiplifier(agent, skill);
         }
 
         public static int FarmComparer(Candidate x, Candidate y) => y.FarmConfidence.CompareTo(x.FarmConfidence);
 
-        public static int ManageComparer(Candidate x, Candidate y) => y.ManageConfidence.CompareTo(x.ManageConfidence);
+        public static int ManageComparer(Candidate x, Candidate y)
+        {
+            var mx = x.ManageConfidence + x.Creature.GetRiskLevel();
+            var my = x.ManageConfidence + y.Creature.GetRiskLevel();
+            return my.CompareTo(mx);
+        }
 
         public static List<Candidate> Suggest(IEnumerable<AgentModel> agents, IEnumerable<CreatureModel> creatures, HashSet<RwbpType> types = null)
         {
@@ -102,6 +105,6 @@ namespace AutoInority
 
         public bool IsAvailable() => Agent.IsAvailable() && Creature.IsAvailable();
 
-        public override string ToString() => $"{Agent.name}: {GoodConfidence}, Distance: {Distance}, HasGift: {HasGift}, HasAnotherGift: {HasAnotherGift}, Exp: {HasReachedExpLimit}";
+        public override string ToString() => $"{Agent.name} ({FarmConfidence}, {ManageConfidence}), Distance: {Distance}, HasGift: {HasGift}, HasAnotherGift: {HasAnotherGift}, Exp: {HasReachedExpLimit}";
     }
 }

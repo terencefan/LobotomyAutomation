@@ -10,6 +10,6 @@
         {
         }
 
-        public override float ConfidencePenalty(AgentModel agent, SkillTypeInfo skill) => agent.prudenceLevel > 2 ? 0.2f : 0;
+        public override float ConfidenceMultiplifier(AgentModel agent, SkillTypeInfo skill) => agent.prudenceLevel > 2 ? 0.5f : 1;
     }
 }
