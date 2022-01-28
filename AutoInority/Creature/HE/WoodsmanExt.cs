@@ -16,17 +16,13 @@
             return base.CanWorkWith(agent, skill, out message);
         }
 
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
+        public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
         {
             if (agent.prudenceLevel > 2)
             {
-                if (IsOverloaded && QliphothCounter > 0)
-                {
-                    return base.CheckConfidence(agent, skill);
-                }
-                return false;
+                return IsOverloaded;
             }
-            return base.CheckConfidence(agent, skill);
+            return base.CheckWorkConfidence(agent, skill);
         }
     }
 }

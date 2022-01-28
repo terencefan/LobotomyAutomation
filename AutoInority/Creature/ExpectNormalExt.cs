@@ -6,18 +6,18 @@
         {
         }
 
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
+        public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
         {
             var confidence = NormalConfidence(agent, skill);
-            if (QliphothCounter > 1 && confidence < Automaton.Instance.CounterDecreaseConfidence)
+            if (QliphothCounter > 1 && confidence > Automaton.Instance.CounterDecreaseConfidence)
             {
-                return false;
+                return true;
             }
-            else if (confidence < CreatureEscapeConfidence)
+            else if (confidence > CreatureEscapeConfidence)
             {
-                return false;
+                return true;
             }
-            return base.CheckConfidence(agent, skill);
+            return false;
         }
     }
 }

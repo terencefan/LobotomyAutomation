@@ -10,9 +10,6 @@
         {
         }
 
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
-        {
-            return NormalConfidence(agent, skill) > DeadConfidence && base.CheckConfidence(agent, skill);
-        }
+        public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill) => NormalConfidence(agent, skill) > DeadConfidence;
     }
 }

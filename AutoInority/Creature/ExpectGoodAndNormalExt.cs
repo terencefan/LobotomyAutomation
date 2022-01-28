@@ -12,12 +12,7 @@
         {
         }
 
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
-        {
-            return CheckGoodNormal(agent, skill) && base.CheckConfidence(agent, skill);
-        }
-
-        protected virtual bool CheckGoodNormal(AgentModel agent, SkillTypeInfo skill)
+        public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
         {
             if (QliphothCounter > 1 || (IsFarming && AutoSuppress))
             {

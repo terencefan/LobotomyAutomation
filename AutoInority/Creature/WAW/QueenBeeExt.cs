@@ -8,13 +8,13 @@
         {
         }
 
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
+        public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
         {
             if (IsFarming && NormalConfidence(agent, skill) > CreatureEscapeConfidence)
             {
-                return CheckSurvive(agent, skill);
+                return true;
             }
-            return base.CheckConfidence(agent, skill);
+            return base.CheckWorkConfidence(agent, skill);
         }
     }
 }

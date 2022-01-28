@@ -6,13 +6,9 @@
         {
         }
 
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
+        public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
         {
-            if (CalculateWorkTime(agent) > 40)
-            {
-                return false;
-            }
-            return base.CheckConfidence(agent, skill);
+            return CalculateWorkTime(agent) < 40 && base.CheckWorkConfidence(agent, skill);
         }
     }
 }
