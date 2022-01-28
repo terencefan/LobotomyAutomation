@@ -40,6 +40,10 @@ namespace AutoInority.Creature
             _creature = creature;
         }
 
+        protected BaseCreatureExt()
+        {
+        }
+
         public virtual bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
             message = null;
@@ -89,8 +93,6 @@ namespace AutoInority.Creature
             return CheckWorkConfidence(agent, skill) && CheckSurvive(agent, skill);
         }
 
-        public virtual bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill) => true;
-
         public bool CheckSurvive(AgentModel agent, SkillTypeInfo skill)
         {
             var workSuccessProb = CalculateWorkSuccessProb(agent, skill);
@@ -121,12 +123,16 @@ namespace AutoInority.Creature
             return false;
         }
 
-        public virtual float ConfidencePenalty(AgentModel agent, SkillTypeInfo skill) => 0f;
+        public virtual bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill) => true;
+
+        public virtual float ConfidenceMultiplifier(AgentModel agent, SkillTypeInfo skill) => 1;
 
         public virtual bool FarmFilter(AgentModel agent)
         {
             return !agent.HasGift(_creature, out var gift) && gift != null && !agent.IsRegionLocked(gift, out _);
         }
+
+        public virtual float GetConfidence(AgentModel agent, SkillTypeInfo skill) => GoodConfidence(agent, skill);
 
         public float GoodConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), _creature.GoodBound() + 1);
 

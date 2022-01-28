@@ -20,6 +20,6 @@
             return base.CanWorkWith(agent, skill, out message);
         }
 
-        public override float ConfidencePenalty(AgentModel agent, SkillTypeInfo skill) => agent.fortitudeLevel > 3 ? 0.2f : 0;
+        public override float ConfidenceMultiplifier(AgentModel agent, SkillTypeInfo skill) => agent.fortitudeLevel > 3 ? 0.5f : 1;
     }
 }

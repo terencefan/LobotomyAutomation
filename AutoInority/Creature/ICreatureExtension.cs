@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace AutoInority.Creature
+﻿namespace AutoInority.Creature
 {
     public interface ICreatureExtension
     {
@@ -12,19 +10,13 @@ namespace AutoInority.Creature
 
         bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message);
 
-        #region Confidence
-
         bool CheckConfidence(AgentModel agent, SkillTypeInfo skill);
 
-        float ConfidencePenalty(AgentModel agent, SkillTypeInfo skill);
-
-        float GoodConfidence(AgentModel agent, SkillTypeInfo skill);
-
-        float NormalConfidence(AgentModel agent, SkillTypeInfo skill);
-
-        #endregion Confidence
+        float ConfidenceMultiplifier(AgentModel agent, SkillTypeInfo skill);
 
         bool FarmFilter(AgentModel agent);
+
+        float GetConfidence(AgentModel agent, SkillTypeInfo skill);
 
         bool TryGetEGOGift(out EquipmentTypeInfo gift);
     }

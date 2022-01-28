@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 
+using AutoInority.Extentions;
+
 namespace AutoInority.Creature
 {
     internal class HellTrainExt : BaseKitExt
@@ -18,8 +20,10 @@ namespace AutoInority.Creature
             {
                 return;
             }
-            Handle();
-
+            else if (_kit.IsAvailable())
+            {
+                Handle();
+            }
             base.OnFixedUpdate();
         }
     }

@@ -17,10 +17,10 @@ namespace AutoInority.Creature
             _to = _creature.GoodBound();
         }
 
-        public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
+        public override float GetConfidence(AgentModel agent, SkillTypeInfo skill)
         {
             var rate = CalculateWorkSuccessProb(agent, skill);
-            return Confidence.InRange(_max, rate, _from, _to) > 0.8f;
+            return Confidence.InRange(_max, rate, _from, _to);
         }
     }
 }

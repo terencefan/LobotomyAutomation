@@ -42,7 +42,7 @@ namespace AutoInority
             var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable());
 
             var candidates = Candidate.Suggest(agents, new[] { creature });
-            candidates.Sort(Candidate.ManageComparer);
+            candidates.Sort(Candidate.FarmComparer);
 
             Log.Info($"Found {agents.Count()} agents for {creature.Tag()}, candidates: {candidates.Count}");
 
