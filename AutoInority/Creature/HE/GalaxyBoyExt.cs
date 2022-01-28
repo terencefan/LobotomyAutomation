@@ -8,9 +8,9 @@
         {
         }
 
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
+        public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
         {
-            return (agent.HasUnitBuf(UnitBufType.FRIEND_TOKEN) || CenterBrain.BlessedCount < 3) && base.CheckConfidence(agent, skill);
+            return agent.HasUnitBuf(UnitBufType.FRIEND_TOKEN) || CenterBrain.BlessedCount < 3;
         }
     }
 }

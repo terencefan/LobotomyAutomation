@@ -84,7 +84,12 @@ namespace AutoInority.Creature
             return true;
         }
 
-        public virtual bool CheckConfidence(AgentModel agent, SkillTypeInfo skill) => CheckSurvive(agent, skill);
+        public bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
+        {
+            return CheckWorkConfidence(agent, skill) && CheckSurvive(agent, skill);
+        }
+
+        public virtual bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill) => true;
 
         public bool CheckSurvive(AgentModel agent, SkillTypeInfo skill)
         {

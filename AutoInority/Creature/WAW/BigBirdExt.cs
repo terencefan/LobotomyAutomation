@@ -10,13 +10,9 @@
         {
         }
 
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
+        public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
         {
-            if (QliphothCounter < 3 && NormalConfidence(agent, skill) < CreatureEscapeConfidence)
-            {
-                return false;
-            }
-            return base.CheckConfidence(agent, skill);
+            return IsUrgent ? GoodConfidence(agent, skill) > 0.8f : base.CheckWorkConfidence(agent, skill);
         }
     }
 }

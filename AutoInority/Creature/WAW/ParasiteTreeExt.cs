@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 
-using AutoInority.Extentions;
-
 namespace AutoInority.Creature
 {
     internal class ParasiteTreeExt : BaseCreatureExt
@@ -21,19 +19,10 @@ namespace AutoInority.Creature
         {
             if (BlessedList.Count >= 4 && !BlessedList.Contains(agent))
             {
-                message = null;
+                message = Message(Angela.Creature.ParasiteTree, agent, skill);
                 return false;
             }
             return base.CanWorkWith(agent, skill, out message);
-        }
-
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
-        {
-            if (IsFarming && agent.HasGift(_creature, out _))
-            {
-                return false;
-            }
-            return base.CheckConfidence(agent, skill);
         }
     }
 }

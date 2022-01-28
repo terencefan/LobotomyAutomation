@@ -16,13 +16,6 @@
             return base.CanWorkWith(agent, skill, out message);
         }
 
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
-        {
-            if (agent.prudenceLevel < 5)
-            {
-                return false;
-            }
-            return base.CheckConfidence(agent, skill);
-        }
+        public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill) => agent.prudenceLevel == 5;
     }
 }

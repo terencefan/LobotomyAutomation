@@ -8,13 +8,9 @@
         {
         }
 
-        public override bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
+        public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
         {
-            if (IsOverloaded || IsFarming)
-            {
-                return base.CheckConfidence(agent, skill);
-            }
-            return NormalConfidence(agent, skill) > CreatureEscapeConfidence;
+            return IsOverloaded || IsFarming || NormalConfidence(agent, skill) > CreatureEscapeConfidence;
         }
     }
 }
