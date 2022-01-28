@@ -12,8 +12,7 @@ namespace AutoInority.Creature
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            var record = CenterBrain.FindLastRecord(_creature);
-            if (record != null && record.Agent.name == agent.name)
+            if (agent.GetRecentWorkedCreature()?.script is HappyTeddy)
             {
                 message = string.Format(Angela.Creature.HappyTeddy, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;

@@ -5,6 +5,7 @@ using System.Reflection;
 
 using AutoInority.Creature;
 using AutoInority.Creature.TETH;
+using AutoInority.Creature.WAW;
 
 using UnityEngine;
 
@@ -295,7 +296,7 @@ namespace AutoInority.Extentions
             }
             else if (script is Yang)
             {
-                // TODO
+                return new YangExt(model);
             }
             else if (script is YouMustHappy)
             {
@@ -385,11 +386,11 @@ namespace AutoInority.Extentions
             }
             else if (model.script is Alriune)
             {
-                // TODO
+                return new AlriuneExt(model);
             }
             else if (model.script is BigBadWolf)
             {
-                // TODO
+                return new BigBadWolfExt(model);
             }
             else if (model.script is BigBird)
             {
@@ -417,11 +418,11 @@ namespace AutoInority.Extentions
             }
             else if (model.script is Piano)
             {
-                // TODO
+                return new LunaExt(model);
             }
             else if (model.script is RedHood)
             {
-                // TODO
+                return new RedHoodExt(model);
             }
             else if (model.script is Yggdrasil)
             {
@@ -465,7 +466,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is Yin)
             {
-                // TODO
+                return new YinExt(model);
             }
             return new ExpectGoodAndNormalExt(model);
         }

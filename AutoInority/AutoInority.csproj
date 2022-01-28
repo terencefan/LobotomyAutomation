@@ -92,6 +92,8 @@
     <Compile Include="Creature\TETH\SpiderBudExt.cs" />
     <Compile Include="Creature\TETH\TheresiaExt.cs" />
     <Compile Include="Creature\TETH\VoidDreamExt.cs" />
+    <Compile Include="Creature\WAW\AlriuneExt.cs" />
+    <Compile Include="Creature\WAW\BigBadWolfExt.cs" />
     <Compile Include="Creature\WAW\BigBirdExt.cs" />
     <Compile Include="Creature\WAW\BlackSwanExt.cs" />
     <Compile Include="Creature\WAW\BloodyTreeExt.cs" />
@@ -108,8 +110,12 @@
     <Compile Include="Creature\WAW\MeatIdolExt.cs" />
     <Compile Include="Creature\WAW\NakedNestExt.cs" />
     <Compile Include="Creature\WAW\ParasiteTreeExt.cs" />
+    <Compile Include="Creature\WAW\LunaExt.cs" />
     <Compile Include="Creature\WAW\QueenBeeExt.cs" />
+    <Compile Include="Creature\WAW\RedHoodExt.cs" />
     <Compile Include="Creature\WAW\SnowWhiteAppleExt.cs" />
+    <Compile Include="Creature\WAW\YangExt.cs" />
+    <Compile Include="Creature\WAW\YinExt.cs" />
     <Compile Include="Creature\ZAYIN\ArmyInBlackExt.cs" />
     <Compile Include="Creature\ZAYIN\BaldExt.cs" />
     <Compile Include="Creature\ZAYIN\DontTouchMeExt.cs" />
