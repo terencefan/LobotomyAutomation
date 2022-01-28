@@ -72,7 +72,7 @@ namespace AutoInority
                     Log.Info("taking damage");
                     if (agent.hp < 0.25 * agent.maxHp || agent.mental < 0.25 * agent.maxMental)
                     {
-                        agent.ReturnToSefira();
+                        agent.ResetWaitingPassage();
                     }
                     return;
             }

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Reflection;
 
 using AutoInority.Extentions;
 
@@ -70,6 +71,15 @@ namespace AutoInority.Creature
                     message = Message(Angela.Creature.ArmorKill, agent, skill);
                     return false;
                 }
+            }
+
+            // GalaxyBoy
+            var buf = agent.GetUnitBufByType(UnitBufType.FRIEND_TOKEN);
+            if (buf != null)
+            {
+                var field = typeof(FriendTokenBuf).GetField("baseCreature", BindingFlags.NonPublic | BindingFlags.Instance);
+                var creature = (GalaxyBoy)field.GetValue(buf);
+                return Script is GalaxyBoy || creature.model.qliphothCounter > 3;
             }
             return true;
         }

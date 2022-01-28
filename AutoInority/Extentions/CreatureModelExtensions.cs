@@ -217,7 +217,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is GalaxyBoy)
             {
-                // TODO The Child of Galaxy
+                return new GalaxyBoyExt(model);
             }
             else if (model.script is SnowQueen)
             {

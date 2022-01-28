@@ -87,6 +87,7 @@ namespace AutoInority
         public static void GameManager_EndGame()
         {
             Invoke(Automaton.Reset);
+            Invoke(CenterBrain.Reset);
         }
 
         public static void Initialize_Graph(GameManager __instance)

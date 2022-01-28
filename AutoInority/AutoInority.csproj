@@ -54,6 +54,7 @@
     <Compile Include="Creature\ExpectNormalExt.cs" />
     <Compile Include="Creature\HE\ButterflyExt.cs" />
     <Compile Include="Creature\HE\DerFreischutzExt.cs" />
+    <Compile Include="Creature\HE\GalaxyBoyExt.cs" />
     <Compile Include="Creature\HE\HappyTeddyExt.cs" />
     <Compile Include="Creature\HE\HelperExt.cs" />
     <Compile Include="Creature\HE\LaetitiaExt.cs" />
