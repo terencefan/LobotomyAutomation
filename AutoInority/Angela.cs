@@ -138,6 +138,10 @@ namespace AutoInority
             public const string BigBadWolf = "{1}能够在{0}身上感知到小红帽雇佣兵的气息，这应该会让它非常的不高兴。";
 
             public const string RedHood = "{1}能够在{0}身上感知到又大有可能很坏的狼的气息，这应该会让它非常的不高兴。";
+
+            public const string MeltingLove = "对{1}进行{2}会导致{0}被粘液感染，希望你已经做好了隔离准备。";
+
+            public const string BodyMountain = "{1}很喜欢受伤的员工 ———— 虽然这并不意味着安排这个工作是明智的。";
         }
     }
 }
