@@ -108,10 +108,6 @@ namespace AutoInority.Extentions
             {
                 throw new Exception("Risk level mismatch");
             }
-            else if (model.script is BossBird)
-            {
-                // TODO
-            }
             else if (model.script is BlueStar)
             {
                 return new BlueStarExt(model);
@@ -122,7 +118,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is SlimeGirl)
             {
-                // TODO Melting Love
+                return new MeltingLoveExt(model);
             }
             else if (model.script is Nothing)
             {
@@ -130,11 +126,11 @@ namespace AutoInority.Extentions
             }
             else if (model.script is DangoCreature)
             {
-                // TODO The Mountain of Smiling Bodies
+                return new SmilingBodyMountainExt(model);
             }
             else if (model.script is SilentOrchestra)
             {
-                // TODO
+                return new SilentOrchestraExt(model);
             }
             else if (model.script is DeathAngel)
             {

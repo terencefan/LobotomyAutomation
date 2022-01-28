@@ -2,7 +2,7 @@
 
 namespace AutoInority.Creature
 {
-    internal class AlriuneExt : BaseCreatureExt
+    internal class SilentOrchestraExt : BaseCreatureExt
     {
         private readonly int _max;
 
@@ -10,7 +10,7 @@ namespace AutoInority.Creature
 
         private readonly int _to;
 
-        public AlriuneExt(CreatureModel creature) : base(creature)
+        public SilentOrchestraExt(CreatureModel creature) : base(creature)
         {
             _max = _creature.MaxCube();
             _from = _creature.NormalBound() + 1;
@@ -20,7 +20,7 @@ namespace AutoInority.Creature
         public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
         {
             var rate = CalculateWorkSuccessProb(agent, skill);
-            return Confidence.InRange(_max, rate, _from, _to) > 0.8f;
+            return Confidence.InRange(_max, rate, _from, _to) > 0.65f;
         }
     }
 }

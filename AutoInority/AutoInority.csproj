@@ -43,8 +43,11 @@
   <ItemGroup>
     <Compile Include="Candidate.cs" />
     <Compile Include="CenterBrain.cs" />
+    <Compile Include="Creature\ALEPH\SmilingBodyMountainExt.cs" />
     <Compile Include="Creature\ALEPH\CensoredExt.cs" />
+    <Compile Include="Creature\ALEPH\MeltingLoveExt.cs" />
     <Compile Include="Creature\ALEPH\NothingThereExt.cs" />
+    <Compile Include="Creature\ALEPH\SilentOrchestraExt.cs" />
     <Compile Include="Creature\ALEPH\WhiteNightExt.cs" />
     <Compile Include="Creature\ALEPH\BlueStarExt.cs" />
     <Compile Include="Creature\BaseCreatureExt.cs" />
