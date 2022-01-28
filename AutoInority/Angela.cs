@@ -134,6 +134,10 @@ namespace AutoInority
             public const string Woodsman = "没有心脏的{1}将会斩首任何接近他的员工，而{0}将会成为因你而死的受害者。";
 
             public const string ParasiteTree = "{1}已经祝福过你的四个员工了，我相信你不会想看到第五个员工被它祝福。";
+
+            public const string BigBadWolf = "{1}能够在{0}身上感知到小红帽雇佣兵的气息，这应该会让它非常的不高兴。";
+
+            public const string RedHood = "{1}能够在{0}身上感知到又大有可能很坏的狼的气息，这应该会让它非常的不高兴。";
         }
     }
 }

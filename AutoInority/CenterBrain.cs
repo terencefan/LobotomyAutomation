@@ -26,7 +26,7 @@ namespace AutoInority
 
         internal static void AddRecord(AgentModel agent, CreatureModel creature, SkillTypeInfo skill)
         {
-            if (creature.script is HappyTeddy || creature.script is YoungPrince || creature.script is BeautyBeast)
+            if (creature.script is YoungPrince || creature.script is BeautyBeast)
             {
                 Instance.records.Push(new Record()
                 {
