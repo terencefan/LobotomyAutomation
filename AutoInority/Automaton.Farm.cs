@@ -22,6 +22,21 @@ namespace AutoInority
 
         private static PropertyInfo IsWorking { get; } = typeof(IsolateRoom).GetProperty("IsWorking", BindingFlags.NonPublic | BindingFlags.Instance);
 
+        // 0 => "Gift_Hat",
+        // 1 => "Gift_Eye",
+        // 2 => "Gift_Mouth",
+        // 3 => "Gift_Helmet",
+        // 4 => "Gift_RightHand",
+        // 5 => "Gift_Brooch",
+        // 6 => "Gift_Ribborn",
+        // 7 => "Gift_RightCheek",
+        // 8 => "Gift_Face",
+        // 9 => "Gift_BackRight",
+        // 102 => "Gift_Mouth_replace",
+        // 210 => "Gift_HeadBack",
+        // 104 => "Gift_RightHand_replace",
+        // 11 => "Gift_BackLeft",
+
         public void AssignWork(CreatureModel creature)
         {
             var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable());

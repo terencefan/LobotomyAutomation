@@ -6,6 +6,8 @@ namespace AutoInority
     {
         private static CenterBrain _instance;
 
+        private readonly HashSet<AgentModel> blessed = new HashSet<AgentModel>();
+
         private readonly Stack<Record> records = new Stack<Record>();
 
         public static CenterBrain Instance
@@ -20,6 +22,8 @@ namespace AutoInority
             }
         }
 
+        internal static int BlessedCount => Instance.blessed.Count;
+
         internal static void AddRecord(AgentModel agent, CreatureModel creature, SkillTypeInfo skill)
         {
             if (creature.script is HappyTeddy || creature.script is YoungPrince || creature.script is BeautyBeast)
@@ -30,6 +34,10 @@ namespace AutoInority
                     Creature = creature,
                     Skill = skill,
                 });
+            }
+            else if (creature.script is GalaxyBoy)
+            {
+                Instance.blessed.Add(agent);
             }
         }
 
@@ -91,6 +99,11 @@ namespace AutoInority
             }
             Log.Info($"Found {result.Count} records for {agent.name}");
             return result;
+        }
+
+        internal static void Reset()
+        {
+            _instance = null;
         }
 
         internal sealed class Record
