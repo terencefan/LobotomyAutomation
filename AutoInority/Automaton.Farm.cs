@@ -148,6 +148,19 @@ namespace AutoInority
             }
         }
 
+        private void TurnOffFarm(IsolateRoom room)
+        {
+            var creature = room.TargetUnit.model;
+            var animator = room.CurrentWorkRoot.GetComponent<Animator>();
+            animator.speed = NormalAnimSpeed; // set play speed back to normal
+            animator.SetTrigger("Stop");
+            room.TurnOffRoomLight();
+
+            FarmingCreatures.Remove(creature);
+            var message = string.Format(Angela.Automaton.FarmOff, creature.Tag());
+            Angela.Log(message);
+        }
+
         private void TurnOnFarm(IsolateRoom room)
         {
             var creature = room.TargetUnit.model;
@@ -159,19 +172,6 @@ namespace AutoInority
 
             FarmingCreatures.Add(creature);
             var message = string.Format(Angela.Automaton.FarmOn, creature.Tag());
-            Angela.Log(message);
-        }
-
-        private void TurnOffFarm(IsolateRoom room)
-        {
-            var creature = room.TargetUnit.model;
-            var animator = room.CurrentWorkRoot.GetComponent<Animator>();
-            animator.speed = NormalAnimSpeed; // set play speed back to normal
-            animator.SetTrigger("Stop");
-            room.TurnOffRoomLight();
-
-            FarmingCreatures.Remove(creature);
-            var message = string.Format(Angela.Automaton.FarmOff, creature.Tag());
             Angela.Log(message);
         }
     }

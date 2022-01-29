@@ -14,8 +14,6 @@
 
         float ConfidenceMultiplifier(AgentModel agent, SkillTypeInfo skill);
 
-        bool FarmFilter(AgentModel agent);
-
         float GetConfidence(AgentModel agent, SkillTypeInfo skill);
 
         bool TryGetEGOGift(out EquipmentTypeInfo gift);

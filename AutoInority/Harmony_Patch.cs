@@ -319,9 +319,10 @@ namespace AutoInority
                     Angela.Say(message);
                     return;
                 }
-                else if (actor.IsRegionLocked(gift, out var slotName))
+                else if (actor.IsRegionLocked(gift))
                 {
-                    message = string.Format(Angela.Agent.SlotLocked, actor.name, slotName);
+                    var regionName = UnitEGOgiftSpace.GetRegionName(gift);
+                    message = string.Format(Angela.Agent.SlotLocked, actor.name, regionName);
                     Angela.Say(message);
                     return;
                 }

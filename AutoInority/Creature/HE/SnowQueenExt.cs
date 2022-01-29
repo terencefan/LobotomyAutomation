@@ -68,15 +68,6 @@ namespace AutoInority.Creature
             return base.CanWorkWith(agent, skill, out message);
         }
 
-        public override bool FarmFilter(AgentModel agent)
-        {
-            if (IsFreezing)
-            {
-                return agent.fortitudeLevel == 5;
-            }
-            return !agent.HasEquipment(RealGiftId);
-        }
-
         public override bool TryGetEGOGift(out EquipmentTypeInfo gift)
         {
             gift = EquipmentTypeList.instance.GetData(RealGiftId);
