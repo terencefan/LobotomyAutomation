@@ -8,9 +8,27 @@ namespace AutoInority.Extentions
     {
         private static readonly RwbpType[] AllTypes = new RwbpType[] { RwbpType.P, RwbpType.R, RwbpType.W, RwbpType.B };
 
+        public static void ClearAutomationBuf(this AgentModel agent)
+        {
+            var items = agent.GetUnitBufList().Where(buf => buf is AutomatonBuf).ToList();
+            foreach (var item in items)
+            {
+                agent.RemoveUnitBuf(item);
+            }
+        }
+
         public static IEnumerable<AgentModel> FilterCanSuppress(this IEnumerable<AgentModel> agents, CreatureModel creature)
         {
             return agents.Where(x => x.IsAvailable() && x.IsCapableOfPressing(creature)).ToList();
+        }
+
+        public static IEnumerable<AgentModel> FilterFarm(this IEnumerable<AgentModel> agents, CreatureModel creature)
+        {
+            if (creature.GetExtension().TryGetEGOGift(out var gift))
+            {
+                return agents.Where(x => !x.HasGift(gift) && !x.IsRegionLocked(gift));
+            }
+            return agents;
         }
 
         public static Sefira GetActualSefira(this AgentModel agent)
@@ -94,20 +112,36 @@ namespace AutoInority.Extentions
             return agent.hp == agent.maxHp && agent.mental == agent.maxMental && agent.GetState() == AgentAIState.IDLE;
         }
 
-        public static bool IsRegionLocked(this AgentModel agent, EquipmentTypeInfo gift, out string slotName)
+        public static bool IsCapableOfPressing(this AgentModel agent, CreatureModel creature)
         {
-            slotName = UnitEGOgiftSpace.GetRegionName(UnitEGOgiftSpace.GetRegionId(gift));
-            return agent.Equipment.gifts.GetLockState(gift);
+            var riskLevel = creature.GetRiskLevel();
+            var weapon = agent.Equipment.weapon.metaInfo;
+            var weaponGrade = (int)weapon.Grade;
+            var armor = agent.Equipment.weapon.metaInfo;
+            var armorGrade = (int)armor.Grade;
+
+            if (agent.level > riskLevel)
+            {
+                return true;
+            }
+            else if (agent.level < riskLevel)
+            {
+                return false;
+            }
+
+            var defense = creature.metaInfo.defenseTable.GetDefenseInfo();
+            if (weaponGrade > riskLevel)
+            {
+                return armorGrade >= riskLevel;
+            }
+            else if (defense.GetMultiplier(weapon.damageInfo.type) > 1.0f)
+            {
+                return armorGrade > riskLevel;
+            }
+            return false;
         }
 
-        public static void RemoveAutomatonBuff(this AgentModel agent)
-        {
-            var buff = agent.GetUnitBufList().Where(buf => buf is AutomatonBuf);
-            if (buff.Any())
-            {
-                agent.RemoveUnitBuf(buff.First());
-            }
-        }
+        public static bool IsRegionLocked(this AgentModel agent, EquipmentTypeInfo gift) => agent.Equipment.gifts.GetLockState(gift);
 
         public static void SetWaitingPassage(this AgentModel agent, PassageObjectModel passage = null)
         {
@@ -137,35 +171,6 @@ namespace AutoInority.Extentions
                    + Math.Min(WorkerPrimaryStat.MaxStatW(), (int)(agent.primaryStat.maxMental + agent.primaryStatExp.mental))
                    + Math.Min(WorkerPrimaryStat.MaxStatB(), (int)(agent.primaryStat.work + agent.primaryStatExp.work))
                    + Math.Min(WorkerPrimaryStat.MaxStatP(), (int)(agent.primaryStat.battle + agent.primaryStatExp.battle));
-        }
-
-        public static bool IsCapableOfPressing(this AgentModel agent, CreatureModel creature)
-        {
-            var riskLevel = creature.GetRiskLevel();
-            var weapon = agent.Equipment.weapon.metaInfo;
-            var weaponGrade = (int)weapon.Grade;
-            var armor = agent.Equipment.weapon.metaInfo;
-            var armorGrade = (int)armor.Grade;
-
-            if (agent.level > riskLevel)
-            {
-                return true;
-            }
-            else if (agent.level < riskLevel)
-            {
-                return false;
-            }
-
-            var defense = creature.metaInfo.defenseTable.GetDefenseInfo();
-            if (weaponGrade > riskLevel)
-            {
-                return armorGrade >= riskLevel;
-            }
-            else if (defense.GetMultiplier(weapon.damageInfo.type) > 1.0f)
-            {
-                return armorGrade > riskLevel;
-            }
-            return false;
         }
     }
 }

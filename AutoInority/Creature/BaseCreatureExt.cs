@@ -127,11 +127,6 @@ namespace AutoInority.Creature
 
         public virtual float ConfidenceMultiplifier(AgentModel agent, SkillTypeInfo skill) => 1;
 
-        public virtual bool FarmFilter(AgentModel agent)
-        {
-            return !agent.HasGift(_creature, out var gift) && gift != null && !agent.IsRegionLocked(gift, out _);
-        }
-
         public virtual float GetConfidence(AgentModel agent, SkillTypeInfo skill) => GoodConfidence(agent, skill);
 
         public float GoodConfidence(AgentModel agent, SkillTypeInfo skill) => Confidence.InRange(_creature.MaxCube(), CalculateWorkSuccessProb(agent, skill), _creature.GoodBound() + 1);

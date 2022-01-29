@@ -9,18 +9,20 @@ namespace AutoInority.Command
     {
         private readonly CreatureModel _creature;
 
-        public override bool IsCompleted => !Automaton.Instance.FarmingCreatures.Contains(_creature);
-
         public override bool IsApplicable => _creature.IsAvailable() && !Automaton.InEmergency;
+
+        public override bool IsCompleted => !Automaton.Instance.FarmingCreatures.Contains(_creature);
 
         public FarmCommand(CreatureModel creature)
         {
             _creature = creature;
         }
 
+        public override bool Equals(ICommand other) => Equals(other as FarmCommand);
+
         public override bool Execute()
         {
-            var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && _creature.GetExtension().FarmFilter(x));
+            var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable()).FilterFarm(_creature);
             var candidates = Candidate.Suggest(agents, new[] { _creature });
 
             if (candidates.Any())
@@ -34,6 +36,11 @@ namespace AutoInority.Command
                 return true;
             }
             return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return 507986143 + EqualityComparer<CreatureModel>.Default.GetHashCode(_creature);
         }
 
         public override PriorityEnum Priority()
@@ -53,13 +60,6 @@ namespace AutoInority.Command
                 default:
                     return PriorityEnum.DEFAULT;
             }
-        }
-
-        public override bool Equals(ICommand other) => Equals(other as FarmCommand);
-
-        public override int GetHashCode()
-        {
-            return 507986143 + EqualityComparer<CreatureModel>.Default.GetHashCode(_creature);
         }
 
         private bool Equals(FarmCommand other) => other != null && Equals(_creature, other._creature);

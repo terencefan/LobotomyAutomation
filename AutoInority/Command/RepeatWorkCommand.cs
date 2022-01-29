@@ -6,11 +6,13 @@ namespace AutoInority.Command
 {
     internal class RepeatWorkCommand : BaseCommand
     {
+        public override bool IsApplicable => Agent.IsAvailable() && Creature.IsAvailable() && !Automaton.InEmergency;
+
         public override bool IsCompleted
         {
             get
             {
-                if (!Automaton.Instance.WorkingAgents.Contains(Agent))
+                if (!Automaton.Instance.WorkingAgents.ContainsKey(Agent))
                 {
                     return true;
                 }
@@ -37,26 +39,22 @@ namespace AutoInority.Command
             }
         }
 
-        public override bool IsApplicable => Agent.IsAvailable() && Creature.IsAvailable() && !Automaton.InEmergency;
-
         private AgentModel Agent { get; }
 
-        private CreatureModel Creature { get; }
+        private CreatureModel Creature { get; set; }
 
-        private SkillTypeInfo Skill { get; }
+        private bool ForExp { get; set; }
 
-        private bool ForGift { get; }
+        private bool ForGift { get; set; }
 
-        private bool ForExp { get; }
+        private SkillTypeInfo Skill { get; set; }
 
-        public RepeatWorkCommand(AgentModel agent, CreatureModel creature, SkillTypeInfo skill, bool forGift = false, bool forExp = false)
+        public RepeatWorkCommand(AgentModel agent)
         {
             Agent = agent;
-            Creature = creature;
-            Skill = skill;
-            ForGift = forGift;
-            ForExp = forExp;
         }
+
+        public override bool Equals(ICommand other) => Equals(other as RepeatWorkCommand);
 
         public override bool Execute()
         {
@@ -67,6 +65,15 @@ namespace AutoInority.Command
                 return true;
             }
             return false;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -1802849804;
+            hashCode = hashCode * -1521134295 + EqualityComparer<AgentModel>.Default.GetHashCode(Agent);
+            hashCode = hashCode * -1521134295 + EqualityComparer<CreatureModel>.Default.GetHashCode(Creature);
+            hashCode = hashCode * -1521134295 + EqualityComparer<RwbpType>.Default.GetHashCode(Skill.rwbpType);
+            return hashCode;
         }
 
         public override PriorityEnum Priority()
@@ -88,18 +95,13 @@ namespace AutoInority.Command
             }
         }
 
-        public override bool Equals(ICommand other) => Equals(other as RepeatWorkCommand);
-
-        public override int GetHashCode()
+        public void Update(CreatureModel creature, SkillTypeInfo skill, bool forGift = false, bool forExp = false)
         {
-            int hashCode = -1802849804;
-            hashCode = hashCode * -1521134295 + EqualityComparer<AgentModel>.Default.GetHashCode(Agent);
-            hashCode = hashCode * -1521134295 + EqualityComparer<CreatureModel>.Default.GetHashCode(Creature);
-            hashCode = hashCode * -1521134295 + EqualityComparer<RwbpType>.Default.GetHashCode(Skill.rwbpType);
-            return hashCode;
+            Creature = creature;
+            Skill = skill;
+            ForGift = forGift;
+            ForExp = forExp;
         }
-
-        private bool Equals(RepeatWorkCommand other) => other != null && Equals(Agent, other.Agent) && Equals(Creature, other.Creature) && Equals(Skill.rwbpType, other.Skill.rwbpType);
 
         private void Apply()
         {
@@ -110,5 +112,7 @@ namespace AutoInority.Command
             Creature.script.OnWorkAllocated(Skill, Agent);
             AngelaConversation.instance.MakeMessage(AngelaMessageState.MANAGE_START, Agent, Skill, Creature);
         }
+
+        private bool Equals(RepeatWorkCommand other) => other != null && Equals(Agent, other.Agent);
     }
 }

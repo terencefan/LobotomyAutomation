@@ -26,7 +26,7 @@ namespace AutoInority.Command
         public override bool Execute()
         {
             var ext = _creature.GetExtension();
-            var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && ext.FarmFilter(x));
+            var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable()).FilterFarm(_creature);
             var candidates = Candidate.Suggest(agents, new[] { _creature });
 
             if (candidates.Any())

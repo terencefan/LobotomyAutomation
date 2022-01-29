@@ -47,7 +47,7 @@ namespace AutoInority
 
         public float DeadConfidence { get; set; } = 0.99f;
 
-        public HashSet<AgentModel> WorkingAgents { get; } = new HashSet<AgentModel>();
+        public Dictionary<AgentModel, RepeatWorkCommand> WorkingAgents { get; } = new Dictionary<AgentModel, RepeatWorkCommand>();
 
         private bool Running { get; set; } = true;
 
@@ -58,7 +58,7 @@ namespace AutoInority
 
         public void AgentAttachEGOgift(AgentModel agent, EGOgiftModel gift)
         {
-            if (agent.IsRegionLocked(gift.metaInfo, out var _))
+            if (agent.IsRegionLocked(gift.metaInfo))
             {
                 return;
             }
@@ -96,7 +96,7 @@ namespace AutoInority
         /// </summary>
         public void Clear()
         {
-            WorkingAgents.ToList().ForEach(x => x.RemoveAutomatonBuff());
+            WorkingAgents.ToList().ForEach(x => x.Key.ClearAutomationBuf());
             WorkingAgents.Clear();
             FarmingCreatures.ToList().ForEach(x => TurnOffFarm(x.Unit.room));
             FarmingCreatures.Clear();
@@ -188,10 +188,19 @@ namespace AutoInority
 
         public void Register(AgentModel agent, CreatureModel creature, SkillTypeInfo skill, bool forGift = false, bool forExp = false)
         {
-            WorkingAgents.Add(agent);
-            Enqueue(new RepeatWorkCommand(agent, creature, skill, forGift: forGift, forExp: forExp));
-            Notice.instance.Send("AddSystemLog", $"{agent.Tag()}将会自动对{creature.Tag()}进行{skill.Tag()}");
+            if (WorkingAgents.TryGetValue(agent, out var command))
+            {
+                agent.ClearAutomationBuf();
+            }
+            else
+            {
+                command = new RepeatWorkCommand(agent);
+                WorkingAgents[agent] = command;
+            }
+            command.Update(creature, skill, forGift, forExp);
+            Enqueue(command);
             agent.AddUnitBuf(new AutomatonBuf(creature));
+            Notice.instance.Send("AddSystemLog", $"{agent.Tag()}将会自动对{creature.Tag()}进行{skill.Tag()}");
         }
 
         /// <summary>
@@ -201,7 +210,7 @@ namespace AutoInority
         public void Remove(AgentModel agent)
         {
             WorkingAgents.Remove(agent);
-            agent.RemoveAutomatonBuff();
+            agent.ClearAutomationBuf();
         }
 
         /// <summary>
