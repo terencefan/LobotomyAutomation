@@ -61,17 +61,24 @@ namespace AutoInority
             }
         }
 
-        public void AgentTakeDamage(AgentModel agent, DamageInfo dmg)
+        public void AgentOnFixedUpdate(AgentModel agent)
         {
+            if (agent.CurrentPanicAction != null)
+            {
+                // TODO handle panic.
+            }
+
             var state = agent.GetState();
 
             switch (state)
             {
                 case AgentAIState.SUPPRESS_CREATURE:
                 case AgentAIState.SUPPRESS_WORKER:
+                case AgentAIState.SUPPRESS_OBJECT:
                     Log.Info("taking damage");
-                    if (agent.hp < 0.25 * agent.maxHp || agent.mental < 0.25 * agent.maxMental)
+                    if (agent.hp < 0.3f * agent.maxHp || agent.mental < 0.3f * agent.maxMental)
                     {
+                        // TODO move to sefira
                         agent.ResetWaitingPassage();
                     }
                     return;
@@ -147,7 +154,7 @@ namespace AutoInority
             }
         }
 
-        public void ManageCreatures()
+        public void Main()
         {
             if (!Running)
             {
@@ -166,13 +173,16 @@ namespace AutoInority
                 return;
             }
 
-            // auto suppress escaped creatures (only a few of them)
-            SuppressEscapedCreatures();
-
             // auto suppress ordeal creatures.
             foreach (var creature in OrdealManager.instance.GetOrdealCreatureList())
             {
                 SuppressOrdealCreature(creature);
+            }
+
+            // auto suppress escaped creatures (only a few of them)
+            foreach (var creature in CreatureManager.instance.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
+            {
+                SuppressEscapedCreature(creature);
             }
 
             // parse macro / farm when handling ordeals.
@@ -192,7 +202,7 @@ namespace AutoInority
                     break;
                 }
             }
-            Log.Debug($"{i} works assigned in this cycle.");
+            Log.Debug($"{i} Macro/Farm works assigned in this cycle.");
         }
 
         public void ManageOrdealCreatures(OrdealManager manager)
@@ -331,15 +341,12 @@ namespace AutoInority
             ext.OnFixedUpdate();
         }
 
-        private void SuppressEscapedCreatures()
+        private void SuppressEscapedCreature(CreatureModel creature)
         {
-            foreach (var creature in CreatureManager.instance.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
+            Log.Debug($"{creature.metaInfo.name} escaped.");
+            if (creature.GetExtension().AutoSuppress)
             {
-                Log.Debug($"{creature.metaInfo.name} escaped.");
-                if (creature.GetExtension().AutoSuppress)
-                {
-                    creature.FindAgents(100).FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
-                }
+                creature.FindAgents(100).FilterCanSuppress(creature).ToList().ForEach(x => x.Suppress(creature));
             }
         }
 

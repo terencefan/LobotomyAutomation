@@ -12,7 +12,7 @@ namespace AutoInority.Creature
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            if (agent.level < 5) // Never send agent less than level V though he may survive.
+            if (agent.level < 5 || agent.temperanceLevel < 5 || agent.maxMental < 100)
             {
                 message = string.Format(Angela.Creature.Censored, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;

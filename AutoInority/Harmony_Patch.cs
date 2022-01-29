@@ -47,7 +47,7 @@ namespace AutoInority
 
         public static void AgentModel_AttachGift_Postfix(AgentModel __instance, EGOgiftModel gift) => Invoke(() => Automaton.Instance.AgentAttachEGOgift(__instance, gift));
 
-        public static void AgentModel_TakeDamage_Postfix(AgentModel __instance, DamageInfo dmg) => Invoke(() => Automaton.Instance.AgentTakeDamage(__instance, dmg));
+        public static void AgentModel_OnFixedUpdate_Postfix(AgentModel __instance) => Invoke(() => Automaton.Instance.AgentOnFixedUpdate(__instance));
 
         public static void CommandWindow_OnClick_Prefix(CommandWindow.CommandWindow __instance, AgentModel actor)
         {
@@ -74,7 +74,7 @@ namespace AutoInority
 
         public static void CreatureManager_OnFixedUpdate_Postfix(CreatureManager __instance)
         {
-            Invoke(() => Automaton.Instance.ManageCreatures(), nameof(Automaton.Instance.ManageCreatures), 60);
+            Invoke(() => Automaton.Instance.Main(), nameof(Automaton.Instance.Main), 60);
             Invoke(() => Automaton.Instance.HandleUncontrollable(), nameof(Automaton.Instance.HandleUncontrollable), 5);
         }
 
@@ -214,9 +214,9 @@ namespace AutoInority
 
         public void PatchAgentModel(HarmonyInstance mod)
         {
-            var takeDamage = typeof(Harmony_Patch).GetMethod(nameof(AgentModel_TakeDamage_Postfix));
-            mod.Patch(typeof(AgentModel).GetMethod(nameof(AgentModel.TakeDamage), new[] { typeof(DamageInfo) }), null, new HarmonyMethod(takeDamage));
-            Log.Info($"patch AgentModel.TakeDamage success");
+            var takeDamage = typeof(Harmony_Patch).GetMethod(nameof(AgentModel_OnFixedUpdate_Postfix));
+            mod.Patch(typeof(AgentModel).GetMethod(nameof(AgentModel.OnFixedUpdate)), null, new HarmonyMethod(takeDamage));
+            Log.Info($"patch AgentModel.OnFixedUpdate.success");
 
             var attachGift = typeof(Harmony_Patch).GetMethod(nameof(AgentModel_AttachGift_Postfix));
             mod.Patch(typeof(AgentModel).GetMethod(nameof(AgentModel.AttachEGOgift)), null, new HarmonyMethod(attachGift));

@@ -46,6 +46,11 @@ namespace AutoInority
             return NodeDistance(node1, node2);
         }
 
+        public static MapNode FindNearestSefira(AgentModel agent)
+        {
+            return null;
+        }
+
         public static void Initialize()
         {
             Assembly a = Assembly.GetExecutingAssembly();
