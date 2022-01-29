@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
+using AutoInority.Command;
 using AutoInority.Extentions;
 
 using UnityEngine;
@@ -14,7 +15,7 @@ namespace AutoInority
 
         public const float NormalAnimSpeed = 0.5f;
 
-        internal HashSet<CreatureModel> FarmingCreatures { get; } = new HashSet<CreatureModel>();
+        public HashSet<CreatureModel> FarmingCreatures { get; } = new HashSet<CreatureModel>();
 
         private static MethodInfo InitProcessText { get; } = typeof(IsolateRoom).GetMethod("InitProcessText", BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -61,7 +62,7 @@ namespace AutoInority
             }
         }
 
-        public void OnCancelWork(IsolateRoom room) => CancelFarm(room);
+        public void OnCancelWork(IsolateRoom room) => TurnOffFarm(room);
 
         public bool OnEnterRoom(IsolateRoom room, AgentModel worker, UseSkill skill)
         {
@@ -70,10 +71,6 @@ namespace AutoInority
 
             if (FarmingCreatures.Where(x => x.Unit.room == room).Any())
             {
-                var IsWorkAllocated = typeof(IsolateRoom).GetProperty("IsWorkAllocated", BindingFlags.NonPublic | BindingFlags.Instance);
-                var IsWorking = typeof(IsolateRoom).GetProperty("IsWorking", BindingFlags.NonPublic | BindingFlags.Instance);
-                var InitProcessText = typeof(IsolateRoom).GetMethod("InitProcessText", BindingFlags.NonPublic | BindingFlags.Instance);
-
                 IsWorkAllocated.SetValue(room, false, null);
                 IsWorking.SetValue(room, true, null);
                 if (skill.skillTypeInfo.id != 5)
@@ -106,28 +103,22 @@ namespace AutoInority
         /// <param name="creature"></param>
         public void ToggleFarming(CreatureModel creature)
         {
+            if (!creature.IsCreature())
+            {
+                return;
+            }
+
             var room = creature.Unit.room;
 
             if (FarmingCreatures.Remove(creature))
             {
-                CancelFarm(room);
+                TurnOffFarm(room);
             }
             else
             {
-                room.CurrentWorkRoot.SetActive(value: true);
-                var animator = room.CurrentWorkRoot.GetComponent<Animator>();
-                animator.speed = FarmingAnimSpeed;
-                animator.SetTrigger("Run");
-                room.TurnOnRoomLight();
-
-                FarmingCreatures.Add(creature);
-                var message = string.Format(Angela.Automaton.FarmOn, creature.Tag());
-                Angela.Log(message);
+                Enqueue(new FarmCommand(creature));
+                TurnOnFarm(room);
             }
-        }
-
-        public void TryTrain(IEnumerable<AgentModel> agents)
-        {
         }
 
         public void TryTrain()
@@ -157,38 +148,31 @@ namespace AutoInority
             }
         }
 
-        private void CancelFarm(IsolateRoom room)
+        private void TurnOnFarm(IsolateRoom room)
         {
-            FarmingCreatures.Remove(room.TargetUnit.model);
+            var creature = room.TargetUnit.model;
+            var animator = room.CurrentWorkRoot.GetComponent<Animator>();
+            room.CurrentWorkRoot.SetActive(value: true);
+            animator.speed = FarmingAnimSpeed;
+            animator.SetTrigger("Run");
+            room.TurnOnRoomLight();
+
+            FarmingCreatures.Add(creature);
+            var message = string.Format(Angela.Automaton.FarmOn, creature.Tag());
+            Angela.Log(message);
+        }
+
+        private void TurnOffFarm(IsolateRoom room)
+        {
+            var creature = room.TargetUnit.model;
             var animator = room.CurrentWorkRoot.GetComponent<Animator>();
             animator.speed = NormalAnimSpeed; // set play speed back to normal
             animator.SetTrigger("Stop");
             room.TurnOffRoomLight();
-            var message = string.Format(Angela.Automaton.FarmOff, room.TargetUnit.model.Tag());
+
+            FarmingCreatures.Remove(creature);
+            var message = string.Format(Angela.Automaton.FarmOff, creature.Tag());
             Angela.Log(message);
-        }
-
-        private bool TryFarm()
-        {
-            foreach (var creature in FarmingCreatures.Where(x => x.IsAvailable()))
-            {
-                var agents = AgentManager.instance.GetAgentList().Where(x => creature.GetExtension().FarmFilter(x));
-                var candidates = Candidate.Suggest(agents, new[] { creature });
-                candidates.Sort(Candidate.FarmComparer);
-
-                foreach (var candidate in candidates)
-                {
-                    if (candidate.Agent.IsAvailable() && candidate.Creature.IsAvailable())
-                    {
-                        var workspaceNode = candidate.Creature.GetWorkspaceNode();
-                        var passageNode = MapGraph.instance.GetNodeById(workspaceNode.GetId().Split('@')[0]);
-                        candidate.Agent.SetWaitingPassage(passageNode.GetAttachedPassage());
-                        candidate.Apply();
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
     }
 }

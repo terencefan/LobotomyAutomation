@@ -2,7 +2,7 @@
 {
     public interface ICreatureKitExtension
     {
-        void Handle();
+        bool CanUse(AgentModel agent);
 
         void OnFixedUpdate();
     }

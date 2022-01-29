@@ -85,6 +85,7 @@ namespace AutoInority
             Log.Info("Graph module initialized.");
         }
 
+
         private static int GetNodeId(MapNode node)
         {
             var sid = node.GetId().Split('@')[0];
