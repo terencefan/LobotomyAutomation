@@ -81,7 +81,6 @@ namespace AutoInority
         public static void FinishWorkSuccessfully_Postfix(UseSkill __instance)
         {
             Invoke(() => CenterBrain.AddRecord(__instance.agent, __instance.targetCreature, __instance.skillTypeInfo));
-            Invoke(() => Automaton.Instance.FinishWork(__instance));
         }
 
         public static void GameManager_EndGame()
@@ -112,14 +111,13 @@ namespace AutoInority
 
         public static void OrdealManager_OnFixedUpdated_Postfix(OrdealManager __instance)
         {
-            Invoke(() => Automaton.Instance.ManageOrdealCreatures(__instance), nameof(OrdealManager), 60);
         }
 
         public static void SefiraManager_OnNotice_Postfix(SefiraManager __instance, string notice, params object[] param)
         {
             if (notice == NoticeName.FixedUpdate)
             {
-                Invoke(() => Automaton.Instance.ManageSefira(__instance), nameof(SefiraManager), 60);
+                // TODO
             }
         }
 
@@ -127,7 +125,7 @@ namespace AutoInority
         {
             if (Input.GetKeyDown(KeyCode.P))
             {
-                Invoke(Automaton.Instance.Toggle);
+                Invoke(Automaton.Instance.ToggleAutomation);
             }
             else if (Input.GetKeyDown(KeyCode.LeftShift))
             {

@@ -43,6 +43,14 @@
   <ItemGroup>
     <Compile Include="Candidate.cs" />
     <Compile Include="CenterBrain.cs" />
+    <Compile Include="Command\BaseCommand.cs" />
+    <Compile Include="Command\FarmCommand.cs" />
+    <Compile Include="Command\ICommand.cs" />
+    <Compile Include="Command\ManageCreatureCommand.cs" />
+    <Compile Include="Command\ManageKitCommand.cs" />
+    <Compile Include="Command\PriorityEnum.cs" />
+    <Compile Include="Command\RepeatWorkCommand.cs" />
+    <Compile Include="Command\SuppressCommand.cs" />
     <Compile Include="Creature\ALEPH\SmilingBodyMountainExt.cs" />
     <Compile Include="Creature\ALEPH\CensoredExt.cs" />
     <Compile Include="Creature\ALEPH\MeltingLoveExt.cs" />
@@ -154,6 +162,7 @@
   <ItemGroup>
     <Compile Include="Automaton.Farm.cs" />
     <None Include="packages.config" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

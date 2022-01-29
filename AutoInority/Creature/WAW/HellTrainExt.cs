@@ -6,7 +6,7 @@ namespace AutoInority.Creature
 {
     internal class HellTrainExt : BaseKitExt
     {
-        private FieldInfo _otherCreatureWorkCount = typeof(HellTrain).GetField(nameof(_otherCreatureWorkCount), BindingFlags.NonPublic | BindingFlags.Instance);
+        private readonly FieldInfo _otherCreatureWorkCount = typeof(HellTrain).GetField(nameof(_otherCreatureWorkCount), BindingFlags.NonPublic | BindingFlags.Instance);
 
         public HellTrainExt(CreatureModel kit) : base(kit)
         {
