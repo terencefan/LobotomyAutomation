@@ -15,10 +15,10 @@
                 // Randomly pick an agent when overloaded.
                 return base.CanWorkWith(agent, skill, out message);
             }
-            else if (_creature.script is KnightOfDespair script)
+            else if (_creature.script is KnightOfDespair script && script.BlessedWorker == null)
             {
                 message = Message(Angela.Creature.KnightOfDespair, agent, skill);
-                return script.BlessedWorker == null;
+                return false;
             }
             return base.CanWorkWith(agent, skill, out message);
         }
