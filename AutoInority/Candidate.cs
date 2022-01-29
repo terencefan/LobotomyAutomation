@@ -63,10 +63,6 @@ namespace AutoInority
                 {
                     foreach (var skill in skillSets)
                     {
-                        if (skill == null)
-                        {
-                            Log.Debug($"creature: {creature.metaInfo.name}, skill is null, length: {skillSets.Count()}, origin: {ext.SkillSets.Count()}");
-                        }
                         var b1 = ext.CanWorkWith(agent, skill, out _);
                         var b2 = ext.CheckConfidence(agent, skill);
                         Log.Debug($"{creature.metaInfo.name}, b1: {b1}, b2: {b2}");

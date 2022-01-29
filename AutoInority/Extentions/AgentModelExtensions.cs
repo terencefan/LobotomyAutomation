@@ -139,7 +139,7 @@ namespace AutoInority.Extentions
                    + Math.Min(WorkerPrimaryStat.MaxStatP(), (int)(agent.primaryStat.battle + agent.primaryStatExp.battle));
         }
 
-        private static bool IsCapableOfPressing(this AgentModel agent, CreatureModel creature)
+        public static bool IsCapableOfPressing(this AgentModel agent, CreatureModel creature)
         {
             var riskLevel = creature.GetRiskLevel();
             var weapon = agent.Equipment.weapon.metaInfo;
