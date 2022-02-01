@@ -26,19 +26,6 @@ Here are other mods that published by me, which could be useful when using this 
 1. Automatically suppress escaped creatures.
 1. Automatically rescue agents that are in **CANNOT_CONTROL** or **PANIC** status.
 
-## Automation Strategy
-
-Agents will not repeat the work work if:
-
-1. The agent is not available.
-   - HP/Mental is not full, or not in `IDLE` status.
-
-2. The agent is not capable of doing that work. Usually because it will result in an instant death or creature escape.
-   - For example, if the agent was the last agent who worked with Teddy Bear, he won't repeat the work.
-
-3. The agent doesn't have enough confidence to survive from the work.
-   - Current threshold is 99%.
-
 ## Work priority
 
 1. Handle urgent events. From riskLevel 5 to 1.
