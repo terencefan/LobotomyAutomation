@@ -55,11 +55,6 @@ namespace AutoInority
         {
             Assembly a = Assembly.GetExecutingAssembly();
 
-            foreach (var name in a.GetManifestResourceNames())
-            {
-                Log.Info(name);
-            }
-
             Stream s = a.GetManifestResourceStream("AutoInority.Graph.xml");
 
             XmlDocument doc = new XmlDocument();

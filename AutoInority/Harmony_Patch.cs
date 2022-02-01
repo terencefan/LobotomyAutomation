@@ -159,25 +159,11 @@ namespace AutoInority
             {
                 Invoke(Automaton.Instance.Clear);
             }
-            else if (Input.GetKeyDown(KeyCode.B))
-            {
-                Screen.SetResolution(Screen.width, Screen.height, !Screen.fullScreen);
-            }
-            else if (Input.GetKeyDown(KeyCode.H))
-            {
-                if (Input.GetKey(KeyCode.LeftShift))
-                {
-                    Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.MoveToNeighborPassage()));
-                }
-                else if (Input.GetKey(KeyCode.LeftAlt))
-                {
-                    Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.MoveToNetzachElevator()));
-                }
-                else
-                {
-                    Invoke(() => SefiraManager.instance.sefiraList.ForEach(x => x.ReturnAgentsToSefira()));
-                }
-            }
+
+            // else if (Input.GetKeyDown(KeyCode.B))
+            // {
+            //     Screen.SetResolution(Screen.width, Screen.height, !Screen.fullScreen);
+            // }
         }
 
         public static void UpdateGameSpeed_Postfix()

@@ -79,7 +79,7 @@ namespace AutoInority
                     return result;
                 }
             }
-            Log.Info($"Found {result.Count} records for {creature.metaInfo.name}");
+            Log.Debug($"Found {result.Count} records for {creature.metaInfo.name}");
             return result;
         }
 
@@ -97,7 +97,7 @@ namespace AutoInority
                     return result;
                 }
             }
-            Log.Info($"Found {result.Count} records for {agent.name}");
+            Log.Debug($"Found {result.Count} records for {agent.name}");
             return result;
         }
 
