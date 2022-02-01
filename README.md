@@ -26,14 +26,6 @@ Here are other mods that published by me, which could be useful when using this 
 1. Automatically suppress escaped creatures.
 1. Automatically rescue agents that are in **CANNOT_CONTROL** or **PANIC** status.
 
-## Work priority
-
-1. Handle urgent events. From riskLevel 5 to 1.
-2. Supress escaping creatures.
-3. --- return if in emergency (ordeal) ---
-4. Try running macros (Agent repeat work)
-5. Try farming
-
 ## Supported anomoly creatures
 
 ### ![color](https://via.placeholder.com/15/1df900/000000?text=+) ZAYIN
