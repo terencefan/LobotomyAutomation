@@ -50,49 +50,16 @@ Agents will not repeat the work work if:
 ## Supported anomoly creatures
 
 ### ![color](https://via.placeholder.com/15/1df900/000000?text=+) ZAYIN
-- Don't Touch Me
-- Fairy Festival
-- One Sin and Hundreds of Good Deeds
-- Opened Can of Wellcheers
+- All
 
 ### ![color](https://via.placeholder.com/15/13a2ff/000000?text=+) TETH
-- Beauty Beast
-- Bloodbath
-- Forsaken Murderer
-- Grave of Cherry Blossoms
-- Scorched Girl
-- Today's Shy Look
-- Void Dream
+- All
 
 ### ![color](https://via.placeholder.com/15/fff900/000000?text=+) HE
-- Funeral of the Dead Butterflies
-- Der Freischütz
-- Happy Teddy Bear
-- Laetitia
-- Nameless Fetus
-- Red Shoes
-- Singing Machine
-- Snow Queen 
-  - Agent freezing will be treated as **Urgent**
+- All
 
 ### ![color](https://via.placeholder.com/15/7B2BF3/000000?text=+) WAW
-- Big Bird
-- Dream of Black Swan
-- Clouded Monk
-- The Dreaming Current
-- Fire Bird (Not recommend)
-  - Better if you had a low-level agent in its dept.
-- The Queen of Hatred (Not recommend)
-  - Better if you had a super ultimate double plus work success rate agent in its dept.
-- Judgement Bird
-- The Little Prince
-- Naked Nest
-- Queen Bee
-- Snow White's Apple
+- All
 
 ### ![color](https://via.placeholder.com/15/ff0000/000000?text=+) ALEPH
-- 「CENSORED」
-- Nothing
-- White Night
-  - Qliphoth counter < 3 will be treated as **Urgent**
-  - Farm with this creature is risky since you may not have enough success rate to raise it's Qliphoth counter before reaches next meltdown level.
+- All except for Plague Doctor
