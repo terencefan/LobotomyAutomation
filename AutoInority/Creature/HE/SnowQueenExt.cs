@@ -6,9 +6,9 @@ namespace AutoInority.Creature
     {
         public static readonly int DummyGiftId = 1021;
 
-        private static readonly int RealGiftId = 1023;
-
         private static readonly int FireBirdArmor = 300061;
+
+        private static readonly int RealGiftId = 1023;
 
         private readonly FieldInfo _field;
 

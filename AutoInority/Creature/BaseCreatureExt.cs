@@ -46,8 +46,6 @@ namespace AutoInority.Creature
 
         public virtual bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            message = null;
-
             // Laetitia
             if (!(Script is LittleWitch) && agent.HasUnitBuf(UnitBufType.LITTLEWITCH_HEART))
             {
@@ -79,12 +77,17 @@ namespace AutoInority.Creature
 
             // GalaxyBoy
             var buf = agent.GetUnitBufByType(UnitBufType.FRIEND_TOKEN);
-            if (buf != null)
+            if (buf != null && !(Script is GalaxyBoy))
             {
                 var field = typeof(FriendTokenBuf).GetField("baseCreature", BindingFlags.NonPublic | BindingFlags.Instance);
-                var creature = (GalaxyBoy)field.GetValue(buf);
-                return Script is GalaxyBoy || creature.model.qliphothCounter > 3;
+                var boy = (GalaxyBoy)field.GetValue(buf);
+                if (boy.model.qliphothCounter < 5)
+                {
+                    message = "";
+                    return false;
+                }
             }
+            message = null;
             return true;
         }
 

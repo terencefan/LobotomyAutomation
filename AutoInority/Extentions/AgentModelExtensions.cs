@@ -26,7 +26,7 @@ namespace AutoInority.Extentions
         {
             if (creature.GetExtension().TryGetEGOGift(out var gift))
             {
-                return agents.Where(x => !x.HasGift(gift) && !x.IsRegionLocked(gift));
+                return agents.Where(x => !x.HasGift(gift) && !x.IsRegionLocked(gift) && !x.HasBetterGift(gift));
             }
             return agents;
         }
@@ -46,7 +46,7 @@ namespace AutoInority.Extentions
             catch (Exception e)
             {
                 Log.Error(e);
-                Log.Info($"agent: {agent.name}, node: {node == null}, passage: {passage == null}, sefira: {sefira == null}");
+                Log.Debug($"agent: {agent.name}, node: {node == null}, passage: {passage == null}, sefira: {sefira == null}");
                 return agent.GetCurrentSefira();
             }
         }
@@ -59,6 +59,21 @@ namespace AutoInority.Extentions
             }
             var regionId = UnitEGOgiftSpace.GetRegionId(gift);
             return agent.GetAllGifts().Where(x => UnitEGOgiftSpace.GetRegionId(x.metaInfo) == regionId).Any();
+        }
+
+        public static bool HasBetterGift(this AgentModel agent, EquipmentTypeInfo target)
+        {
+            var regionId = UnitEGOgiftSpace.GetRegionId(target);
+            var priority = target.GetPriority();
+            foreach (var gift in agent.GetAllGifts().Where(x => UnitEGOgiftSpace.GetRegionId(x.metaInfo) == regionId))
+            {
+                if (gift.metaInfo.GetPriority() > priority)
+                {
+                    // Log.Info($"{agent.name} has better gift: {gift.metaInfo.Name}");
+                    return true;
+                }
+            }
+            return false;
         }
 
         public static bool HasGift(this AgentModel agent, CreatureModel creature, out EquipmentTypeInfo gift)
