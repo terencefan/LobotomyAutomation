@@ -1,6 +1,11 @@
 # LobotomyAutomation
 [简体中文](./README-zh-CN.md)
 
+Here are other mods that published by me, which could be useful when using this mod (but not required)
+
+[Today's Ordeal](https://www.nexusmods.com/lobotomycorporation/mods/127)
+[Relocate Agents](https://www.nexusmods.com/lobotomycorporation/mods/128)
+
 ## Features
 
 1. **Angela will diss you when you made a wrong decision that will result in agents die or creatures escape.**
@@ -9,7 +14,7 @@
 3. Press `Alt + click` to repeat the work until the agent gets max EXP of that work type.
 4. Press `T` when selecting an creature to let Angela help you find candidates who don't have the EGO gift to work with the creature.
    - Press `T` again to toggle it off.
-6. Press `H` to send all agents back to their restroom.
+
 
 9. Press `Shift` when selecting agents to cancel their automation works.
 10. Press `P` to pause all automation works.
@@ -21,8 +26,6 @@
 
 1. Automatically suppress escaped creatures.
 1. Automatically rescue agents that are in **CANNOT_CONTROL** or **PANIC** status.
-3. Press `Alt + H` to send all agents to the passage next to their restroom. Can be useful when handling Outter God Noon.
-4. Press `Shift + H` to send all agents to the top left elevator. Can be useful when handling Machine Midnight.
 
 ## Automation Strategy
 
