@@ -10,7 +10,7 @@ Here are other mods that published by me, which could be useful when using this 
 ## Features
 
 1. **Angela will diss you when you made a wrong decision that will result in agents dying or creatures escaping**
-   - Note that I haven't finished the translation works now, only Chinese supported.
+   - Note that I haven't finished the translation works now, only Chinese has been supported.
 3. Press `Shift + click` to repeat the work.
 4. Press `Ctrl + click` to repeat the work until the agent gets the EGO gift.
 5. Press `Alt + click` to repeat the work until the agent gets max EXP of that work type.
