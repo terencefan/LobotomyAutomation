@@ -21,11 +21,6 @@ Here are other mods that published by me, which could be useful when using this 
 10. Automatically handle Qliphoth Meltdown events.
 11. Automatically suppress `Dawn` and `Noon` ordeal creatures.
 
-### Next Features
-
-1. Automatically suppress escaped creatures.
-1. Automatically rescue agents that are in **CANNOT_CONTROL** or **PANIC** status.
-
 ## Supported anomoly creatures
 
 ### ![color](https://via.placeholder.com/15/1df900/000000?text=+) ZAYIN
