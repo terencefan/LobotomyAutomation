@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 
 using AutoInority.Extentions;
@@ -109,19 +110,22 @@ namespace AutoInority.Creature
 
             var minDamage = damageInfo.min * multiplier;
             var maxDamage = damageInfo.max * multiplier;
+            var hp = agent.hp;
+            var mental = MentalFix(agent.mental);
 
             switch (damageInfo.type)
             {
                 case RwbpType.R:
-                case RwbpType.B:
                 case RwbpType.N:
-                    return Confidence.Survive(agent.hp, minDamage, maxDamage, workSuccessProb, maxCubeCount) > Automaton.Instance.DeadConfidence;
+                    return Confidence.Survive(hp - maxDamage, minDamage, maxDamage, workSuccessProb, maxCubeCount) > Automaton.Instance.DeadConfidence;
                 case RwbpType.W:
-                    return Confidence.Survive(MentalFix(agent.mental), minDamage, maxDamage, workSuccessProb, maxCubeCount) > Automaton.Instance.DeadConfidence;
+                    return Confidence.Survive(mental - maxDamage, minDamage, maxDamage, workSuccessProb, maxCubeCount) > Automaton.Instance.DeadConfidence;
+                case RwbpType.B:
+                    return Confidence.Survive(Math.Min(hp, mental) - maxDamage, minDamage, maxDamage, workSuccessProb, maxCubeCount) > Automaton.Instance.DeadConfidence;
                 case RwbpType.P:
                     minDamage *= agent.maxHp / 100f;
                     maxDamage *= agent.maxHp / 100f;
-                    return Confidence.Survive(agent.hp, minDamage, maxDamage, workSuccessProb, maxCubeCount) > Automaton.Instance.DeadConfidence;
+                    return Confidence.Survive(hp - maxDamage, minDamage, maxDamage, workSuccessProb, maxCubeCount) > Automaton.Instance.DeadConfidence;
             }
             return false;
         }
@@ -146,7 +150,6 @@ namespace AutoInority.Creature
 
         protected virtual float CalculateWorkSuccessProb(AgentModel agent, SkillTypeInfo skill)
         {
-            Log.Debug(_creature.metaInfo.name);
             float prob = _creature.GetWorkSuccessProb(agent, skill);
             prob += _creature.GetObserveBonusProb() / 100f;
             prob += _creature.script.OnBonusWorkProb() / 100f;

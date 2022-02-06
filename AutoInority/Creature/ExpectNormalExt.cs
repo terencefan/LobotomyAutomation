@@ -19,5 +19,7 @@
             }
             return false;
         }
+
+        public override float GetConfidence(AgentModel agent, SkillTypeInfo skill) => NormalConfidence(agent, skill);
     }
 }
