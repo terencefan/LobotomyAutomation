@@ -65,7 +65,7 @@ namespace AutoInority
                     {
                         var b1 = ext.CanWorkWith(agent, skill, out _);
                         var b2 = ext.CheckConfidence(agent, skill);
-                        Log.Debug($"{creature.metaInfo.name}, b1: {b1}, b2: {b2}");
+                        Log.Debug($"{agent.name}, {skill.name}, {creature.metaInfo.name}, b1: {b1}, b2: {b2}");
                         if (b1 && b2)
                         {
                             candidates.Add(new Candidate(agent, creature, skill));

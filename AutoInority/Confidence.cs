@@ -88,7 +88,7 @@ namespace AutoInority
             {
                 r += P(count, i, prob);
             }
-            Log.Debug($"{count}, {prob}, {from}, {to}: {r}");
+            Log.Debug($"InRange: {count}, {prob}, [{from}, {to}]: {r}");
             return r;
         }
 
@@ -145,7 +145,6 @@ namespace AutoInority
 
         public static double Survive(double maxPoints, double minDamage, double maxDamage, float workProb, int count)
         {
-            maxPoints -= 1.0;
             if (maxPoints / maxDamage > count)
             {
                 return 1.0;
@@ -172,7 +171,7 @@ namespace AutoInority
                     r += p * d;
                 }
             }
-            Log.Debug($"{maxPoints}, {minDamage}, {maxDamage}, {workProb}, {count}: {r}");
+            Log.Debug($"Survive: {count}, {workProb}, {maxPoints}, [{minDamage}, {maxDamage}]: {r}");
             return r;
         }
     }

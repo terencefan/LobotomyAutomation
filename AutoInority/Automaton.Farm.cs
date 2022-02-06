@@ -45,7 +45,7 @@ namespace AutoInority
             var candidates = Candidate.Suggest(agents, new[] { creature });
             candidates.Sort(Candidate.FarmComparer);
 
-            Log.Debug($"Found {agents.Count()} agents for {creature.Tag()}, candidates: {candidates.Count}");
+            Log.Debug($"Found {agents.Count()} agents for {creature.metaInfo.name}, candidates: {candidates.Count}");
 
             foreach (var candidate in candidates)
             {
