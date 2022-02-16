@@ -38,3 +38,7 @@ Here are other mods that published by me, which could be useful when using this 
 
 ### ![color](https://via.placeholder.com/15/ff0000/000000?text=+) ALEPH
 - All except for Plague Doctor
+
+## Special Thanks
+
+- ):
