@@ -1,7 +1,7 @@
 # LobotomyAutomation
 [简体中文](./README-zh-CN.md)
 
-Here are other mods that published by me, which could be useful when using this mod (but not required)
+Here are other mods that were published by me, which could be useful when using this mod (but not required)
 
 [Today's Ordeal](https://www.nexusmods.com/lobotomycorporation/mods/127)
 
