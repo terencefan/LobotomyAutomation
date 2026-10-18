@@ -51,6 +51,37 @@ namespace AutoInority
             return my.CompareTo(mx);
         }
 
+        /// <summary>
+        /// 自动路径拒绝播报的去重记忆：agent → 该 agent 已播报过且尚未恢复的目标集合。
+        /// Suggest 每 60 帧全量重跑，不去重会每 tick 刷屏；恢复可工作后移除，下次危害可再播。
+        /// </summary>
+        private static readonly Dictionary<AgentModel, HashSet<CreatureModel>> _reportedRejections = new Dictionary<AgentModel, HashSet<CreatureModel>>();
+
+        private static void NotifyRejection(AgentModel agent, CreatureModel creature, string message)
+        {
+            if (string.IsNullOrEmpty(message))
+            {
+                return;
+            }
+            if (!_reportedRejections.TryGetValue(agent, out var creatures))
+            {
+                creatures = new HashSet<CreatureModel>();
+                _reportedRejections[agent] = creatures;
+            }
+            if (creatures.Add(creature))
+            {
+                Angela.Log(message);
+            }
+        }
+
+        private static void AcceptCandidate(AgentModel agent, CreatureModel creature)
+        {
+            if (_reportedRejections.TryGetValue(agent, out var creatures))
+            {
+                creatures.Remove(creature);
+            }
+        }
+
         public static List<Candidate> Suggest(IEnumerable<AgentModel> agents, IEnumerable<CreatureModel> creatures, HashSet<RwbpType> types = null)
         {
             var candidates = new List<Candidate>();
@@ -63,13 +94,17 @@ namespace AutoInority
                 {
                     foreach (var skill in skillSets)
                     {
-                        var b1 = ext.CanWorkWith(agent, skill, out _);
-                        var b2 = ext.CheckConfidence(agent, skill);
-                        Log.Debug($"{creature.metaInfo.name}, b1: {b1}, b2: {b2}");
-                        if (b1 && b2)
+                        if (!ext.CanWorkWith(agent, skill, out var message))
                         {
-                            candidates.Add(new Candidate(agent, creature, skill));
+                            NotifyRejection(agent, creature, message);
+                            continue;
                         }
+                        AcceptCandidate(agent, creature);
+                        if (!ext.CheckConfidence(agent, skill))
+                        {
+                            continue;
+                        }
+                        candidates.Add(new Candidate(agent, creature, skill));
                     }
                 }
             }
