@@ -92,6 +92,13 @@ namespace AutoInority
 
                 foreach (var agent in agents)
                 {
+                    // 带心（蕾蒂希娅）员工仅可派往女巫本体；提前剔除，免去无谓的
+                    // 置信度计算，也避免其混入候选集扰乱排序
+                    if (agent.HasUnitBuf(UnitBufType.LITTLEWITCH_HEART) && !(creature.script is LittleWitch))
+                    {
+                        NotifyRejection(agent, creature, string.Format(Angela.Creature.Laetitia, agent.Tag(), creature.Tag(), string.Empty));
+                        continue;
+                    }
                     foreach (var skill in skillSets)
                     {
                         if (!ext.CanWorkWith(agent, skill, out var message))
