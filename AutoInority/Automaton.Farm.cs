@@ -158,7 +158,7 @@ namespace AutoInority
 
             FarmingCreatures.Remove(creature);
             var message = string.Format(Angela.Automaton.FarmOff, creature.Tag());
-            Angela.Announce(message);
+            Angela.Log(message);
         }
 
         private void TurnOnFarm(IsolateRoom room)
@@ -172,7 +172,7 @@ namespace AutoInority
 
             FarmingCreatures.Add(creature);
             var message = string.Format(Angela.Automaton.FarmOn, creature.Tag());
-            Angela.Announce(message);
+            Angela.Log(message);
         }
     }
 }
