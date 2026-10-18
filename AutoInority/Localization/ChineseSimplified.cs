@@ -6,9 +6,9 @@ namespace AutoInority.Localization
     {
         public override SystemLanguage Language => SystemLanguage.ChineseSimplified;
 
-        public override string Automation_Conv_On => "自动化工作已开始，员工将会回到他们的岗位上。";
+        public override string Automation_Conv_On => "自动化工作已开始，职员将会回到他们的岗位上——总算不用再看着你犹豫了。";
 
-        public override string Automation_Conv_Off => "自动化工作已暂停。";
+        public override string Automation_Conv_Off => "自动化工作已暂停。既然你坚持亲自来，祝你好运，主管。";
 
         public override string Automation_Log_FarmOn => "已开始对{0}的自动化工作";
 

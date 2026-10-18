@@ -6,9 +6,9 @@ namespace AutoInority.Localization
     {
         public override SystemLanguage Language => SystemLanguage.English;
 
-        public override string Automation_Conv_On => "Automatic ON, sending agents back to their position.";
+        public override string Automation_Conv_On => "Automatic work has started, agents are returning to their posts. No more watching you hesitate, at least.";
 
-        public override string Automation_Conv_Off => "Automation OFF.";
+        public override string Automation_Conv_Off => "Automation paused. If you insist on doing it yourself — good luck, Manager.";
 
         public override string Automation_Log_FarmOn => "Farming with {0} started.";
 
