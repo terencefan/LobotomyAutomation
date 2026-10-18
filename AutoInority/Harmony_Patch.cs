@@ -121,6 +121,11 @@ namespace AutoInority
             }
         }
 
+        // F 键单击/长按区分：单击开关种地，长按放行给游戏的镜头拉近（CameraMover 的 GetKey）
+        private const float FarmTapThreshold = 0.3f;
+
+        private static float _farmKeyDownTime = -1f;
+
         public static void UnitMouseEventManager_Update(UnitMouseEventManager __instance)
         {
             if (Input.GetKeyDown(KeyCode.P))
@@ -133,11 +138,7 @@ namespace AutoInority
             }
             else if (Input.GetKeyDown(KeyCode.F))
             {
-                var currentWindow = CommandWindow.CommandWindow.CurrentWindow;
-                if (currentWindow.enabled && currentWindow.IsEnabled && currentWindow.CurrentTarget is CreatureModel creature)
-                {
-                    Invoke(() => Automaton.Instance.ToggleFarming(creature));
-                }
+                _farmKeyDownTime = Time.unscaledTime;
             }
             else if (Input.GetKeyDown(KeyCode.X))
             {
@@ -158,6 +159,21 @@ namespace AutoInority
             else if (Input.GetKeyDown(KeyCode.V))
             {
                 Invoke(Automaton.Instance.Clear);
+            }
+
+            if (Input.GetKeyUp(KeyCode.F) && _farmKeyDownTime >= 0f)
+            {
+                var hold = Time.unscaledTime - _farmKeyDownTime;
+                _farmKeyDownTime = -1f;
+                // 长按是镜头缩放（游戏原生），只有单击才开关种地
+                if (hold < FarmTapThreshold)
+                {
+                    var currentWindow = CommandWindow.CommandWindow.CurrentWindow;
+                    if (currentWindow.enabled && currentWindow.IsEnabled && currentWindow.CurrentTarget is CreatureModel creature)
+                    {
+                        Invoke(() => Automaton.Instance.ToggleFarming(creature));
+                    }
+                }
             }
 
             // else if (Input.GetKeyDown(KeyCode.B))

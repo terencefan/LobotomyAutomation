@@ -16,6 +16,7 @@ Here are other mods that were published by me, which could be useful when using 
 4. Press `Alt + click` to repeat the work until the agent gets max EXP of that work type.
 5. Press `F` when selecting a creature to toggle the farm mode: Angela keeps sending agents (preferring ones without the EGO gift) to work on the creature.
    - Press `F` again to toggle it off.
+   - A **short press** toggles farming; holding `F` keeps the built-in camera zoom-in untouched.
 6. Press `X` when selecting a creature to let Angela assign the best available agent for a **single** work session.
    - With no command window open, `X` performs a single training assignment instead.
 7. Press `Shift` when selecting agents to cancel their automation works.
