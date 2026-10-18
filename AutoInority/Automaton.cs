@@ -220,7 +220,7 @@ namespace AutoInority
         {
             Running = !Running;
             var message = AutomationMessage();
-            Angela.Say(message);
+            Angela.Announce(message);
         }
 
         private string AutomationMessage() => Running ? Angela.Automaton.On : Angela.Automaton.Off;
