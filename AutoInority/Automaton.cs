@@ -131,6 +131,31 @@ namespace AutoInority
         }
 
         /// <summary>
+        /// 带心（蕾蒂希娅）闲置员工自动派回女巫本体：心未消期间员工只被允许为她工作，
+        /// 与其闲置不如继续赚箱。已注册宏（含玩家手动宏）的员工不抢。
+        /// </summary>
+        private void CheckHeartAgents()
+        {
+            var witch = CreatureManager.instance.GetCreatureList().FirstOrDefault(x => x.script is LittleWitch);
+            if (witch == null || !witch.IsAvailable())
+            {
+                return;
+            }
+            foreach (var agent in AgentManager.instance.GetAgentList())
+            {
+                if (agent.IsAvailable() && agent.HasUnitBuf(UnitBufType.LITTLEWITCH_HEART) && !WorkingAgents.ContainsKey(agent))
+                {
+                    var candidates = Candidate.Suggest(new[] { agent }, new[] { witch });
+                    if (candidates.Count > 0)
+                    {
+                        candidates.Sort(Candidate.ManageComparer);
+                        Register(agent, witch, candidates[0].Skill);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// 在途复查：员工已派工、仍在路上（canCancelCurrentWork）时逐 tick 复核目标收容物；
         /// ext 策略（CanKeepWorking）不放行且 Boss 战不可取消期外，发 ManageCancel 取消派工，
         /// 游戏侧 ForcelyCancelWork 会释放房间并让员工回当前 Sefira 待机通道。
@@ -167,6 +192,7 @@ namespace AutoInority
             }
 
             CheckEnrouteAgents();
+            CheckHeartAgents();
 
             foreach (var kit in CreatureManager.instance.GetCreatureList().Where(x => x.IsKit()))
             {
@@ -187,6 +213,18 @@ namespace AutoInority
                 if (creature.GetExtension().AutoSuppress)
                 {
                     Enqueue(new SuppressCommand(creature));
+                }
+            }
+
+            // 子实体（如蕾蒂希娅的蕾怪）不在 GetCreatureList() 里，单独纳入镇压视野
+            foreach (var parent in CreatureManager.instance.GetCreatureList())
+            {
+                foreach (var child in parent.GetAliveChilds().Where(x => x.state == CreatureState.ESCAPE))
+                {
+                    if (child.GetExtension().AutoSuppress)
+                    {
+                        Enqueue(new SuppressCommand(child));
+                    }
                 }
             }
 
