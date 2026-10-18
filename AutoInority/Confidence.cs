@@ -94,7 +94,7 @@ namespace AutoInority
         {
             if (n > _table.Length || r > n)
             {
-                Log.Error(new Exception("nCr out of bound.")); return -1;
+                throw new ArgumentOutOfRangeException(nameof(n), $"nCr out of bound: n={n}, r={r}, table length={_table.Length}");
             }
             return _table[n][r];
         }
@@ -102,26 +102,6 @@ namespace AutoInority
         public static float P(int n, int r, float p)
         {
             return (float)(Math.Pow(p, r) * Math.Pow(1f - p, n - r) * NCR(n, r));
-        }
-
-        public static float Survive(float maxPoints, float damage, float prob, int count)
-        {
-            maxPoints -= 1;
-            if (maxPoints / damage >= count)
-            {
-                return 1f;
-            }
-
-            var r = 0f;
-            for (int i = 0; i <= count; i++)
-            {
-                if (i * damage > maxPoints)
-                {
-                    return r;
-                }
-                r += P(count, count - i, prob);
-            }
-            return r;
         }
 
         public static double NormalizeDistribute(double x, int n)
@@ -165,7 +145,10 @@ namespace AutoInority
                 }
                 else
                 {
-                    var x = (maxPoints - i * avgDamage) / delta * 2;
+                    // i 次均匀伤害之和 S = i·min + δ·T（T~Irwin-Hall，均值 i/2、方差 i/12），
+                    // 存活条件 S ≤ maxPoints 的正确 z 分数为 ((maxPoints - i·min)/δ - i/2)/√(i/12)，
+                    // NormalizeDistribute 内部已除 σ，此处不再乘 2
+                    var x = (maxPoints - i * avgDamage) / delta;
                     var d = NormalizeDistribute(x, i);
                     r += p * d;
                 }

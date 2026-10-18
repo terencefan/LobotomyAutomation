@@ -46,7 +46,7 @@ namespace AutoInority.Test
                 var expected = MonteCarlo(() => SurviveSimulate(maxPoints, damage, prob, count), repeatTimes);
                 // min = max = damage：区间伤害退化为固定伤害
                 var actual = Confidence.Survive(maxPoints, (double)damage, (double)damage, prob, count);
-                Assert.InRange(actual, expected - 0.05, expected + 0.01);
+                Assert.InRange(actual, expected - 0.02, expected + 0.02);
             });
         }
 
@@ -70,15 +70,19 @@ namespace AutoInority.Test
         [InlineData(100f, 3, 12, 0.5, 30)]
         [InlineData(100f, 2, 13, 0.5, 30)]
         [InlineData(100f, 1, 14, 0.5, 30)]
+        // 混合区（i·min < M < i·max）针对性用例：min/max 差大、预期存活率在中间区域，
+        // 专门校准 z 分数公式的符号与幅度（×2 bug 回归检测）
+        [InlineData(120f, 2, 14, 0.5, 30)]
+        [InlineData(120f, 3, 9, 0.6, 25)]
+        [InlineData(200f, 5, 15, 0.4, 35)]
+        [InlineData(100f, 4, 12, 0.5, 28)]
         public void SurviveConfidenceRangeDamageTest(float maxPoints, float minDamage, float maxDamage, float prob, int count)
         {
             RetryAssert((repeatTimes) =>
             {
                 var expected = MonteCarlo(() => SurviveSimulate(maxPoints, minDamage, maxDamage, prob, count), repeatTimes);
                 var actual = Confidence.Survive(maxPoints, minDamage, maxDamage, prob, count);
-                // 上界放宽到 +0.03：(100,6,9,0.4,20) 与 (100,6,9,0.6,30) 因 x 分数 ×2 bug
-                // 系统性高估约 +0.02/+0.016，待修复后由后续 PR 收紧
-                Assert.InRange(actual, expected - 0.05, expected + 0.03);
+                Assert.InRange(actual, expected - 0.02, expected + 0.02);
             });
         }
 
