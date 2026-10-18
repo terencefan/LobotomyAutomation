@@ -21,11 +21,12 @@ namespace AutoInority
         {
             get
             {
-                var b1 = OrdealManager.instance.GetOrdealCreatureList().Where(x => x.state != CreatureState.SUPPRESSED).Any();
-                Log.Debug("Suppressing ordeal creatures.");
-                var b2 = CreatureManager.instance.GetCreatureList().Where(x => x.IsAvailable() && x.isOverloaded).Any();
-                Log.Debug("Handling qliphoth meltdowns.");
-                return b1 && b2;
+                // 考验在场或存在过载收容物都视为紧急，暂停宏与种地（原实现误用 &&，仅两者同时发生才暂停）。
+                if (OrdealManager.instance.GetOrdealCreatureList().Where(x => x.state != CreatureState.SUPPRESSED).Any())
+                {
+                    return true;
+                }
+                return CreatureManager.instance.GetCreatureList().Where(x => x.IsAvailable() && x.isOverloaded).Any();
             }
         }
 
