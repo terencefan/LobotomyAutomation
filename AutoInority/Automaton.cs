@@ -132,8 +132,11 @@ namespace AutoInority
 
         /// <summary>
         /// 在途复查：员工已派工、仍在路上（canCancelCurrentWork）时逐 tick 复核目标收容物；
-        /// ext 策略（CanKeepWorking）不放行且 Boss 战不可取消期外，发 ManageCancel 取消派工，
-        /// 游戏侧 ForcelyCancelWork 会释放房间并让员工回当前 Sefira 待机通道。
+        /// ext 策略（CanKeepWorking，默认复检 CanWorkWith）不放行且 Boss 战不可取消期外，
+        /// 发 ManageCancel 取消派工，游戏侧 ForcelyCancelWork 会释放房间并让员工回待机通道。
+        /// 仅限普通收容物（IsCreature）：kit 搬运不在 creature ext 职责内。
+        /// 惊群面：Notice.Send 同步广播且首发即取消全部同目标在途者，
+        /// 同 tick 后续迭代因 canCancelCurrentWork 已翻转而自然跳过，无重复广播。
         /// </summary>
         private void CheckEnrouteAgents()
         {
@@ -147,7 +150,7 @@ namespace AutoInority
                 {
                     continue;
                 }
-                if (agent.target is CreatureModel creature && !creature.GetExtension().CanKeepWorking(agent))
+                if (agent.target is CreatureModel creature && creature.IsCreature() && !creature.GetExtension().CanKeepWorking(agent))
                 {
                     Notice.instance.Send(NoticeName.ManageCancel, creature);
                 }

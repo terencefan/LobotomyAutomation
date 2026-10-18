@@ -47,10 +47,16 @@ namespace AutoInority.Creature
 
         /// <summary>
         /// 在途复查：员工已被派往该收容物、仍在路上（canCancelCurrentWork）时每 tick 调用。
-        /// 返回 false 表示情况已变（如害羞换了坏表情），Automaton 会取消派工让员工回待机通道。
-        /// 与 CanWorkWith 的区别：CanWorkWith 管派工时刻，本方法管派出后到达前的窗口。
+        /// 默认以派工时的技能（GetRecentWork）复检 CanWorkWith——派工与在途共用单一事实源，
+        /// 杜绝两处覆写语义不一致导致的「派工→取消→再派工」震荡。ext 仅当在途策略需要
+        /// 与派工策略不同时才覆写本方法（默认从严：此刻不能派，就不要在途）。
+        /// 副作用收紧：在途期间干员状态恶化（如半路获得蕾蒂希娅的心）同样会被拦截。
         /// </summary>
-        public virtual bool CanKeepWorking(AgentModel agent) => true;
+        public virtual bool CanKeepWorking(AgentModel agent)
+        {
+            var skill = agent.GetRecentWork();
+            return skill == null || CanWorkWith(agent, skill, out _);
+        }
 
         /// <summary>
         /// buf 危害排除表：员工持有某 buf 时，派往（非豁免）目标会遭受工作之外的危害
