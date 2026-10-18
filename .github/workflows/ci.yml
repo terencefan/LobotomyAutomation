@@ -42,7 +42,7 @@ jobs:
   # net35 编译检查（等价本地 pre-commit 的 mcs 验证）。
   # lib/ 里的 DLL 被铁律禁止入库，而本仓库是 public，release 也不能放游戏程序集——
   # 物料走私有仓库：自建私有 repo（如 lobotomy-ci-libs）发一个 release，
-  # 资产 lib.zip（根目录平铺 lib/ 的 5 个 DLL），并添加仓库 secret LIBS_TOKEN（PAT，read 权限）。
+  # 资产 lib.zip（根目录平铺 lib/ 的 9 个 DLL，v2 起新增 UnityEngine.dll/TextRenderingModule/UIModule/UI——面板 UGUI 需要），并添加仓库 secret LIBS_TOKEN（PAT，read 权限）。
   # 未配置时本作业优雅跳过；配置后每次 PR 验证 net35 API 漂移。
   build-net35:
     name: mcs net35 build check
@@ -77,7 +77,8 @@ jobs:
           mcs -noconfig -nostdlib -target:library -optimize+ -langversion:latest \
             -r:"$R/mscorlib.dll" -r:"$R/System.dll" -r:"$R/System.Core.dll" -r:"$R/System.Xml.dll" \
             -r:lib/0Harmony.dll -r:lib/Assembly-CSharp.dll \
-            -r:lib/UnityEngine.CoreModule.dll -r:lib/UnityEngine.AnimationModule.dll -r:lib/UnityEngine.ImageConversionModule.dll \
+            -r:lib/UnityEngine.dll -r:lib/UnityEngine.CoreModule.dll -r:lib/UnityEngine.AnimationModule.dll -r:lib/UnityEngine.ImageConversionModule.dll -r:lib/UnityEngine.TextRenderingModule.dll -r:lib/UnityEngine.UIModule.dll \
+            -r:lib/UnityEngine.UI.dll \
             -res:Graph.xml,AutoInority.Graph.xml \
             -out:/tmp/inority_Automation_MOD.dll \
             $(grep -o 'Include="[^"]*\.cs"' AutoInority.csproj | sed 's/Include="//;s/"$//' | tr '\\' '/')
