@@ -29,6 +29,40 @@ namespace AutoInority.Test
             Assert.Equal(expected, Confidence.P(n, r, prob), 4);
         }
 
+        [Fact]
+        public void NCRTableBoundaryTest()
+        {
+            // 组合数表共 36 行（n ≤ 35）：n=35 合法，n=36 必须抛出而非越界取行
+            Assert.Equal(4537567650L, Confidence.NCR(35, 17));
+            Assert.Throws<ArgumentOutOfRangeException>(() => Confidence.NCR(36, 18));
+        }
+
+        [Fact]
+        public void SurviveDeterministicDamageTest()
+        {
+            // (100, 9, 9, 0.7, 20)：δ=0 且第 11 次失败时 i·damage == maxPoints−1，
+            // 恰好命中确定性存活边界。回归检测：旧实现此处 0/0 → NaN → 平台相关偏差。
+            // 期望值用独立的二项累加（迭代组合数），不走被测代码
+            const int n = 20;
+            const int surviveFailures = 11;
+            var failProb = 1f - 0.7f;
+            var expected = 0.0;
+            var ncr = 1L;
+            for (int i = 0; i <= n; i++)
+            {
+                if (i > 0)
+                {
+                    ncr = ncr * (n - i + 1) / i;
+                }
+                if (i <= surviveFailures)
+                {
+                    expected += (float)(Math.Pow(failProb, i) * Math.Pow(0.7f, n - i) * ncr);
+                }
+            }
+            var actual = Confidence.Survive(100, 9, 9, 0.7f, n);
+            Assert.Equal(expected, actual, 6);
+        }
+
         [Theory]
         [InlineData(100f, 6, 0.7, 15)]
         [InlineData(100f, 6, 0.7, 20)]

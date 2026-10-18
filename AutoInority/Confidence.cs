@@ -92,7 +92,7 @@ namespace AutoInority
 
         public static long NCR(int n, int r)
         {
-            if (n > _table.Length || r > n)
+            if (n >= _table.Length || r > n)
             {
                 throw new ArgumentOutOfRangeException(nameof(n), $"nCr out of bound: n={n}, r={r}, table length={_table.Length}");
             }
@@ -142,6 +142,13 @@ namespace AutoInority
                 else if (i * minDamage > maxPoints)
                 {
                     break;
+                }
+                else if (delta == 0)
+                {
+                    // δ=0（min==max）时伤害为确定值：进入本分支意味着 i·maxDamage 恰好
+                    // 等于 maxPoints（入口处已 −1，即严格存活边界），确定性存活，全额计入。
+                    // 若直接走下方除法会得到 0/0 = NaN，产生平台相关的偏差（x64/ARM64 不同）
+                    r += p;
                 }
                 else
                 {
