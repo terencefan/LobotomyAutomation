@@ -161,6 +161,10 @@ namespace AutoInority.Creature
             var maxCubeCount = _creature.metaInfo.feelingStateCubeBounds.GetLastBound();
 
             DamageInfo damageInfo = _creature.metaInfo.workDamage.Copy() * GetDamageMultiplierInWork(agent, skill);
+
+            // 对齐游戏 WorkerModel.TakeDamage 的顺序：装备先修正伤害，再进入 EGO 等级 / buf / 抗性乘区。
+            ApplyEquipmentDamageModifiers(agent, ref damageInfo);
+
             var attackMultiplifier = UnitModel.GetDmgMultiplierByEgoLevel(_creature.GetAttackLevel(), agent.GetDefenseLevel());
             var defenseMultiplifier = agent.defense.GetMultiplier(damageInfo.type);
             var bufDamageMultiplifier = agent.GetBufDamageMultiplier(_creature, damageInfo);
@@ -183,6 +187,67 @@ namespace AutoInority.Creature
                     return Confidence.Survive(agent.hp, minDamage, maxDamage, workSuccessProb, maxCubeCount) > AutomationConfig.DeadConfidence;
             }
             return false;
+        }
+
+        // 复刻游戏 WorkerModel.TakeDamage 的装备修正层（armor -> weapon -> gifts，actor 传生物，与游戏一致）。
+        // 装备 script 的 OnTakeDamage 可能带有真实副作用（反弹伤害、回血回精神、添加护盾 buff、写装备状态字段），
+        // 而评估会被 RepeatWorkCommand 每轮重派时重复触发，重复调用会污染游戏状态。
+        // 因此只放行反编译排查后确认的"纯函数型"实现（只修改 ref dmg，无任何状态副作用），其余一律跳过：
+        //   - DeathAngelArmor: 纯函数（按当前防御/buf 重算伤害并在小伤害时归零）；但同时持有白夜武器「失乐园」时会额外 RecoverHP/RecoverMental，此时跳过
+        //   - NamelessFetusGift: 纯函数（dmg.min/max 各乘 0.95）
+        //   - YinGift: 纯透传（不修改 dmg，调用无收益，跳过）
+        //   - BlackSwanWeapon: 会 actor.TakeDamage 反弹真实伤害并播放特效，跳过
+        //   - CensoredWeapon: 不修改 dmg，但写装备自身 hp_old/mp_old 状态字段，无收益，跳过
+        //   - OneBadManyGoodArmor: 不修改 dmg，且按随机概率 RecoverMental，跳过
+        //   - SlimeGirlArmor: 会真实添加 BarrierBuf 等 buf 并启动冷却计时器，跳过
+        // 注：armor 的常规减伤（如 DeathAngelArmor.GetDefense）已由 agent.defense 聚合，包含在本类既有的抗性乘区中。
+        private void ApplyEquipmentDamageModifiers(AgentModel agent, ref DamageInfo damageInfo)
+        {
+            var equipment = agent.Equipment;
+            if (equipment == null)
+            {
+                return;
+            }
+
+            ApplyDeathAngelArmorModifier(agent, equipment, ref damageInfo);
+
+            // weapon：现有实现均非纯函数，跳过。
+
+            ApplyGiftsModifier(equipment, ref damageInfo);
+        }
+
+        /// <summary>
+        /// 白夜装甲（DeathAngelArmor）修正：未持「失乐园」时其 OnTakeDamage 是纯函数；一旦同时持有
+        /// 该武器，装甲会额外做小伤害归零并回血回精神（游戏 DeathAngelArmor.cs L43+），带副作用须跳过该组合。
+        /// </summary>
+        private void ApplyDeathAngelArmorModifier(AgentModel agent, UnitEquipSpace equipment, ref DamageInfo damageInfo)
+        {
+            if (equipment.armor != null && equipment.armor.script is DeathAngelArmor && !agent.HasEquipment((int)EquipmentId.ParadiseLost))
+            {
+                equipment.armor.OnTakeDamage(_creature, ref damageInfo);
+            }
+        }
+
+        /// <summary>
+        /// gifts 集合的饰品修正分发：白名单命中的饰品调 OnTakeDamage（当前唯一成员为
+        /// NamelessFetusGift——dmg.min/max 各乘 0.95，纯函数重复评估无副作用）；
+        /// 其余饰品带副作用（回精神/加 buf/写状态），一律跳过。
+        /// </summary>
+        private void ApplyGiftsModifier(UnitEquipSpace equipment, ref DamageInfo damageInfo)
+        {
+            var gifts = equipment.gifts;
+            if (gifts == null)
+            {
+                return;
+            }
+
+            foreach (var gift in gifts.replacedGifts.Concat(gifts.addedGifts))
+            {
+                if (gift.script is NamelessFetusGift)
+                {
+                    gift.script.OnTakeDamage(_creature, ref damageInfo);
+                }
+            }
         }
 
         public virtual bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill) => true;

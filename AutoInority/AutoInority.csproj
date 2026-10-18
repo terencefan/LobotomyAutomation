@@ -141,6 +141,7 @@
     <Compile Include="Angela.Log.cs" />
     <Compile Include="Angela.Say.cs" />
     <Compile Include="AutomationConfig.cs" />
+    <Compile Include="EquipmentId.cs" />
     <Compile Include="Automaton.cs" />
     <Compile Include="Extentions\CreatureModelExtensions.cs" />
     <Compile Include="Extentions\EquipmentTypeInfoExtensions.cs" />

@@ -48,6 +48,9 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\AutoInority\lib\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="LobotomyBaseModLib">
+      <HintPath>../AutoInority/lib/LobotomyBaseModLib.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\AutoInority\lib\UnityEngine.dll</HintPath>
     </Reference>
