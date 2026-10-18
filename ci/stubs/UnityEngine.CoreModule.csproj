@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    CI 专用存根：测试项目的 Unity 依赖面只有 Log.cs 的 Application.dataPath
+    （Confidence.cs 零 Unity 依赖），真实 API 兼容性由本地 pre-commit mcs
+    与本地 dotnet test（真 DLL）把关，这里只需编译期符号成立。
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>UnityEngine.CoreModule</AssemblyName>
+    <Nullable>disable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Application.cs" />
+  </ItemGroup>
+
+</Project>
