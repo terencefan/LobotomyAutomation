@@ -82,6 +82,7 @@
     <Compile Include="Creature\HE\WoodsmanExt.cs" />
     <Compile Include="Creature\ICreatureExtension.cs" />
     <Compile Include="Creature\ICreatureKitExtension.cs" />
+    <Compile Include="Creature\ShyLookPolicy.cs" />
     <Compile Include="Creature\BaseKitExt.cs" />
     <Compile Include="Creature\NeverUseKitExt.cs" />
     <Compile Include="Creature\TETH\BehaviorExt.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="Creature\ZAYIN\YouMustBeHappyExt.cs" />
     <Compile Include="Extentions\AgentModelExtensions.cs" />
     <Compile Include="Angela.cs" />
+    <Compile Include="Angela.Log.cs" />
     <Compile Include="Angela.Say.cs" />
     <Compile Include="Automaton.cs" />
     <Compile Include="Extentions\CreatureModelExtensions.cs" />

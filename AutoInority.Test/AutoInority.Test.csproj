@@ -33,10 +33,12 @@
     直接链接主工程的算法源码（主工程是老式 net35 csproj，无法被 dotnet build 引用）。
     Confidence.cs 仅依赖 BCL；Log.cs 引用 UnityEngine.CoreModule 只为编译期通过
     （Application.dataPath），运行时 DebugEnabled=false 不会触发 IO。
+    ShyLookPolicy.cs 同为纯 BCL，供门口弹回真值表测试。
   -->
   <ItemGroup>
     <Compile Include="..\AutoInority\Confidence.cs" Link="Confidence.cs" />
     <Compile Include="..\AutoInority\Log.cs" Link="Log.cs" />
+    <Compile Include="..\AutoInority\Creature\ShyLookPolicy.cs" Link="Creature/ShyLookPolicy.cs" />
   </ItemGroup>
 
   <ItemGroup>
