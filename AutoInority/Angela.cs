@@ -117,6 +117,8 @@ namespace AutoInority
             public const string Shark = "安排{0}对{1}进行{2}是非常不明智的行为，你是不是应该多思考一下。";
 
             public const string SiningMachine = "我相信{0}在结束工作后就会跳进{1}中，这将会是公司的一笔重大财务损失。";
+            public const string ShyLook = "现在还不是接近{1}的时候，{0}。它的表情并不友善，请等它笑得再开心一些。";
+
 
             public const string SnowQueen = "本次对{1}的{2}有可能会导致{0}被冰封，请准备解救工作。";
 
