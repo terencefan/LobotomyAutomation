@@ -10,6 +10,10 @@ namespace AutoInority.Localization
 
         public override string Automation_Conv_Off => "如你所愿，主管。反正收拾残局的人一直都是你，不差这一次。";
 
+        public override string Automation_Log_DebugOff => "调试日志已关闭";
+
+        public override string Automation_Log_DebugOn => "调试日志已开启";
+
         public override string Automation_Log_FarmOn => "已开始对{0}的自动化工作";
 
         public override string Automation_Log_FarmOff => "已结束对{0}的自动化工作";

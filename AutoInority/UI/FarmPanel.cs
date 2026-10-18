@@ -90,21 +90,18 @@ namespace AutoInority.UI
             Log.Debug($"FarmPanel: opened under {parent.name}");
         }
 
-        // GlobalCanvas tag 的唯一游戏引用（TextAppearEffect）没有调用者，日场景常无该 tag 对象——
-        // 回退到 BaseMod GlobalNoticeBox 验证过的跨场景挂点：GlobalGameManager 的 child 0
+        // GlobalCanvas tag 虽在日场景可找到，但其唯一游戏引用（TextAppearEffect）是死代码，
+        // 挂上去不渲染——首选用 BaseMod GlobalNoticeBox 验证过的跨场景挂点：
+        // GlobalGameManager 的 child 0（BaseMod 自家弹窗渲染于此，实际可见）
         private static Transform FindCanvasTransform()
         {
-            var tagged = GameObject.FindGameObjectWithTag("GlobalCanvas");
-            if (tagged != null)
-            {
-                return tagged.transform;
-            }
             var manager = GlobalGameManager.instance;
             if (manager != null && manager.transform.childCount > 0)
             {
                 return manager.transform.GetChild(0);
             }
-            return null;
+            var tagged = GameObject.FindGameObjectWithTag("GlobalCanvas");
+            return tagged != null ? tagged.transform : null;
         }
 
         private static Font GetFont()

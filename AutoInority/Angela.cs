@@ -71,6 +71,10 @@ namespace AutoInority
 
         public class Automaton
         {
+            public static string DebugOff => Language.Automation_Log_DebugOff;
+
+            public static string DebugOn => Language.Automation_Log_DebugOn;
+
             public static string FarmOff => Language.Automation_Log_FarmOff;
 
             public static string FarmOn => Language.Automation_Log_FarmOn;

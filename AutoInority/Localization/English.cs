@@ -10,6 +10,10 @@ namespace AutoInority.Localization
 
         public override string Automation_Conv_Off => "As you wish, Manager. You have always been the one cleaning up, after all.";
 
+        public override string Automation_Log_DebugOff => "Debug logging disabled.";
+
+        public override string Automation_Log_DebugOn => "Debug logging enabled.";
+
         public override string Automation_Log_FarmOn => "Farming with {0} started.";
 
         public override string Automation_Log_FarmOff => "Farming with {0} ended.";

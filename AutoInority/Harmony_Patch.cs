@@ -138,7 +138,7 @@ namespace AutoInority
             new KeyBinding { Key = KeyCode.T,  OnDown = i => ToggleFarm() },
             new KeyBinding { Key = KeyCode.X,  OnDown = i => AssignOrTrain() },
             new KeyBinding { Key = KeyCode.O,  OnDown = i => Invoke(FarmPanel.Toggle) },
-            new KeyBinding { Key = KeyCode.Z,  OnDown = i => Log.DebugEnabled = !Log.DebugEnabled },
+            new KeyBinding { Key = KeyCode.Z,  OnDown = i => ToggleDebugLog() },
             new KeyBinding { Key = KeyCode.V,  OnDown = i => Invoke(Automaton.Instance.Clear) },
         };
 
@@ -160,6 +160,12 @@ namespace AutoInority
             {
                 Invoke(() => Automaton.Instance.ToggleFarming(creature));
             }
+        }
+
+        private static void ToggleDebugLog()
+        {
+            Log.DebugEnabled = !Log.DebugEnabled;
+            Angela.Log(Log.DebugEnabled ? Angela.Automaton.DebugOn : Angela.Automaton.DebugOff);
         }
 
         private static void AssignOrTrain()
