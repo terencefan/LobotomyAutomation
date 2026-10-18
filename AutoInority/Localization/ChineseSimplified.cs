@@ -21,5 +21,15 @@ namespace AutoInority.Localization
         public override string Agent_Log_GotEGOGift => "{0}获得了饰品：{1}";
 
         public override string Agent_Log_ReachMaxExp => "{0}的{1}已经达到最大值";
+
+        public override string FarmPanel_ByDepartment => "按部门";
+
+        public override string FarmPanel_ByRiskLevel => "按等级";
+
+        public override string FarmPanel_ClickHint => "点击行可结束该异想体的轮班";
+
+        public override string FarmPanel_Empty => "当前没有轮班中的异想体";
+
+        public override string FarmPanel_Title => "轮班管理";
     }
 }

@@ -4,6 +4,8 @@ using System.Reflection;
 
 using AutoInority.Extentions;
 
+using AutoInority.UI;
+
 using Harmony;
 
 using UnityEngine;
@@ -135,6 +137,7 @@ namespace AutoInority
             new KeyBinding { Key = KeyCode.LeftShift, OnDown = i => i.GetSelectedAgents().ForEach(x => Automaton.Instance.Remove(x)) },
             new KeyBinding { Key = KeyCode.T,  OnDown = i => ToggleFarm() },
             new KeyBinding { Key = KeyCode.X,  OnDown = i => AssignOrTrain() },
+            new KeyBinding { Key = KeyCode.O,  OnDown = i => Invoke(FarmPanel.Toggle) },
             new KeyBinding { Key = KeyCode.Z,  OnDown = i => Log.DebugEnabled = !Log.DebugEnabled },
             new KeyBinding { Key = KeyCode.V,  OnDown = i => Invoke(Automaton.Instance.Clear) },
         };

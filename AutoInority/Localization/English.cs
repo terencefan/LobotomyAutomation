@@ -23,5 +23,15 @@ namespace AutoInority.Localization
         public override string Agent_Log_ReachMaxExp => "{0} exploited his potential of {1}";
 
         public override string Agent_Conv_NoEGOGift => "{0} don't have any EGO gift, I don't think this is a meaningfull arrangement.";
+
+        public override string FarmPanel_ByDepartment => "By Department";
+
+        public override string FarmPanel_ByRiskLevel => "By Risk Level";
+
+        public override string FarmPanel_ClickHint => "Click a row to end that creature's rotation";
+
+        public override string FarmPanel_Empty => "No creature is on rotation right now.";
+
+        public override string FarmPanel_Title => "Work Roster";
     }
 }

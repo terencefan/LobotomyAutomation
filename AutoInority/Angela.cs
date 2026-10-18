@@ -80,6 +80,20 @@ namespace AutoInority
             public static string On => Language.Automation_Conv_On;
         }
 
+        // 种地管理面板的界面文案（非 Angela 台词，无性格要求）
+        public class FarmPanel
+        {
+            public static string ByDepartment => Language.FarmPanel_ByDepartment;
+
+            public static string ByRiskLevel => Language.FarmPanel_ByRiskLevel;
+
+            public static string ClickHint => Language.FarmPanel_ClickHint;
+
+            public static string Empty => Language.FarmPanel_Empty;
+
+            public static string Title => Language.FarmPanel_Title;
+        }
+
         public class Creature
         {
             public const string BeautyBeast = "根据我们已经获得的资料显示，对虚弱状态下的{1}进行{2}会导致{0}死亡，你是否应该重新审视你的决定？";

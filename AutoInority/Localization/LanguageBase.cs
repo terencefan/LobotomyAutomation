@@ -31,5 +31,19 @@ namespace AutoInority.Localization
         public abstract string Agent_Log_ReachMaxExp { get; }
 
         #endregion Agent
+
+        #region FarmPanel
+
+        public abstract string FarmPanel_ByDepartment { get; }
+
+        public abstract string FarmPanel_ByRiskLevel { get; }
+
+        public abstract string FarmPanel_ClickHint { get; }
+
+        public abstract string FarmPanel_Empty { get; }
+
+        public abstract string FarmPanel_Title { get; }
+
+        #endregion FarmPanel
     }
 }
