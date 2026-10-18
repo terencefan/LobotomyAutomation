@@ -11,12 +11,6 @@ namespace AutoInority
     {
         private static Automaton _instance;
 
-        private readonly PriorityQueue<ICommand> _commandQueue = new PriorityQueue<ICommand>();
-
-        private readonly HashSet<ICommand> _commands = new HashSet<ICommand>();
-
-        private readonly Queue<ICommand> _repeatQueue = new Queue<ICommand>();
-
         public static bool InEmergency
         {
             get
@@ -136,52 +130,56 @@ namespace AutoInority
                 return;
             }
 
-            while (_repeatQueue.Count > 0)
+            // 每 tick 从源头重建命令队列：命令是瞬态的，未完成/未适用的下个 tick
+            // 由源头重新生成。旧实现的 _repeatQueue/_commands 组合存在增长缺陷
+            // （去重集合只删不增，失败命令每 tick 复制一份，长期紧急时 O(T²) 累积）
+            var commands = new List<ICommand>();
+            commands.AddRange(WorkingAgents.Values.Cast<ICommand>());
+
+            foreach (var creature in FarmingCreatures)
             {
-                Enqueue(_repeatQueue.Dequeue());
+                commands.Add(new FarmCommand(creature));
             }
 
             foreach (var kit in CreatureManager.instance.GetCreatureList().Where(x => x.IsKit()))
             {
                 if (kit.isOverloaded)
                 {
-                    Enqueue(new ManageKitCommand(kit));
+                    commands.Add(new ManageKitCommand(kit));
                 }
                 kit.GetKitExtension().OnFixedUpdate();
             }
 
             foreach (var creature in CreatureManager.instance.GetCreatureList().FilterUrgent())
             {
-                Enqueue(new ManageCreatureCommand(creature));
+                commands.Add(new ManageCreatureCommand(creature));
             }
 
             foreach (var creature in CreatureManager.instance.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
             {
                 if (creature.GetExtension().AutoSuppress)
                 {
-                    Enqueue(new SuppressCommand(creature));
+                    commands.Add(new SuppressCommand(creature));
                 }
             }
 
             foreach (var creature in OrdealManager.instance.GetOrdealCreatureList())
             {
-                Enqueue(new SuppressCommand(creature));
+                commands.Add(new SuppressCommand(creature));
             }
 
-            while (_commandQueue.Count() > 0)
+            var queue = new PriorityQueue<ICommand>();
+            foreach (var command in commands)
             {
-                var command = _commandQueue.Dequeue();
-                if (command.IsCompleted)
+                queue.Enqueue(command);
+            }
+
+            while (queue.Count() > 0)
+            {
+                var command = queue.Dequeue();
+                if (!command.IsCompleted && command.IsApplicable)
                 {
-                    _commands.Remove(command);
-                }
-                else if (command.IsApplicable && command.Execute())
-                {
-                    _repeatQueue.Enqueue(command); // TODO wait 3+ cycles
-                }
-                else
-                {
-                    _repeatQueue.Enqueue(command); // check on next cycle
+                    command.Execute();
                 }
             }
         }
@@ -198,7 +196,6 @@ namespace AutoInority
                 WorkingAgents[agent] = command;
             }
             command.Update(creature, skill, forGift, forExp);
-            Enqueue(command);
             agent.AddUnitBuf(new AutomatonBuf(creature));
             Notice.instance.Send("AddSystemLog", $"{agent.Tag()}将会自动对{creature.Tag()}进行{skill.Tag()}");
         }
@@ -224,15 +221,6 @@ namespace AutoInority
         }
 
         private string AutomationMessage() => Running ? Angela.Automaton.On : Angela.Automaton.Off;
-
-        private void Enqueue(ICommand command)
-        {
-            if (_commands.Contains(command))
-            {
-                return;
-            }
-            _commandQueue.Enqueue(command);
-        }
 
         private void HandleKitEvents(CreatureModel kit)
         {

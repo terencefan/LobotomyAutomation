@@ -116,7 +116,6 @@ namespace AutoInority
             }
             else
             {
-                Enqueue(new FarmCommand(creature));
                 TurnOnFarm(room);
             }
         }
