@@ -137,6 +137,7 @@
     <Compile Include="Creature\ZAYIN\YouMustBeHappyExt.cs" />
     <Compile Include="Extentions\AgentModelExtensions.cs" />
     <Compile Include="Angela.cs" />
+    <Compile Include="Angela.Say.cs" />
     <Compile Include="Automaton.cs" />
     <Compile Include="Extentions\CreatureModelExtensions.cs" />
     <Compile Include="Extentions\EquipmentTypeInfoExtensions.cs" />
