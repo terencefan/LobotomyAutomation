@@ -47,7 +47,7 @@ namespace AutoInority
         public static int ManageComparer(Candidate x, Candidate y)
         {
             var mx = x.ManageConfidence + x.Creature.GetRiskLevel();
-            var my = x.ManageConfidence + y.Creature.GetRiskLevel();
+            var my = y.ManageConfidence + y.Creature.GetRiskLevel();
             return my.CompareTo(mx);
         }
 
