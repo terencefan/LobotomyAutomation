@@ -10,6 +10,8 @@
 
         bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message);
 
+        bool CanKeepWorking(AgentModel agent);
+
         bool CheckConfidence(AgentModel agent, SkillTypeInfo skill);
 
         float ConfidenceMultiplifier(AgentModel agent, SkillTypeInfo skill);

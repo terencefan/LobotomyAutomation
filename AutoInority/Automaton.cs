@@ -130,6 +130,30 @@ namespace AutoInority
             }
         }
 
+        /// <summary>
+        /// 在途复查：员工已派工、仍在路上（canCancelCurrentWork）时逐 tick 复核目标收容物；
+        /// ext 策略（CanKeepWorking）不放行且 Boss 战不可取消期外，发 ManageCancel 取消派工，
+        /// 游戏侧 ForcelyCancelWork 会释放房间并让员工回当前 Sefira 待机通道。
+        /// </summary>
+        private void CheckEnrouteAgents()
+        {
+            if (!SefiraBossManager.Instance.IsWorkCancelable)
+            {
+                return;
+            }
+            foreach (var agent in AgentManager.instance.GetAgentList())
+            {
+                if (agent.GetState() != AgentAIState.MANAGE || !agent.canCancelCurrentWork || agent.target == null)
+                {
+                    continue;
+                }
+                if (agent.target is CreatureModel creature && !creature.GetExtension().CanKeepWorking(agent))
+                {
+                    Notice.instance.Send(NoticeName.ManageCancel, creature);
+                }
+            }
+        }
+
         public void Main()
         {
             if (!Running)
@@ -141,6 +165,8 @@ namespace AutoInority
             {
                 Enqueue(_repeatQueue.Dequeue());
             }
+
+            CheckEnrouteAgents();
 
             foreach (var kit in CreatureManager.instance.GetCreatureList().Where(x => x.IsKit()))
             {

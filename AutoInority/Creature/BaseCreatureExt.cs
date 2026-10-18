@@ -44,6 +44,13 @@ namespace AutoInority.Creature
         {
         }
 
+        /// <summary>
+        /// 在途复查：员工已被派往该收容物、仍在路上（canCancelCurrentWork）时每 tick 调用。
+        /// 返回 false 表示情况已变（如害羞换了坏表情），Automaton 会取消派工让员工回待机通道。
+        /// 与 CanWorkWith 的区别：CanWorkWith 管派工时刻，本方法管派出后到达前的窗口。
+        /// </summary>
+        public virtual bool CanKeepWorking(AgentModel agent) => true;
+
         public virtual bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
             // Laetitia
