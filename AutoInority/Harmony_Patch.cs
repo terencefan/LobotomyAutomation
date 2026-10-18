@@ -121,65 +121,73 @@ namespace AutoInority
             }
         }
 
+        // 快捷键绑定表：新增按键在 _keyBindings 加一行即可，主循环只做分发。
+        // Down/Up 双相位（F 的单击/长按需要 Up；List 而非 Dictionary 正是为了一键双相位）
+        private class KeyBinding
+        {
+            internal KeyCode Key;
+
+            internal Action<UnitMouseEventManager> OnDown;
+
+            internal Action<UnitMouseEventManager> OnUp;
+        }
+
         // F 键单击/长按区分：单击开关种地，长按放行给游戏的镜头拉近（CameraMover 的 GetKey）
         private const float FarmTapThreshold = 0.3f;
 
         private static float _farmKeyDownTime = -1f;
 
+        private static readonly List<KeyBinding> _keyBindings = new List<KeyBinding>
+        {
+            new KeyBinding { Key = KeyCode.P,  OnDown = i => Invoke(Automaton.Instance.ToggleAutomation) },
+            new KeyBinding { Key = KeyCode.LeftShift, OnDown = i => i.GetSelectedAgents().ForEach(x => Automaton.Instance.Remove(x)) },
+            new KeyBinding { Key = KeyCode.F,  OnDown = i => _farmKeyDownTime = Time.unscaledTime, OnUp = i => TryToggleFarmByTap() },
+            new KeyBinding { Key = KeyCode.X,  OnDown = i => AssignOrTrain() },
+            new KeyBinding { Key = KeyCode.Z,  OnDown = i => Log.DebugEnabled = !Log.DebugEnabled },
+            new KeyBinding { Key = KeyCode.V,  OnDown = i => Invoke(Automaton.Instance.Clear) },
+        };
+
         public static void UnitMouseEventManager_Update(UnitMouseEventManager __instance)
         {
-            if (Input.GetKeyDown(KeyCode.P))
+            foreach (var binding in _keyBindings)
             {
-                Invoke(Automaton.Instance.ToggleAutomation);
+                if (binding.OnDown != null && Input.GetKeyDown(binding.Key))
+                {
+                    Invoke(() => binding.OnDown(__instance));
+                }
+                if (binding.OnUp != null && Input.GetKeyUp(binding.Key))
+                {
+                    Invoke(() => binding.OnUp(__instance));
+                }
             }
-            else if (Input.GetKeyDown(KeyCode.LeftShift))
-            {
-                Invoke(() => __instance.GetSelectedAgents().ForEach(x => Automaton.Instance.Remove(x)));
-            }
-            else if (Input.GetKeyDown(KeyCode.F))
-            {
-                _farmKeyDownTime = Time.unscaledTime;
-            }
-            else if (Input.GetKeyDown(KeyCode.X))
+        }
+
+        private static void TryToggleFarmByTap()
+        {
+            var hold = Time.unscaledTime - _farmKeyDownTime;
+            _farmKeyDownTime = -1f;
+            // 长按是镜头缩放（游戏原生），只有单击才开关种地
+            if (hold < FarmTapThreshold)
             {
                 var currentWindow = CommandWindow.CommandWindow.CurrentWindow;
                 if (currentWindow.enabled && currentWindow.IsEnabled && currentWindow.CurrentTarget is CreatureModel creature)
                 {
-                    Invoke(() => Automaton.Instance.AssignWork(creature));
-                }
-                else
-                {
-                    Invoke(() => Automaton.Instance.TryTrain());
+                    Invoke(() => Automaton.Instance.ToggleFarming(creature));
                 }
             }
-            else if (Input.GetKeyDown(KeyCode.Z))
-            {
-                Invoke(() => Log.DebugEnabled = !Log.DebugEnabled);
-            }
-            else if (Input.GetKeyDown(KeyCode.V))
-            {
-                Invoke(Automaton.Instance.Clear);
-            }
+        }
 
-            if (Input.GetKeyUp(KeyCode.F) && _farmKeyDownTime >= 0f)
+        private static void AssignOrTrain()
+        {
+            var currentWindow = CommandWindow.CommandWindow.CurrentWindow;
+            if (currentWindow.enabled && currentWindow.IsEnabled && currentWindow.CurrentTarget is CreatureModel creature)
             {
-                var hold = Time.unscaledTime - _farmKeyDownTime;
-                _farmKeyDownTime = -1f;
-                // 长按是镜头缩放（游戏原生），只有单击才开关种地
-                if (hold < FarmTapThreshold)
-                {
-                    var currentWindow = CommandWindow.CommandWindow.CurrentWindow;
-                    if (currentWindow.enabled && currentWindow.IsEnabled && currentWindow.CurrentTarget is CreatureModel creature)
-                    {
-                        Invoke(() => Automaton.Instance.ToggleFarming(creature));
-                    }
-                }
+                Invoke(() => Automaton.Instance.AssignWork(creature));
             }
-
-            // else if (Input.GetKeyDown(KeyCode.B))
-            // {
-            //     Screen.SetResolution(Screen.width, Screen.height, !Screen.fullScreen);
-            // }
+            else
+            {
+                Invoke(() => Automaton.Instance.TryTrain());
+            }
         }
 
         public static void UpdateGameSpeed_Postfix()
