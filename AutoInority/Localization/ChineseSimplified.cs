@@ -30,10 +30,12 @@ namespace AutoInority.Localization
 
         public override string FarmPanel_ByRiskLevel => "按等级";
 
-        public override string FarmPanel_ClickHint => "点击行可结束该异想体的轮班";
+        public override string FarmPanel_ClickHint => "点击开关以开发异想体";
 
         public override string FarmPanel_Empty => "当前没有轮班中的异想体";
 
-        public override string FarmPanel_Title => "轮班管理";
+        public override string FarmPanel_Escaped => "出逃中";
+
+        public override string FarmPanel_Title => "异想体管理";
     }
 }

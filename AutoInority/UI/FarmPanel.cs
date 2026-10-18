@@ -10,14 +10,17 @@ using UnityEngine.UI;
 
 namespace AutoInority.UI
 {
-    // 种地管理面板：O 键开关。只显示正在 farm 的异想体，点击行即关闭该异想体的种地。
+    // 异想体管理面板：O 键开关。列出设施内全部异想体（滤工具与考验实体），
+    // 每行一个开发开关（= farm 模式），无需开管理窗口按 T；出逃/镇压中的行灰显禁用。
     // 纯叠加 UI，不暂停游戏；刷新与拖动均用 unscaled 时间，暂停/倍速下照常工作。
-    // 样式取自游戏调色板（UIColorManager）与游戏字体，不引入外部素材。
+    // 样式取自游戏调色板（UIColorManager）与游戏字体；分组 section 用组色线框（程序化九宫格）。
     internal class FarmPanel : MonoBehaviour
     {
-        private const float GroupHeaderHeight = 30f;
+        private const float HeaderHeight = 30f;
 
         private const float HintHeight = 24f;
+
+        private const float MaxContentHeight = 640f;
 
         private const float Padding = 12f;
 
@@ -27,6 +30,16 @@ namespace AutoInority.UI
 
         private const float RowHeight = 48f;
 
+        private const float SectionGap = 8f;
+
+        private const float SectionInset = 8f;
+
+        private const float SectionPadding = 6f;
+
+        private const float SwitchHeight = 36f;
+
+        private const float SwitchWidth = 100f;
+
         private const float TitleBarHeight = 44f;
 
         private static readonly string[] RiskLevelNames = { "ZAYIN", "TETH", "HE", "WAW", "ALEPH" };
@@ -34,6 +47,8 @@ namespace AutoInority.UI
         private static FarmPanel _instance;
 
         private static Font _font;
+
+        private static Sprite _frameSprite;
 
         private RectTransform _content;
 
@@ -115,6 +130,25 @@ namespace AutoInority.UI
             return _font;
         }
 
+        // 程序化九宫格：16x16 全白贴图 + 2px border，供 section 线框（Sliced）使用
+        private static Sprite GetFrameSprite()
+        {
+            if (_frameSprite == null)
+            {
+                var texture = new Texture2D(16, 16, TextureFormat.RGBA32, false);
+                var pixels = new Color32[16 * 16];
+                for (var i = 0; i < pixels.Length; i++)
+                {
+                    pixels[i] = new Color32(255, 255, 255, 255);
+                }
+                texture.SetPixels32(pixels);
+                texture.Apply();
+                _frameSprite = Sprite.Create(texture, new Rect(0f, 0f, 16f, 16f), new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect, new Vector4(2f, 2f, 2f, 2f));
+                _frameSprite.name = "AutoInority.Frame";
+            }
+            return _frameSprite;
+        }
+
         private static RectTransform CreateRect(string name, Transform parent)
         {
             var rect = new GameObject(name, typeof(RectTransform)).GetComponent<RectTransform>();
@@ -145,14 +179,14 @@ namespace AutoInority.UI
             return text;
         }
 
-        // 顶部锚定、横向撑满（左右各缩进 Padding）、自上而下按 top 排布
-        private static void AnchorTopStretch(RectTransform rect, float top, float height)
+        // 顶部锚定、横向撑满（左右各缩进 inset）、自上而下按 top 排布
+        private static void AnchorTopStretch(RectTransform rect, float top, float height, float inset)
         {
             rect.anchorMin = new Vector2(0f, 1f);
             rect.anchorMax = new Vector2(1f, 1f);
             rect.pivot = new Vector2(0.5f, 1f);
             rect.anchoredPosition = new Vector2(0f, -top);
-            rect.sizeDelta = new Vector2(-2f * Padding, height);
+            rect.sizeDelta = new Vector2(-2f * inset, height);
         }
 
         private static Color TextColor(float alpha = 1f)
@@ -183,6 +217,21 @@ namespace AutoInority.UI
             return (skill != null && skill.agent != null) ? skill.agent.name : "—";
         }
 
+        // 出逃/镇压中的异想体不可开关（回收容后恢复）
+        private static bool IsUnavailable(CreatureModel creature)
+        {
+            return creature.IsEscaped()
+                || creature.state == CreatureState.SUPPRESSED
+                || creature.state == CreatureState.SUPPRESSED_RETURN;
+        }
+
+        private static List<CreatureModel> GetCreatures()
+        {
+            return CreatureManager.instance.GetCreatureList()
+                .Where(x => x != null && x.IsCreature() && !(x is OrdealCreatureModel))
+                .ToList();
+        }
+
         private void BuildRoot()
         {
             _root = GetComponent<RectTransform>();
@@ -200,12 +249,32 @@ namespace AutoInority.UI
 
             BuildTitleBar();
 
-            _content = CreateRect("Content", _root);
+            // 行区：限高滚动（RectMask2D 裁剪，viewport 透明图承接滚轮射线）
+            var viewport = CreateRect("Viewport", _root);
+            viewport.anchorMin = Vector2.zero;
+            viewport.anchorMax = Vector2.one;
+            viewport.pivot = new Vector2(0.5f, 0.5f);
+            viewport.offsetMin = new Vector2(0f, HintHeight);
+            viewport.offsetMax = new Vector2(0f, -TitleBarHeight);
+            var viewportImage = viewport.gameObject.AddComponent<Image>();
+            viewportImage.color = Color.clear;
+            viewportImage.raycastTarget = true;
+            viewport.gameObject.AddComponent<RectMask2D>();
+
+            var scrollRect = viewport.gameObject.AddComponent<ScrollRect>();
+            scrollRect.horizontal = false;
+            scrollRect.vertical = true;
+            scrollRect.movementType = ScrollRect.MovementType.Clamped;
+            scrollRect.scrollSensitivity = 24f;
+            scrollRect.viewport = viewport;
+
+            _content = CreateRect("Content", viewport);
             _content.anchorMin = new Vector2(0f, 1f);
             _content.anchorMax = new Vector2(1f, 1f);
             _content.pivot = new Vector2(0.5f, 1f);
-            _content.anchoredPosition = new Vector2(0f, -TitleBarHeight);
+            _content.anchoredPosition = Vector2.zero;
             _content.sizeDelta = new Vector2(0f, 0f);
+            scrollRect.content = _content;
 
             var hint = CreateText("Hint", _root, Angela.FarmPanel.ClickHint, 15, TextColor(0.6f), TextAnchor.MiddleCenter);
             var hintRect = hint.rectTransform;
@@ -283,34 +352,27 @@ namespace AutoInority.UI
         {
             ClearRows();
 
-            // 快照，防遍历中集合变更
-            var creatures = Automaton.Instance.FarmingCreatures.Where(x => x != null && x.IsCreature()).ToList();
+            var creatures = GetCreatures();
             var top = 0f;
 
             if (creatures.Count == 0)
             {
                 var empty = CreateText("Empty", _content, Angela.FarmPanel.Empty, 17, TextColor(0.7f), TextAnchor.MiddleCenter);
-                AnchorTopStretch(empty.rectTransform, top, RowHeight);
+                AnchorTopStretch(empty.rectTransform, top, RowHeight, Padding);
                 top += RowHeight;
             }
             else
             {
                 foreach (var group in GroupCreatures(creatures))
                 {
-                    var header = CreateText("GroupHeader", _content, GroupTitle(group.Key, group.Count()), 16, TextColor(0.85f), TextAnchor.MiddleLeft);
-                    AnchorTopStretch(header.rectTransform, top, GroupHeaderHeight);
-                    top += GroupHeaderHeight;
-
-                    foreach (var creature in group)
-                    {
-                        BuildCreatureRow(creature, top);
-                        top += RowHeight;
-                    }
+                    top += BuildSection(group, top) + SectionGap;
                 }
+                top -= SectionGap;
             }
 
+            var viewportHeight = Mathf.Min(top, MaxContentHeight);
             _content.sizeDelta = new Vector2(0f, top);
-            _root.sizeDelta = new Vector2(PanelWidth, TitleBarHeight + top + HintHeight + Padding);
+            _root.sizeDelta = new Vector2(PanelWidth, TitleBarHeight + viewportHeight + HintHeight);
         }
 
         private void ClearRows()
@@ -347,17 +409,62 @@ namespace AutoInority.UI
             return $"{name} ×{count}";
         }
 
-        private void BuildCreatureRow(CreatureModel creature, float top)
+        private Color GroupColor(int key)
         {
-            var row = CreateRect("Row", _content);
-            AnchorTopStretch(row, top, RowHeight - 2f);
+            var manager = UIColorManager.instance;
+            if (_mode == GroupMode.Department)
+            {
+                var sefiraColor = manager != null ? manager.GetSefiraColor((SefiraEnum)key) : null;
+                return sefiraColor != null ? sefiraColor.imageColor : TextColor();
+            }
+            var colors = manager != null ? manager.RiskLevelColor : null;
+            return (colors != null && key >= 0 && key < colors.Length) ? colors[key] : TextColor();
+        }
 
-            var image = row.gameObject.AddComponent<Image>();
-            image.color = new Color(1f, 1f, 1f, 0.06f);
+        // 组线框 section：Sliced 九宫格着组色（线框 + 低透明度底），含组标题、分隔线与数据行；返回 section 总高
+        private float BuildSection(IGrouping<int, CreatureModel> group, float top)
+        {
+            var list = group.ToList();
+            var sectionHeight = HeaderHeight + SectionPadding + list.Count * RowHeight + SectionPadding;
 
-            var button = row.gameObject.AddComponent<Button>();
-            button.targetGraphic = image;
-            button.onClick.AddListener(delegate { HandleRowClick(creature); });
+            var section = CreateRect("Section", _content);
+            AnchorTopStretch(section, top, sectionHeight, SectionInset);
+
+            var groupColor = GroupColor(group.Key);
+            var frame = section.gameObject.AddComponent<Image>();
+            frame.sprite = GetFrameSprite();
+            frame.type = Image.Type.Sliced;
+            frame.fillCenter = true;
+            frame.color = new Color(groupColor.r, groupColor.g, groupColor.b, 0.10f);
+            frame.raycastTarget = false;
+
+            var header = CreateText("Header", section, GroupTitle(group.Key, list.Count), 16, groupColor, TextAnchor.MiddleLeft);
+            AnchorTopStretch(header.rectTransform, 0f, HeaderHeight, SectionPadding + 4f);
+
+            var divider = CreateImage("Divider", section, new Color(groupColor.r, groupColor.g, groupColor.b, 0.55f));
+            AnchorTopStretch(divider.rectTransform, HeaderHeight, 2f, SectionPadding);
+
+            var y = HeaderHeight + SectionPadding;
+            foreach (var creature in list)
+            {
+                BuildCreatureRow(section, creature, y);
+                y += RowHeight;
+            }
+            return sectionHeight;
+        }
+
+        private void BuildCreatureRow(RectTransform section, CreatureModel creature, float top)
+        {
+            var row = CreateRect("Row", section);
+            AnchorTopStretch(row, top, RowHeight - 2f, SectionPadding + 4f);
+
+            var escaped = IsUnavailable(creature);
+            var farming = Automaton.Instance.FarmingCreatures.Contains(creature);
+
+            // 行底色：开发中更亮；行本身不可点（无 Button，raycast 关闭）
+            var rowImage = row.gameObject.AddComponent<Image>();
+            rowImage.color = new Color(1f, 1f, 1f, farming ? 0.10f : 0.05f);
+            rowImage.raycastTarget = false;
 
             var portrait = CreateImage("Portrait", row, Color.white);
             var sprite = Add_On.GetPortrait(creature.metaInfo.portraitSrc);
@@ -370,32 +477,74 @@ namespace AutoInority.UI
                 portrait.sprite = sprite;
                 portrait.preserveAspect = true;
             }
+            if (escaped)
+            {
+                portrait.color = new Color(1f, 1f, 1f, 0.4f);
+            }
             portrait.rectTransform.anchorMin = new Vector2(0f, 0.5f);
             portrait.rectTransform.anchorMax = new Vector2(0f, 0.5f);
             portrait.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             portrait.rectTransform.sizeDelta = new Vector2(36f, 36f);
-            portrait.rectTransform.anchoredPosition = new Vector2(Padding + 18f, 0f);
+            portrait.rectTransform.anchoredPosition = new Vector2(24f, 0f);
 
-            var name = CreateText("Name", row, creature.metaInfo.name, 18, RiskColor(creature), TextAnchor.MiddleLeft);
+            var nameColor = RiskColor(creature);
+            if (escaped)
+            {
+                nameColor.a *= 0.4f;
+            }
+            var name = CreateText("Name", row, creature.metaInfo.name, 18, nameColor, TextAnchor.MiddleLeft);
             name.rectTransform.anchorMin = new Vector2(0f, 0f);
             name.rectTransform.anchorMax = new Vector2(1f, 1f);
-            name.rectTransform.offsetMin = new Vector2(64f, 0f);
-            name.rectTransform.offsetMax = new Vector2(-200f, 0f);
+            name.rectTransform.offsetMin = new Vector2(58f, 0f);
+            name.rectTransform.offsetMax = new Vector2(-224f, 0f);
 
-            var agentLabel = CreateText("Agent", row, CurrentAgentLabel(creature), 15, TextColor(0.7f), TextAnchor.MiddleRight);
+            var agentLabel = CreateText("Agent", row, escaped ? Angela.FarmPanel.Escaped : CurrentAgentLabel(creature), 15, TextColor(escaped ? 0.45f : 0.7f), TextAnchor.MiddleRight);
             agentLabel.rectTransform.anchorMin = new Vector2(1f, 0f);
             agentLabel.rectTransform.anchorMax = new Vector2(1f, 1f);
             agentLabel.rectTransform.pivot = new Vector2(1f, 0.5f);
-            agentLabel.rectTransform.offsetMin = new Vector2(-196f, 0f);
-            agentLabel.rectTransform.offsetMax = new Vector2(-8f, 0f);
+            agentLabel.rectTransform.offsetMin = new Vector2(-220f, 0f);
+            agentLabel.rectTransform.offsetMax = new Vector2(-112f, 0f);
+
+            // 开发开关：指示灯绿=开发中、暗=未开发；出逃行不可点
+            var switchRect = CreateRect("Switch", row);
+            switchRect.anchorMin = new Vector2(1f, 0.5f);
+            switchRect.anchorMax = new Vector2(1f, 0.5f);
+            switchRect.pivot = new Vector2(1f, 0.5f);
+            switchRect.sizeDelta = new Vector2(SwitchWidth, SwitchHeight);
+            switchRect.anchoredPosition = new Vector2(-10f, 0f);
+            var switchBackground = switchRect.gameObject.AddComponent<Image>();
+            switchBackground.color = new Color(1f, 1f, 1f, 0.10f);
+            var switchButton = switchRect.gameObject.AddComponent<Button>();
+            switchButton.targetGraphic = switchBackground;
+            switchButton.interactable = !escaped;
+            switchButton.onClick.AddListener(delegate { HandleToggle(creature); });
+
+            var manager = UIColorManager.instance;
+            Color lampColor;
+            if (farming)
+            {
+                lampColor = manager != null ? manager.Allocate_SefiraGreen : new Color(0.3f, 0.9f, 0.4f);
+            }
+            else if (escaped)
+            {
+                lampColor = new Color(0.5f, 0.5f, 0.5f, 0.4f);
+            }
+            else
+            {
+                lampColor = new Color(0.7f, 0.7f, 0.7f, 0.25f);
+            }
+            var lamp = CreateImage("Lamp", switchRect, lampColor);
+            lamp.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+            lamp.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+            lamp.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            lamp.rectTransform.sizeDelta = new Vector2(14f, 14f);
         }
 
-        private void HandleRowClick(CreatureModel creature)
+        private void HandleToggle(CreatureModel creature)
         {
             try
             {
-                // 只关不放：行仅在面板打开期间存在，若期间该异想体已被移出 farm 集合则忽略
-                if (creature != null && creature.Unit != null && creature.Unit.room != null && Automaton.Instance.FarmingCreatures.Contains(creature))
+                if (creature != null && creature.Unit != null && creature.Unit.room != null)
                 {
                     Automaton.Instance.ToggleFarming(creature);
                 }

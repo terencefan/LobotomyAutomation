@@ -46,6 +46,8 @@ namespace AutoInority.Localization
 
         public abstract string FarmPanel_Empty { get; }
 
+        public abstract string FarmPanel_Escaped { get; }
+
         public abstract string FarmPanel_Title { get; }
 
         #endregion FarmPanel

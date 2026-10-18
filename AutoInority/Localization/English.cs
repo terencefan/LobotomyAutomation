@@ -32,10 +32,12 @@ namespace AutoInority.Localization
 
         public override string FarmPanel_ByRiskLevel => "By Risk Level";
 
-        public override string FarmPanel_ClickHint => "Click a row to end that creature's rotation";
+        public override string FarmPanel_ClickHint => "Toggle a switch to exploit a creature";
 
         public override string FarmPanel_Empty => "No creature is on rotation right now.";
 
-        public override string FarmPanel_Title => "Work Roster";
+        public override string FarmPanel_Escaped => "Escaped";
+
+        public override string FarmPanel_Title => "Creature Management";
     }
 }

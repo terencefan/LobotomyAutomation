@@ -95,6 +95,8 @@ namespace AutoInority
 
             public static string Empty => Language.FarmPanel_Empty;
 
+            public static string Escaped => Language.FarmPanel_Escaped;
+
             public static string Title => Language.FarmPanel_Title;
         }
 
