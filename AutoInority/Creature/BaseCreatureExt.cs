@@ -1,3 +1,4 @@
+using System;
 ﻿using System.Linq;
 using System.Reflection;
 
@@ -51,20 +52,50 @@ namespace AutoInority.Creature
         /// </summary>
         public virtual bool CanKeepWorking(AgentModel agent) => true;
 
+        /// <summary>
+        /// buf 危害排除表：员工持有某 buf 时，派往（非豁免）目标会遭受工作之外的危害
+        /// （死亡/处罚），故一律拒绝派工。新增 buf 危害 = 加一行表项。
+        /// 与技能型相关的拒绝（如碎甲）不适用此表，仍写在 CanWorkWith 内。
+        /// </summary>
+        private sealed class BufExclusion
+        {
+            internal readonly Func<AgentModel, bool> Match;
+
+            internal readonly Func<CreatureBase, bool> Exempt;
+
+            internal readonly string Message;
+
+            internal BufExclusion(Func<AgentModel, bool> match, Func<CreatureBase, bool> exempt, string message)
+            {
+                Match = match;
+                Exempt = exempt;
+                Message = message;
+            }
+        }
+
+        private static readonly BufExclusion[] BufExclusions =
+        {
+            // 蕾蒂希娅的心：带心员工派往任何非蕾蒂希娅目标，5-10s 后死亡并生成蕾怪
+            new BufExclusion(
+                a => a.HasUnitBuf(UnitBufType.LITTLEWITCH_HEART),
+                s => s is LittleWitch,
+                Angela.Creature.Laetitia),
+            // 精灵盛宴的祝福：带祝福员工被派往任何收容物（含精灵本体）都会在到达前被吃掉
+            new BufExclusion(
+                a => a.GetUnitBufList().Where(x => x is FairyBuf).Any(),
+                s => s is Fairy,
+                Angela.Creature.Fairy),
+        };
+
         public virtual bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            // Laetitia
-            if (!(Script is LittleWitch) && agent.HasUnitBuf(UnitBufType.LITTLEWITCH_HEART))
+            foreach (var exclusion in BufExclusions)
             {
-                message = string.Format(Angela.Creature.Laetitia, agent.Tag(), _creature.Tag(), skill.Tag());
-                return false;
-            }
-
-            // Fairy
-            if (!(Script is Fairy) && agent.GetUnitBufList().Where(x => x is FairyBuf).Any())
-            {
-                message = string.Format(Angela.Creature.Fairy, agent.Tag(), _creature.Tag(), skill.Tag());
-                return false;
+                if (exclusion.Match(agent) && !exclusion.Exempt(Script))
+                {
+                    message = string.Format(exclusion.Message, agent.Tag(), _creature.Tag(), skill.Tag());
+                    return false;
+                }
             }
 
             // Armor
