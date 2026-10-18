@@ -25,6 +25,12 @@ namespace AutoInority
             Notice.instance.Send("AddSystemLog", message);
         }
 
+        public static void Announce(string message)
+        {
+            Say(message);
+            Log(message);
+        }
+
         public static void Say(string message)
         {
             AngelaConversationUI.instance.AddAngelaMessage(message);
@@ -34,6 +40,7 @@ namespace AutoInority
         {
             switch (language)
             {
+                case SystemLanguage.Chinese:
                 case SystemLanguage.ChineseSimplified:
 
                     // AutoInority.Log.Info("Simplified chinese resource loaded");
