@@ -102,15 +102,15 @@ namespace AutoInority
 
             public const string HappyTeddy = "我很遗憾看到您连续安排{0}对{1}进行{2}，或许下一位主管能做的比您更好些。";
 
-            public const string KnightOfDespair = "我只是提醒一下，{1}还没有祝福过任何员工。";
+            public const string KnightOfDespair = "我只是提醒一下，{1}还没有祝福过任何职员。";
 
             public const string Laetitia = "您难道没有发现{0}已经拥有{1}的礼物了吗？您这样的主管真是令我失望。";
 
-            public const string Nothing = "被激怒的{1}很可能会杀死员工或者突破收容，我不认为{0}具备对{1}进行{2}的能力。";
+            public const string Nothing = "被激怒的{1}很可能会杀死职员或者突破收容，我不认为{0}具备对{1}进行{2}的能力。";
 
             public const string RedShoes = "我不认为安排{0}去对{1}进行{2}是一个好主意，很明显{0}还不如您自律。";
 
-            public const string Sakura = "本次对{1}的工作将会导致数名设施内的员工对其着魔，不过我相信你应该已经准备好镇压了。";
+            public const string Sakura = "本次对{1}的工作将会导致数名设施内的职员对其着魔，不过我相信你应该已经准备好镇压了。";
 
             public const string Shark = "安排{0}对{1}进行{2}是非常不明智的行为，你是不是应该多思考一下。";
 
@@ -130,17 +130,17 @@ namespace AutoInority
 
             public const string ArmorWarning = "指派{0}对{1}进行{2}会导致其无法再完成其他的沟通和压迫工作，以他目前的能力值来看，我认为他还没有准备好。";
 
-            public const string ArmorKill = "我相信{1}并不喜欢弱小的员工，这可能是我们最后一次见到{0}了。";
+            public const string ArmorKill = "我相信{1}并不喜欢弱小的职员，这可能是我们最后一次见到{0}了。";
 
             public const string Spider = "我想{0}在完成{1}的{2}后就会被变成茧吧，主管，您真的有在认真读观察记录吗？ ";
 
             public const string Ppodae = "{1}并不喜欢{2}，恐怕这一工作安排恐怕会导致{1}的出逃，希望你已经准备好了。";
 
-            public const string Porccubus = "以{0}的自律能力应该无法抵挡来自{1}的死亡诱惑吧，你应该开始这位员工的善后准备了。";
+            public const string Porccubus = "以{0}的自律能力应该无法抵挡来自{1}的死亡诱惑吧，你应该开始这位职员的善后准备了。";
 
-            public const string Woodsman = "没有心脏的{1}将会斩首任何接近他的员工，而{0}将会成为因你而死的受害者。";
+            public const string Woodsman = "没有心脏的{1}将会斩首任何接近他的职员，而{0}将会成为因你而死的受害者。";
 
-            public const string ParasiteTree = "{1}已经祝福过你的四个员工了，我相信你不会想看到第五个员工被它祝福。";
+            public const string ParasiteTree = "{1}已经祝福过你的四个职员了，我相信你不会想看到第五个职员被它祝福。";
 
             public const string BigBadWolf = "{1}能够在{0}身上感知到小红帽雇佣兵的气息，这应该会让它非常的不高兴。";
 
@@ -148,7 +148,7 @@ namespace AutoInority
 
             public const string MeltingLove = "对{1}进行{2}会导致{0}被粘液感染，希望你已经做好了隔离准备。";
 
-            public const string BodyMountain = "{1}很喜欢受伤的员工 ———— 虽然这并不意味着安排这个工作是明智的。";
+            public const string BodyMountain = "{1}很喜欢受伤的职员 ———— 虽然这并不意味着安排这个工作是明智的。";
         }
     }
 }
