@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 
 using AutoInority.Extentions;
@@ -178,18 +179,23 @@ namespace AutoInority.Creature
             var minDamage = damageInfo.min * multiplier;
             var maxDamage = damageInfo.max * multiplier;
 
+            // 游戏在 TakeDamage 各伤害分支先过 BarrierBuf.UseBarrier 抵扣再扣血（WorkerModel.cs:613/634/676/715 附近），
+            // 此处把对应类型护盾的剩余抵扣量折算进有效血池。
             switch (damageInfo.type)
             {
                 case RwbpType.R:
-                case RwbpType.B:
                 case RwbpType.N:
-                    return Confidence.Survive(agent.hp, minDamage, maxDamage, workSuccessProb, maxCubeCount) > AutomationConfig.DeadConfidence;
+                    return Confidence.Survive(agent.hp + agent.GetBarrierValue(damageInfo.type), minDamage, maxDamage, workSuccessProb, maxCubeCount) > AutomationConfig.DeadConfidence;
                 case RwbpType.W:
-                    return Confidence.Survive(MentalFix(agent.mental), minDamage, maxDamage, workSuccessProb, maxCubeCount) > AutomationConfig.DeadConfidence;
+                    return Confidence.Survive(agent.mental + agent.GetBarrierValue(RwbpType.W), minDamage, maxDamage, workSuccessProb, maxCubeCount) > AutomationConfig.DeadConfidence;
+                case RwbpType.B:
+                    // 游戏 B 伤害用同一抵扣后的 num2 同时扣 hp 与 mental，有效池取两者较小值；护盾只抵扣一次，等效两池各加 barrier(B)。
+                    var pool = Math.Min(agent.hp, agent.mental) + agent.GetBarrierValue(RwbpType.B);
+                    return Confidence.Survive(pool, minDamage, maxDamage, workSuccessProb, maxCubeCount) > AutomationConfig.DeadConfidence;
                 case RwbpType.P:
                     minDamage *= agent.maxHp / 100f;
                     maxDamage *= agent.maxHp / 100f;
-                    return Confidence.Survive(agent.hp, minDamage, maxDamage, workSuccessProb, maxCubeCount) > AutomationConfig.DeadConfidence;
+                    return Confidence.Survive(agent.hp + agent.GetBarrierValue(RwbpType.P), minDamage, maxDamage, workSuccessProb, maxCubeCount) > AutomationConfig.DeadConfidence;
             }
             return false;
         }
@@ -313,8 +319,6 @@ namespace AutoInority.Creature
             var useSkill = FakeUseSkill(skill, agent);
             return Script.GetDamageMultiplierInWork(useSkill);
         }
-
-        protected virtual float MentalFix(float mental) => mental;
 
         protected string Message(string pattern, AgentModel agent, SkillTypeInfo skill)
         {

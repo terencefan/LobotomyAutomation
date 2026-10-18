@@ -1,12 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace AutoInority.Extentions
 {
     public static class AgentModelExtensions
     {
         private static readonly RwbpType[] AllTypes = new RwbpType[] { RwbpType.P, RwbpType.R, RwbpType.W, RwbpType.B };
+
+        // 护盾剩余量的读取方式：BarrierBuf 的 _barrierValue（剩余抵扣量）与 _rwbpType 均为私有字段且无公开
+        // 读取 API；UnitModel._barrierBufList 是 protected（GetUnitBufList() 返回的是基类 UnitBuf 列表）。
+        // 游戏唯一的消耗入口 UseBarrier 会真实抵扣并在耗尽时 Destroy() buf，有副作用；而评估（CheckSurvive）
+        // 会被重复触发，必须无副作用，因此只能反射读取字段值，绝不调用 UseBarrier。
+        private static readonly FieldInfo BarrierBufTypeField = typeof(BarrierBuf).GetField("_rwbpType", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        private static readonly FieldInfo BarrierBufValueField = typeof(BarrierBuf).GetField("_barrierValue", BindingFlags.NonPublic | BindingFlags.Instance);
+
+        // 对应伤害类型的护盾当前剩余抵扣量（只读评估，无副作用）。
+        // RwbpType.A 的通用护盾（UseBarrier 对任意类型抵扣）一并计入；耗尽的护盾 _barrierValue 已归零，读 0 即可。
+        public static float GetBarrierValue(this AgentModel agent, RwbpType type)
+        {
+            if (BarrierBufTypeField == null || BarrierBufValueField == null)
+            {
+                return 0;
+            }
+            var value = 0f;
+            foreach (var buf in agent.GetUnitBufList())
+            {
+                if (!(buf is BarrierBuf barrier))
+                {
+                    continue;
+                }
+                var bufType = (RwbpType)BarrierBufTypeField.GetValue(barrier);
+                if (bufType == type || bufType == RwbpType.A)
+                {
+                    value += (float)BarrierBufValueField.GetValue(barrier);
+                }
+            }
+            return value;
+        }
 
         public static void ClearAutomationBuf(this AgentModel agent)
         {

@@ -19,7 +19,5 @@ namespace AutoInority.Creature
             }
             return base.CanWorkWith(agent, skill, out message);
         }
-
-        protected override float MentalFix(float mental) => 0.4f * mental;
     }
 }
