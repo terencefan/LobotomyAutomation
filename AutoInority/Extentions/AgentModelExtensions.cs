@@ -17,11 +17,6 @@ namespace AutoInority.Extentions
             }
         }
 
-        public static IEnumerable<AgentModel> FilterCanSuppress(this IEnumerable<AgentModel> agents, CreatureModel creature)
-        {
-            return agents.Where(x => x.IsAvailable() && x.IsCapableOfPressing(creature)).ToList();
-        }
-
         public static IEnumerable<AgentModel> FilterFarm(this IEnumerable<AgentModel> agents, CreatureModel creature)
         {
             if (creature.GetExtension().TryGetEGOGift(out var gift))

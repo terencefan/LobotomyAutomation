@@ -26,22 +26,6 @@ namespace AutoInority.Extentions
             return creatures.Where(x => x.IsCreature() && x.IsUrgent() && x.IsAvailable());
         }
 
-        public static List<Candidate> FindCandidates(this IEnumerable<CreatureModel> creatures, int distance)
-        {
-            var candidates = new List<Candidate>();
-            foreach (var creature in creatures)
-            {
-                var agents = creature.FindAgents(distance);
-                candidates.AddRange(Candidate.Suggest(agents, creature));
-            }
-            return candidates;
-        }
-
-        public static IEnumerable<AgentModel> FindAgents(this CreatureModel creature, int distance = 80)
-        {
-            return AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && Graph.Distance(x, creature) < distance);
-        }
-
         public static ICreatureExtension GetExtension(this CreatureModel model)
         {
             if (model.IsKit())
