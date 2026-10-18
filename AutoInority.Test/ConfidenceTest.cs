@@ -160,7 +160,7 @@ namespace AutoInority.Test
         public bool InRangeSimulate(int count, float prob, int from, int to)
         {
             to = to < 0 ? count : to;
-            var random = new Random(DateTime.UtcNow.Millisecond);
+            var random = Random.Shared;
             var r = 0;
             for (int i = 0; i < count; i++)
             {
@@ -178,7 +178,7 @@ namespace AutoInority.Test
 
         private bool SurviveSimulate(float maxPoints, int damage, float prob, int count)
         {
-            var random = new Random(DateTime.UtcNow.Millisecond);
+            var random = Random.Shared;
             for (int i = 0; i < count; i++)
             {
                 if (random.NextDouble() > prob)
@@ -196,7 +196,7 @@ namespace AutoInority.Test
         private bool SurviveSimulate(float maxPoints, float minDamage, float maxDamage, float prob, int count)
         {
             var delta = maxDamage - minDamage;
-            var random = new Random(DateTime.UtcNow.Millisecond);
+            var random = Random.Shared;
             for (int i = 0; i < count; i++)
             {
                 if (random.NextDouble() > prob)
