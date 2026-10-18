@@ -73,20 +73,38 @@ namespace AutoInority.UI
         {
             if (GlobalGameManager.instance == null)
             {
+                Log.Info("FarmPanel: GlobalGameManager not ready, skip");
                 return;
             }
-            var canvas = GameObject.FindGameObjectWithTag("GlobalCanvas");
-            if (canvas == null)
+            var parent = FindCanvasTransform();
+            if (parent == null)
             {
-                Log.Debug("FarmPanel: GlobalCanvas not found");
+                Log.Info("FarmPanel: no UI canvas found, skip");
                 return;
             }
             var root = new GameObject("AutoInority.FarmPanel", typeof(RectTransform), typeof(FarmPanel));
-            root.transform.SetParent(canvas.transform, false);
+            root.transform.SetParent(parent, false);
             _instance = root.GetComponent<FarmPanel>();
             _instance.BuildRoot();
             _instance.RebuildRows();
-            Log.Debug("FarmPanel: opened");
+            Log.Debug($"FarmPanel: opened under {parent.name}");
+        }
+
+        // GlobalCanvas tag 的唯一游戏引用（TextAppearEffect）没有调用者，日场景常无该 tag 对象——
+        // 回退到 BaseMod GlobalNoticeBox 验证过的跨场景挂点：GlobalGameManager 的 child 0
+        private static Transform FindCanvasTransform()
+        {
+            var tagged = GameObject.FindGameObjectWithTag("GlobalCanvas");
+            if (tagged != null)
+            {
+                return tagged.transform;
+            }
+            var manager = GlobalGameManager.instance;
+            if (manager != null && manager.transform.childCount > 0)
+            {
+                return manager.transform.GetChild(0);
+            }
+            return null;
         }
 
         private static Font GetFont()
