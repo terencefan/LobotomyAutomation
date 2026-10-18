@@ -131,7 +131,7 @@ namespace AutoInority
             {
                 Invoke(() => __instance.GetSelectedAgents().ForEach(x => Automaton.Instance.Remove(x)));
             }
-            else if (Input.GetKeyDown(KeyCode.T))
+            else if (Input.GetKeyDown(KeyCode.F))
             {
                 var currentWindow = CommandWindow.CommandWindow.CurrentWindow;
                 if (currentWindow.enabled && currentWindow.IsEnabled && currentWindow.CurrentTarget is CreatureModel creature)
