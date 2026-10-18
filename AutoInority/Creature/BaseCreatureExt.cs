@@ -44,6 +44,15 @@ namespace AutoInority.Creature
         {
         }
 
+        /// <summary>
+        /// 门检默认放行：无门口特殊风险的异想体无需处理，覆写以启用门口弹回。
+        /// </summary>
+        public virtual bool ViableAtDoor(AgentModel agent, SkillTypeInfo skill, out string message)
+        {
+            message = null;
+            return true;
+        }
+
         public virtual bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
             // Laetitia

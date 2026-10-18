@@ -20,8 +20,12 @@ namespace AutoInority
             }
         }
 
-        public static void Log(string message)
+        public static void Log(string message, bool verbose = false)
         {
+            if (verbose && !AutoInority.Log.DebugEnabled)
+            {
+                return;
+            }
             Notice.instance.Send("AddSystemLog", message);
         }
 

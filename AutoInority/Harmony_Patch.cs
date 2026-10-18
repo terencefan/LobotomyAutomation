@@ -85,6 +85,33 @@ namespace AutoInority
             Invoke(() => CenterBrain.AddRecord(__instance.agent, __instance.targetCreature, __instance.skillTypeInfo));
         }
 
+        public static bool UseSkill_InitUseSkillAction_Prefix(SkillTypeInfo skillInfo, AgentModel agent, CreatureModel creature)
+        {
+            return Invoke(() =>
+            {
+                if (agent == null || creature == null)
+                {
+                    return true;
+                }
+                if (creature.GetExtension().ViableAtDoor(agent, skillInfo, out var message))
+                {
+                    return true;
+                }
+
+                // 门口弹回：不调 ForcelyCancelWork（内部 StopAction 会清命令队列），也不手动补
+                // FinishManage/WorkParamInit——返回 false 让 InitUseSkillAction 返回 null，
+                // 命令 Finish() 后由 WorkerCommandQueue 在下一帧走原生 OnDestroy 清理序；
+                // 这里只补释放房间分配位并让员工走回 Sefira 待机节点。
+                if (creature.Unit != null)
+                {
+                    creature.Unit.room.OnCancelWork();
+                }
+                agent.MoveToMovable(MapGraph.instance.GetSefiraMovableNodeByRandom(agent.currentSefira));
+                Angela.Log(message, verbose: true);
+                return false;
+            });
+        }
+
         public static void GameManager_EndGame()
         {
             Invoke(Automaton.Reset);
@@ -250,7 +277,11 @@ namespace AutoInority
 
         public void PatchUnitMouseEventManager(HarmonyInstance mod) => PatchPostfix(mod, typeof(UnitMouseEventManager), "Update", nameof(UnitMouseEventManager_Update));
 
-        public void PatchUseSkill(HarmonyInstance mod) => PatchPostfix(mod, typeof(UseSkill), "FinishWorkSuccessfully", nameof(FinishWorkSuccessfully_Postfix));
+        public void PatchUseSkill(HarmonyInstance mod)
+        {
+            PatchPostfix(mod, typeof(UseSkill), "FinishWorkSuccessfully", nameof(FinishWorkSuccessfully_Postfix));
+            PatchPrefix(mod, typeof(UseSkill), nameof(UseSkill.InitUseSkillAction), nameof(UseSkill_InitUseSkillAction_Prefix));
+        }
 
         private static void Invoke(Action action)
         {
