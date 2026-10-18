@@ -11,14 +11,16 @@ Here are other mods that were published by me, which could be useful when using 
 
 1. **Angela will diss you when you made a wrong decision that will result in agents dying or creatures escaping**
    - Note that I haven't finished the translation works now, only Chinese has been supported.
-3. Press `Shift + click` to repeat the work.
-4. Press `Ctrl + click` to repeat the work until the agent gets the EGO gift.
-5. Press `Alt + click` to repeat the work until the agent gets max EXP of that work type.
-6. Press `T` when selecting a creature to let Angela help you find candidates who don't have the EGO gift to work with the creature.
+2. Press `Shift + click` to repeat the work.
+3. Press `Ctrl + click` to repeat the work until the agent gets the EGO gift.
+4. Press `Alt + click` to repeat the work until the agent gets max EXP of that work type.
+5. Press `T` when selecting a creature to toggle the farm mode: Angela keeps sending agents (preferring ones without the EGO gift) to work on the creature.
    - Press `T` again to toggle it off.
-9. Press `Shift` when selecting agents to cancel their automation works.
-10. Press `P` to pause all automation works.
-11. Press `V` to clear all automation works.
+6. Press `X` when selecting a creature to let Angela assign the best available agent for a **single** work session.
+   - With no command window open, `X` performs a single training assignment instead.
+7. Press `Shift` when selecting agents to cancel their automation works.
+8. Press `P` to pause all automation works.
+9. Press `V` to clear all automation works.
 10. Automatically handle Qliphoth Meltdown events.
 11. Automatically suppress `Dawn` and `Noon` ordeal creatures.
 
