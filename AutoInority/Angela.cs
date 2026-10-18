@@ -108,6 +108,8 @@ namespace AutoInority
 
             public const string Nothing = "被激怒的{1}很可能会杀死职员或者突破收容，我不认为{0}具备对{1}进行{2}的能力。";
 
+            public const string OneSinConfession = "白夜尚未被镇压，此刻对{1}的任何工作只要满箱就会替您完成赎罪————白夜会被处决，而「失乐园」将永远与您无缘。我很惊讶您竟然想用这种方式蒙混过关。";
+
             public const string RedShoes = "我不认为安排{0}去对{1}进行{2}是一个好主意，很明显{0}还不如您自律。";
 
             public const string Sakura = "本次对{1}的工作将会导致数名设施内的职员对其着魔，不过我相信你应该已经准备好镇压了。";

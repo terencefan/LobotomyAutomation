@@ -122,7 +122,9 @@ namespace AutoInority.Extentions
             // 满血满精神的原要求与 CheckSurvive 的数学门槛双重保守——置信度模型
             // 本来就在用当前 hp/mental 计算「带伤能否扛住这次工作」。放宽为 90%：
             // 轻伤职工可进候选池，生死仍由 CheckSurvive 按当前数值把关
-            return agent.hp >= agent.maxHp * 0.9f && agent.mental >= agent.maxMental * 0.9f && agent.GetState() == AgentAIState.IDLE;
+            // 白夜的「卖主的叛徒」无敌且只能赎罪，不能作为普通劳动力进候选池
+            return agent.hp >= agent.maxHp * 0.9f && agent.mental >= agent.maxMental * 0.9f && agent.GetState() == AgentAIState.IDLE
+                && !agent.HasUnitBuf(UnitBufType.DEATH_ANGEL_BETRAYER);
         }
 
         public static bool IsCapableOfPressing(this AgentModel agent, CreatureModel creature)
