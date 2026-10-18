@@ -18,11 +18,12 @@ Here are other mods that were published by me, which could be useful when using 
    - Press `T` again to toggle it off.
 6. Press `X` when selecting a creature to let Angela assign the best available agent for a **single** work session.
    - With no command window open, `X` performs a single training assignment instead.
-7. Press `Shift` when selecting agents to cancel their automation works.
-8. Press `P` to pause all automation works.
-9. Press `V` to clear all automation works.
-10. Automatically handle Qliphoth Meltdown events.
-11. Automatically suppress `Dawn` and `Noon` ordeal creatures.
+7. Press `O` to toggle the **Work Roster** panel: an in-game overlay listing creatures currently in farm mode, groupable by department or risk level. Click a row to end that creature's rotation.
+8. Press `Shift` when selecting agents to cancel their automation works.
+9. Press `P` to pause all automation works.
+10. Press `V` to clear all automation works.
+11. Automatically handle Qliphoth Meltdown events.
+12. Automatically suppress `Dawn` and `Noon` ordeal creatures.
 
 ## Supported anomoly creatures
 
