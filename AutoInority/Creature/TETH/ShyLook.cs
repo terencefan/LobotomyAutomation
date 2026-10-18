@@ -5,8 +5,9 @@
     /// <summary>
     /// 今天也很害羞 O-01-92：表情 0-4 随机变换（3-5s 一轮），员工进屋开工瞬间冻结为全程表情。
     /// 伤害倍率 [0.5,1,1,1.5,2]、成功率加成 [+30,+10,0,-30,-50] 均按表情。
-    /// 策略：只在表情 0/1 放行派工（实时按表情计算置信度与伤害，基类已接游戏脚本）；
-    /// 表情 0 时标记紧急抢窗口；在途表情变坏则撤回。TODO 表情 0/1 成功 tick 的回血
+    /// 策略：只在表情 0/1 放行派工（实时按表情计算置信度与伤害，基类已接游戏脚本），
+    /// 在途撤回经 CanKeepWorking 默认复检 CanWorkWith 同一门槛生效，无需单独覆写；
+    /// 表情 0 时标记紧急抢窗口。TODO 表情 0/1 成功 tick 的回血
     /// （20% HP+MP / 20% MP）尚未纳入生存模型（Confidence.Survive 无回复概念）。
     /// </summary>
     internal class ShyLook : ExpectNormalExt
@@ -32,8 +33,6 @@
             }
             return base.CanWorkWith(agent, skill, out message);
         }
-
-        public override bool CanKeepWorking(AgentModel agent) => GoodFace;
 
         public override bool IsUrgent => GoodFace;
     }
