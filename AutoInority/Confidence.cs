@@ -1,7 +1,5 @@
 ﻿using System;
 
-using UnityEngine;
-
 namespace AutoInority
 {
     public class Confidence
@@ -103,7 +101,7 @@ namespace AutoInority
 
         public static float P(int n, int r, float p)
         {
-            return Mathf.Pow(p, r) * Mathf.Pow(1f - p, n - r) * NCR(n, r);
+            return (float)(Math.Pow(p, r) * Math.Pow(1f - p, n - r) * NCR(n, r));
         }
 
         public static float Survive(float maxPoints, float damage, float prob, int count)
