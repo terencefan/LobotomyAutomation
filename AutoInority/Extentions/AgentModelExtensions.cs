@@ -132,8 +132,9 @@ namespace AutoInority.Extentions
             var riskLevel = creature.GetRiskLevel();
             var weapon = agent.Equipment.weapon.metaInfo;
             var weaponGrade = (int)weapon.Grade;
-            var armor = agent.Equipment.weapon.metaInfo;
-            var armorGrade = (int)armor.Grade;
+            // 护甲此前误读为 weapon.metaInfo，两条护甲资格分支全部失真
+            var armor = agent.Equipment.armor?.metaInfo;
+            var armorGrade = armor != null ? (int)armor.Grade : 0;
 
             if (agent.level > riskLevel)
             {
@@ -144,7 +145,8 @@ namespace AutoInority.Extentions
                 return false;
             }
 
-            var defense = creature.metaInfo.defenseTable.GetDefenseInfo();
+            // 用异想体当前防御行（defenseId 可被核心抑制等脚本改写），而非固定 "1" 行
+            var defense = creature.defense;
             if (weaponGrade > riskLevel)
             {
                 return armorGrade >= riskLevel;
