@@ -119,7 +119,10 @@ namespace AutoInority.Extentions
 
         public static bool IsAvailable(this AgentModel agent)
         {
-            return agent.hp == agent.maxHp && agent.mental == agent.maxMental && agent.GetState() == AgentAIState.IDLE;
+            // 满血满精神的原要求与 CheckSurvive 的数学门槛双重保守——置信度模型
+            // 本来就在用当前 hp/mental 计算「带伤能否扛住这次工作」。放宽为 90%：
+            // 轻伤职工可进候选池，生死仍由 CheckSurvive 按当前数值把关
+            return agent.hp >= agent.maxHp * 0.9f && agent.mental >= agent.maxMental * 0.9f && agent.GetState() == AgentAIState.IDLE;
         }
 
         public static bool IsCapableOfPressing(this AgentModel agent, CreatureModel creature)
