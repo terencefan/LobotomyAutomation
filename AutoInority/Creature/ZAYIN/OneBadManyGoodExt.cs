@@ -17,12 +17,10 @@ namespace AutoInority.Creature
 
         public override bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            if (IsOverloaded)
-            {
-                return base.CanWorkWith(agent, skill, out message);
-            }
-            // 白夜逃逸期间暂停对一罪与百善的自动化派工：此刻常规工作的满箱同样会触发
-            // 赎罪处决（游戏月记 bug，不检查工作类型），是否忏悔应由主管亲自决定
+            // 白夜逃逸期间无条件拒绝对一罪与百善的自动化派工（优先于过载放行）：
+            // 此刻常规工作的满箱会触发赎罪处决（游戏月记 bug，不检查工作类型），
+            // 而过载爆炸对无计数器的它只扣能源——丢「失乐园」与扣能源不成比例，
+            // 是否忏悔应由主管亲自决定
             if (WhiteNightEscaped())
             {
                 message = string.Format(Angela.Creature.OneSinConfession, agent.Tag(), _creature.Tag(), skill.Tag());
