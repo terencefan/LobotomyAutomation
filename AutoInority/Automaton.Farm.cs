@@ -43,8 +43,7 @@ namespace AutoInority
             var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable());
 
             var candidates = Candidate.Suggest(agents, new[] { creature });
-            // X 键单次派工走管理语义：不带 FarmComparer 的礼物/经验惩罚项
-            candidates.Sort(Candidate.ManageComparer);
+            candidates.Sort(Candidate.FarmComparer);
 
             Log.Debug($"Found {agents.Count()} agents for {creature.Tag()}, candidates: {candidates.Count}");
 
