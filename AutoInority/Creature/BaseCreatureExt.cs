@@ -80,10 +80,11 @@ namespace AutoInority.Creature
                 a => a.HasUnitBuf(UnitBufType.LITTLEWITCH_HEART),
                 s => s is LittleWitch,
                 Angela.Creature.Laetitia),
-            // 精灵盛宴的祝福：带祝福员工被派往任何收容物（含精灵本体）都会在到达前被吃掉
+            // 精灵盛宴的祝福：游戏 FairyBuf 的击杀条件只看「派工在途」不看目标，
+            // 重派回精灵本体同样走在途死亡窗口，故无豁免，8s 内禁派任何工作
             new BufExclusion(
                 a => a.GetUnitBufList().Where(x => x is FairyBuf).Any(),
-                s => s is Fairy,
+                s => false,
                 Angela.Creature.Fairy),
         };
 
