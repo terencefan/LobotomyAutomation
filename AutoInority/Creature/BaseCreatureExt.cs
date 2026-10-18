@@ -62,8 +62,9 @@ namespace AutoInority.Creature
                 return false;
             }
 
-            // Fairy
-            if (!(Script is Fairy) && agent.GetUnitBufList().Where(x => x is FairyBuf).Any())
+            // 精灵盛宴的祝福：游戏 FairyBuf 的击杀条件只看「派工在途」不看目标，
+            // 重派回精灵本体同样走在途死亡窗口，故无豁免，8s 内禁派任何工作
+            if (agent.GetUnitBufList().Where(x => x is FairyBuf).Any())
             {
                 message = string.Format(Angela.Creature.Fairy, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
