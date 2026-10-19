@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -56,6 +57,27 @@ namespace AutoInority.Test
                 new SkillTypeInfo { id = 3, name = "B" },
                 new SkillTypeInfo { id = 4, name = "P" },
             });
+        }
+
+        /// <summary>
+        /// 可过 CanWorkWith 全链的桥接 agent（name 注入 + 链上集合空表）。
+        /// 游戏真实现链路：Laetitia 心/精灵祝福/FriendToken 查 _bufList；
+        /// HasEquipment 经 _equipment(UnitEquipSpace)——weapon/armor 槽位为 null 时
+        /// IL 短路跳过，gifts 遍历 replacedGifts/addedGifts 两列表，故 gifts 注空表、
+        /// 槽位留 null 即判「未持有」。CanWorkWith 链新挂检查点时在此补注入。
+        /// </summary>
+        internal static AgentModel CanWorkAgent(string name = "小红")
+        {
+            var agent = Bare<AgentModel>();
+            Set(agent, "name", name);
+            Set(agent, "_bufList", new List<UnitBuf>());
+            var gifts = Bare<UnitEGOgiftSpace>();
+            Set(gifts, "replacedGifts", new List<EGOgiftModel>());
+            Set(gifts, "addedGifts", new List<EGOgiftModel>());
+            var equip = Bare<UnitEquipSpace>();
+            Set(equip, "gifts", gifts);
+            Set(agent, "_equipment", equip);
+            return agent;
         }
 
         private static FieldInfo Field(Type type, string field)

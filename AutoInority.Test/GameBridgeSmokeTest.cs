@@ -96,5 +96,23 @@ namespace AutoInority.Test
                 Automaton.Reset();
             }
         }
+
+        private sealed class PlainExt : BaseCreatureExt
+        {
+            internal PlainExt(CreatureModel creature) : base(creature)
+            {
+            }
+        }
+
+        [Fact]
+        public void CanWorkWithChainRunsRealImplementation()
+        {
+            // CanWorkWith 全链（Laetitia 心 → 精灵祝福 → 碎甲装备 → FriendToken）
+            // 在桥接空表下走游戏真实现直至放行；链上新挂检查点若依赖未注字段在此显式 NRE
+            GameBridge.InjectSkillTypes();
+            var look = new PlainExt(GameBridge.Bare<CreatureModel>()); // Script 留 null：非 LittleWitch/GalaxyBoy 特判照走
+            Assert.True(look.CanWorkWith(GameBridge.CanWorkAgent(), new SkillTypeInfo { id = 3, name = "B", calledName = "本能" }, out var message));
+            Assert.Null(message);
+        }
     }
 }
