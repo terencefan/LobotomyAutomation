@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using AutoInority.Creature;
+
 using AutoInority.Extentions;
 
 namespace AutoInority.Command
@@ -10,7 +12,7 @@ namespace AutoInority.Command
     {
         private readonly CreatureModel _kit;
 
-        public override bool IsCompleted => !_kit.isOverloaded;
+        public override bool IsCompleted => !_kit.isOverloaded && !_kit.GetKitExtension().WantsDispatch();
 
         public override bool IsApplicable => _kit.IsAvailable();
 
@@ -27,13 +29,10 @@ namespace AutoInority.Command
 
         public override bool Execute()
         {
-            var ext = _kit.GetKitExtension();
-            var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && ext.CanUse(x)).ToList();
+            var agent = _kit.GetKitExtension().SelectAgent();
 
-            if (agents.Count > 0)
+            if (agent != null)
             {
-                agents.Sort(DistanceComparer);
-                var agent = agents.First();
                 agent.ManageKitCreature(_kit);
                 agent.counterAttackEnabled = false;
                 _kit.Unit.room.OnWorkAllocated(agent);
@@ -49,13 +48,6 @@ namespace AutoInority.Command
         }
 
         public override PriorityEnum Priority() => PriorityEnum.MANAGE_KIT;
-
-        protected int DistanceComparer(AgentModel x, AgentModel y)
-        {
-            var d1 = Graph.Distance(x, _kit);
-            var d2 = Graph.Distance(y, _kit);
-            return d1.CompareTo(d2);
-        }
 
         private bool Equals(ManageKitCommand other) => other != null && Equals(_kit, other._kit);
     }

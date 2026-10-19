@@ -18,6 +18,17 @@ namespace AutoInority.Creature
 
         public virtual bool CanUse(AgentModel agent) => false;
 
+        public virtual AgentModel SelectAgent()
+        {
+            foreach (var agent in FindAgents())
+            {
+                return agent;
+            }
+            return null;
+        }
+
+        public virtual bool WantsDispatch() => false;
+
         public IEnumerable<AgentModel> FindAgents()
         {
             var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && CanUse(x)).ToList();

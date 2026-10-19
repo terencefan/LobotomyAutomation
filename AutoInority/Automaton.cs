@@ -138,11 +138,12 @@ namespace AutoInority
 
             foreach (var kit in CreatureManager.instance.GetCreatureList().Where(x => x.IsKit()))
             {
-                if (kit.isOverloaded)
+                var ext = kit.GetKitExtension();
+                if (kit.isOverloaded || ext.WantsDispatch())
                 {
                     Enqueue(new ManageKitCommand(kit));
                 }
-                kit.GetKitExtension().OnFixedUpdate();
+                ext.OnFixedUpdate();
             }
 
             foreach (var creature in CreatureManager.instance.GetCreatureList().FilterUrgent())
