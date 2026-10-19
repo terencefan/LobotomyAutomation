@@ -45,7 +45,7 @@
 
 ### 异想体编号规则
 
-前缀=危险级：O（ZAYIN）/T（TETH）/F（HE）/W（WAW，罕见）/A（ALEPH，罕见）/D（衍生：WonderLab/Limbus 联动）；格式 `<前缀>-<部门两位>-<序号>`，变体加后缀 `-W/-H/-T/-Z`。**游戏 id（100xxx/200xxx/300xxx）与 wiki 编号无规律映射，对照查 `creatures-zh.md`**。200xxx=考验，300xxx=WonderLab 衍生。
+前缀是 wiki 编号的组成部分（旧版分类遗留），**与游戏风险等级不对应**：O（偏低位）/T/F/W/A/D（衍生：WonderLab/Limbus 联动）；格式 `<前缀>-<部门两位>-<序号>`，变体加后缀 `-W/-H/-T/-Z`。**游戏 id（100xxx/200xxx/300xxx）与 wiki 编号无规律映射，对照查 `creatures-zh.md`**；前缀与实际等级大量不符（樱下墓 O-04-100=TETH、蕾蒂希娅 O-01-67=HE、别碰我 O-05-47=ZAYIN、爱娜温 T-04-53=WAW），风险等级以 `creatures-zh.md` 等级列（游戏 `*_stat.txt` riskLevel）为准。200xxx=考验，300xxx=WonderLab 衍生。
 
 ## 已知差异（游戏名 vs wiki 名，全表见 creatures-zh.md）
 
