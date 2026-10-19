@@ -133,7 +133,6 @@
     <Compile Include="Creature\ZAYIN\DontTouchMeExt.cs" />
     <Compile Include="Creature\ZAYIN\FairyFestivalExt.cs" />
     <Compile Include="Creature\ZAYIN\OneBadManyGoodExt.cs" />
-    <Compile Include="Creature\ZAYIN\PinkCorpsExt.cs" />
     <Compile Include="Creature\ZAYIN\WellcheersExt.cs" />
     <Compile Include="Creature\ZAYIN\YouMustBeHappyExt.cs" />
     <Compile Include="Extentions\AgentModelExtensions.cs" />
