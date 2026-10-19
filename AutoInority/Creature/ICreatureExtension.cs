@@ -6,6 +6,13 @@
 
         bool IsUrgent { get; }
 
+        /// <summary>
+        /// 是否可接待带心（蕾蒂希娅 LITTLEWITCH_HEART）员工：心未消期间员工只能为她工作，
+        /// 默认拒绝，由心之归属地覆写放行（LaetitiaExt）。派工闸（CanWorkWith）与
+        /// 门口兜底（ViableAtDoor）均读此值。
+        /// </summary>
+        bool AcceptsHeartAgent { get; }
+
         SkillTypeInfo[] SkillSets { get; }
 
         bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message);
@@ -13,7 +20,8 @@
         /// <summary>
         /// 门检：员工抵达工作位、游戏即将创建 UseSkill（UseSkill.InitUseSkillAction）的前一瞬调用，
         /// 返回 false 则拒绝开工并把员工弹回待机通道——此时表情等易变状态刚被定格，
-        /// 是撤销派工的最后安全点。默认放行（见 BaseCreatureExt），有门口风险的异想体覆写。
+        /// 是撤销派工的最后安全点。总入口（非虚）先过心之归属地兜底，creature 门检覆写
+        /// BaseCreatureExt.DoorCheck，默认放行。
         /// </summary>
         bool ViableAtDoor(AgentModel agent, SkillTypeInfo skill, out string message);
 

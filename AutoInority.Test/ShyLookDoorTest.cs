@@ -10,7 +10,7 @@ namespace AutoInority.Test
     /// 门检真值表（实例级）：害羞平淡及更好放行（平淡无危害加成，按普通计算）、
     /// 低落/崩溃看能力——冻结脸修正后的真实置信度严格大于及格线（CreatureEscapeConfidence
     /// 缺省 0.99，与 CheckWorkConfidence 家族同口径）硬上，否则弹回；animScript 未就绪
-    /// 视为弹回且文案记「未知」；另钉 BaseCreatureExt.ViableAtDoor 默认放行基线。
+    /// 视为弹回且文案记「未知」；另钉 BaseCreatureExt.DoorCheck 默认放行基线。
     /// FaceTypeAtDoor/ProbAtDoor 为产品虚缝（GetFaceType 绑 Unity Animator icall、成功率
     /// 链级联游戏工作概率管道，均无法离线驱动），测试子类注入编程值；ConfidenceAtDoor
     /// 本体走真实现（ prob → Confidence.InRange 重卷积，钉住「修正发生在概率层」语义，
@@ -65,6 +65,8 @@ namespace AutoInority.Test
         {
             var agent = GameBridge.Bare<AgentModel>();
             GameBridge.Set(agent, "name", "小红");
+            // 门检总入口先查心之归属地（HasUnitBuf 走 _bufList），空表即无 buf
+            GameBridge.Set(agent, "_bufList", new List<UnitBuf>());
             var skill = new SkillTypeInfo { id = 3, name = "B", calledName = "本能" };
             return look.ViableAtDoor(agent, skill, out message);
         }
@@ -169,11 +171,14 @@ namespace AutoInority.Test
         [Fact]
         public void DoorCheckDefaultsToPassThrough()
         {
-            // BaseCreatureExt.ViableAtDoor 虚默认：无门口风险的异想体不拦
+            // BaseCreatureExt.DoorCheck 虚默认：无门口风险的异想体不拦
+            // （ViableAtDoor 总入口先过心之归属地，agent 注空 buf 表放行）
             GameBridge.InjectSkillTypes();
             var creature = GameBridge.Bare<CreatureModel>();
             GameBridge.Set(creature, "script", GameBridge.Bare<ShyThing>());
-            Assert.True(new PlainLook(creature).ViableAtDoor(GameBridge.Bare<AgentModel>(), new SkillTypeInfo(), out var message));
+            var agent = GameBridge.Bare<AgentModel>();
+            GameBridge.Set(agent, "_bufList", new List<UnitBuf>());
+            Assert.True(new PlainLook(creature).ViableAtDoor(agent, new SkillTypeInfo(), out var message));
             Assert.Null(message);
         }
     }

@@ -72,6 +72,8 @@ namespace AutoInority.Extentions
             return creature.isOverloaded || creature.GetExtension().IsUrgent;
         }
 
+        public static bool AcceptsHeartAgent(this CreatureModel creature) => creature.GetExtension().AcceptsHeartAgent;
+
         public static int MaxCube(this CreatureModel creature) => creature.metaInfo.feelingStateCubeBounds.GetLastBound();
 
         public static int NormalBound(this CreatureModel creature) => creature.metaInfo.feelingStateCubeBounds.upperBounds[0];
