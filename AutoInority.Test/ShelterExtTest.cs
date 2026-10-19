@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -100,14 +101,18 @@ namespace AutoInority.Test
         }
 
         /// <summary>AgentManager.instance 惰性构造会级联 Init()，直接注入裸单例绕开。</summary>
-        private static ShelterExt ExtWithAgents(float elapsed, params AgentModel[] agents)
+        private static void SetAgents(params AgentModel[] agents)
         {
             var manager = GameBridge.Bare<AgentManager>();
             GameBridge.Set(manager, "agentList", new List<AgentModel>(agents));
             typeof(AgentManager).GetField("_instance", BindingFlags.NonPublic | BindingFlags.Static)
                 .SetValue(null, manager);
-            var kit = GameBridge.Bare<CreatureModel>();
-            return new ShelterExt(kit);
+        }
+
+        private static ShelterExt ExtWithAgents(params AgentModel[] agents)
+        {
+            SetAgents(agents);
+            return new ShelterExt(GameBridge.Bare<CreatureModel>());
         }
 
         [Theory]
@@ -116,24 +121,49 @@ namespace AutoInority.Test
         [InlineData(100, 100, 40, 100, true)]
         public void CanUseGateAdmitsOnlyWounded(int hp, int maxHp, int mental, int maxMental, bool expected)
         {
-            var ext = ExtWithAgents(0f);
+            var ext = ExtWithAgents();
             Assert.Equal(expected, ext.CanUse(Candidate(hp, maxHp, mental, maxMental)));
         }
 
-        [Fact]
-        public void SelectAgentPicksMostWounded()
+        /// <summary>Graph.Distance 裸对象不安全，注假距离驱动分诊排序。</summary>
+        private sealed class RoutedShelterExt : ShelterExt
         {
-            var healthy = Candidate(100, 100, 100, 100);
-            var light = Candidate(50, 100, 100, 100);
-            var severe = Candidate(30, 100, 100, 100);
-            var ext = ExtWithAgents(0f, healthy, light, severe);
+            private readonly Func<AgentModel, float> _distance;
+
+            public RoutedShelterExt(Func<AgentModel, float> distance) : base(GameBridge.Bare<CreatureModel>())
+            {
+                _distance = distance;
+            }
+
+            protected override float Distance(AgentModel agent) => _distance(agent);
+        }
+
+        [Fact]
+        public void SelectAgentSevereBeatsNearerModerate()
+        {
+            // 跨桶绝对优先：40% 重伤（远端，dist 100）压过 70% 中伤（门口，dist 1）
+            var severe = Candidate(40, 100, 100, 100);
+            var moderate = Candidate(70, 100, 100, 100);
+            SetAgents(severe, moderate);
+            var ext = new RoutedShelterExt(agent => ReferenceEquals(agent, severe) ? 100f : 1f);
             Assert.Same(severe, ext.SelectAgent());
+        }
+
+        [Fact]
+        public void SelectAgentNearWinsWithinBucket()
+        {
+            // 同桶（均 <60% 重伤档）就近：50% 在门口压过 30% 在远端
+            var far = Candidate(30, 100, 100, 100);
+            var near = Candidate(50, 100, 100, 100);
+            SetAgents(far, near);
+            var ext = new RoutedShelterExt(agent => ReferenceEquals(agent, far) ? 10f : 1f);
+            Assert.Same(near, ext.SelectAgent());
         }
 
         [Fact]
         public void SelectAgentNullWhenAllHealthy()
         {
-            var ext = ExtWithAgents(0f, Candidate(100, 100, 100, 100));
+            var ext = ExtWithAgents(Candidate(100, 100, 100, 100));
             Assert.Null(ext.SelectAgent());
         }
 
@@ -141,8 +171,8 @@ namespace AutoInority.Test
         public void WantsDispatchNeedsFreeKitAndPatient()
         {
             var wounded = Candidate(40, 100, 100, 100);
-            Assert.True(ExtWithAgents(0f, wounded).WantsDispatch());
-            Assert.False(ExtWithAgents(0f, Candidate(100, 100, 100, 100)).WantsDispatch());
+            Assert.True(ExtWithAgents(wounded).WantsDispatch());
+            Assert.False(ExtWithAgents(Candidate(100, 100, 100, 100)).WantsDispatch());
         }
 
         [Fact]
