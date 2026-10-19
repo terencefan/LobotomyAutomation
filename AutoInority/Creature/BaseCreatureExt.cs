@@ -53,20 +53,36 @@ namespace AutoInority.Creature
             return true;
         }
 
+        /// <summary>
+        /// buf 危害排除表：员工持有某 buf 时，派往（非豁免）目标会遭受工作之外的危害
+        /// （死亡/处罚），故一律拒绝派工。新增 buf 危害 = 加一行表项；
+        /// 求值语义（首命中即拒、豁免跳过、文案格式化）见 BufExclusionRule。
+        /// 与技能型相关的拒绝（如碎甲）不适用此表，仍写在 CanWorkWith 内。
+        /// </summary>
+        private BufExclusionRule.Rule[] BufRules(AgentModel agent)
+        {
+            return new[]
+            {
+                // 蕾蒂希娅的心：带心员工派往任何非蕾蒂希娅目标，5-10s 后死亡并生成蕾怪
+                new BufExclusionRule.Rule(
+                    () => agent.HasUnitBuf(UnitBufType.LITTLEWITCH_HEART),
+                    () => Script is LittleWitch,
+                    Angela.Creature.Laetitia),
+                // 精灵盛宴的祝福：游戏 FairyBuf 的击杀条件只看「派工在途」不看目标，
+                // 重派回精灵本体同样走在途死亡窗口，故无豁免，8s 内禁派任何工作
+                new BufExclusionRule.Rule(
+                    () => agent.GetUnitBufList().Where(x => x is FairyBuf).Any(),
+                    () => false,
+                    Angela.Creature.Fairy),
+            };
+        }
+
         public virtual bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            // Laetitia
-            if (!(Script is LittleWitch) && agent.HasUnitBuf(UnitBufType.LITTLEWITCH_HEART))
+            var rejection = BufExclusionRule.Evaluate(BufRules(agent));
+            if (rejection != null)
             {
-                message = string.Format(Angela.Creature.Laetitia, agent.Tag(), _creature.Tag(), skill.Tag());
-                return false;
-            }
-
-            // 精灵盛宴的祝福：游戏 FairyBuf 的击杀条件只看「派工在途」不看目标，
-            // 重派回精灵本体同样走在途死亡窗口，故无豁免，8s 内禁派任何工作
-            if (agent.GetUnitBufList().Where(x => x is FairyBuf).Any())
-            {
-                message = string.Format(Angela.Creature.Fairy, agent.Tag(), _creature.Tag(), skill.Tag());
+                message = string.Format(rejection.Message, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
             }
 
