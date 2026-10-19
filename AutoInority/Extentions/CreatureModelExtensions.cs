@@ -487,6 +487,10 @@ namespace AutoInority.Extentions
             {
                 return new LadyLookingAtWallExt(model);
             }
+            else if (model.script is LightsHammer)
+            {
+                return new LightsHammerExt(model);
+            }
             return new ExpectGoodAndNormalExt(model);
         }
     }
