@@ -24,6 +24,7 @@ Here are other mods that were published by me, which could be useful when using 
 10. Press `V` to clear all automation works.
 11. Automatically handle Qliphoth Meltdown events.
 12. Automatically suppress `Dawn` and `Noon` ordeal creatures.
+13. **ICU mode for the Shelter**: wounded idle agents are automatically admitted to the Shelter to channel its regeneration (invulnerable while inside) — severe cases triaged first, nearest within the same tier — and discharged as soon as they are fully healed. Sessions always stop at 28s, never reaching the counter-clearing window that opens at 30s.
 
 ## Supported anomoly creatures
 
