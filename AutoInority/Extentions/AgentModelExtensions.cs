@@ -102,7 +102,13 @@ namespace AutoInority.Extentions
 
         public static bool HasGift(this AgentModel agent, EquipmentTypeInfo gift) => agent.Equipment.gifts.HasEquipment(gift.id);
 
-        public static bool HasReachedExpLimit(this AgentModel agent, out HashSet<RwbpType> types)
+        /// <summary>
+        /// 聚合判定：员工是否还有可练的经验维度（types = 未满级类型集合）。
+        /// 注意与单类型版 HasReachedExpLimit(type) 的布尔语义相反——原聚合版
+        /// 误用 HasReachedExpLimit 命名且调用方守卫随之反转，训练从不派工
+        /// （历史 bug，2026-10 修正并改名）。
+        /// </summary>
+        public static bool HasTrainableTypes(this AgentModel agent, out HashSet<RwbpType> types)
         {
             types = new HashSet<RwbpType>();
             foreach (var type in AllTypes)
