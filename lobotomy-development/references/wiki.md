@@ -8,11 +8,13 @@
 2. **数值 / 机制 / API 签名以反编译代码为准**（references 其余各文件）
 3. 两者冲突 → 代码赢，并把差异记到本文件"已知差异"节；译名差异记到 `creatures-zh.md` 的 wiki 列
 
-## 访问通道（WebFetch 对 fandom 报 402 不可用）
+## 访问通道（2026-10-19 本机网络实测，按优先级）
 
-- 页面 HTML：`curl https://lobotomycorp.fandom.com/zh/wiki/<页面名>?variant=zh`
-- **API（推荐）**：`https://lobotomycorp.fandom.com/zh/api.php?action=query&format=json&titles=<名>&redirects=1`（批量用 `|` 连接，每批 ≤50）；全文解析 `action=parse&page=<名>`；搜索 `list=search&srsearch=`；前缀列举 `list=allpages&apprefix=`
-- **必须带 User-Agent**（python urllib 默认 UA 会 403，curl 自带 UA 可用）；串行 + sleep(0.3) 限速
+1. **WebSearch（当前实测可用）**：claude 侧搜索，不走本机网络。`allowed_domains: ["lobotomycorporation.wiki.gg"]`（wiki.gg 镜像比 fandom 全），换多组关键词挖页面内容摘要，拼凑表格化事实
+2. **WebFetch 不可用**：fandom 与 wiki.gg 域名均被 claude.ai 侧域名安全检查拒（"Unable to verify if domain ... is safe to fetch"）
+3. **本机直连 fandom 不可用（网络层）**：SSL 被 MITM（curl exit 60）；`-k` 跳过校验后 HTTP 200 但 body 为空（响应体被网络层过滤）；环境变量里的本地代理 `127.0.0.1:7890` 未运行。换网络环境时重测
+4. **fandom API（备用，原环境可用）**：`https://lobotomycorp.fandom.com/zh/api.php?action=query&format=json&titles=<名>&redirects=1`（批量用 `|` 连接，每批 ≤50）；全文解析 `action=parse&page=<名>`；搜索 `list=search&srsearch=`；前缀列举 `list=allpages&apprefix=`；**必须带 User-Agent**（python urllib 默认 UA 会 403，curl 自带 UA 可用）；串行 + sleep(0.3) 限速
+- 页面 HTML（备用）：`curl https://lobotomycorp.fandom.com/zh/wiki/<页面名>?variant=zh`
 - 页面名规则：**异想体页 = `<官方编号> <中文名>`**（如 `O-05-61 破裂盔甲`），直接输名字会命中 redirect；考验页 = `<颜色时段> <副标题>`（如 `琥珀色的黎明 新鲜的食物`）；URL 用 urllib.parse.quote 编码
 
 ## 异想体页面结构
