@@ -54,6 +54,8 @@
 
             public const string KnightOfDespair = "我只是提醒一下，{1}还没有祝福过任何职员。";
 
+            public const string LadyLookingAtWall = "我相信{0}完成{1}的{2}后就会被夺走心智，您难道没有读过观察记录吗？";
+
             public const string Laetitia = "您难道没有发现{0}已经拥有害羞的小孩的礼物了吗？您这样的主管真是令我失望。";
 
             public const string Nothing = "被激怒的{1}很可能会杀死职员或者突破收容，我不认为{0}具备对{1}进行{2}的能力。";
