@@ -1,8 +1,17 @@
-﻿namespace AutoInority.Creature
+﻿using System.Collections.Generic;
+
+namespace AutoInority.Creature
 {
     public interface ICreatureExtension
     {
         bool AutoSuppress { get; }
+
+        /// <summary>
+        /// 镇压扩展目标：本体之外需一并镇压的子实体（如蕾蒂希娅的女巫之子，须过滤
+        /// destroied——GetAliveChilds 不筛死活，尸体仍报 ESCAPE 会让命令永不完结）。
+        /// 默认无。
+        /// </summary>
+        IEnumerable<CreatureModel> SuppressionTargets { get; }
 
         bool IsUrgent { get; }
 

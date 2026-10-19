@@ -121,6 +121,14 @@ namespace AutoInority
             }
         }
 
+        // 心之引信主动回送：带心员工被手工派往非女巫目标时，5-10s 引信在途即可引爆
+        // （门口兜底要到门才拦），立即撤单回 Sefira 待机点
+        private void RecallHeartAgents()
+        {
+            var witch = CreatureManager.instance.GetCreatureList().FirstOrDefault(x => x.script is LittleWitch);
+            LaetitiaExt.RecallHeartAgents(AgentManager.instance.GetAgentList(), witch);
+        }
+
         public void Main()
         {
             if (!Running)
@@ -147,11 +155,19 @@ namespace AutoInority
                 Enqueue(new ManageCreatureCommand(creature));
             }
 
+            RecallHeartAgents();
+
             foreach (var creature in CreatureManager.instance.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
             {
+                // HE 及以上本体不自动镇压是既有姿态策略；子实体不受此限——
+                // 女巫之子 actively 伤人且镇压对本体零影响，清场不越权
                 if (creature.GetExtension().AutoSuppress)
                 {
                     Enqueue(new SuppressCommand(creature));
+                }
+                foreach (var child in creature.GetExtension().SuppressionTargets)
+                {
+                    Enqueue(new SuppressCommand(child));
                 }
             }
 

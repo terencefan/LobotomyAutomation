@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -29,6 +30,9 @@ namespace AutoInority.Creature
 
         /// <summary>语义见 ICreatureExtension.AcceptsHeartAgent；默认拒绝。</summary>
         public virtual bool AcceptsHeartAgent => false;
+
+        /// <summary>镇压扩展目标，默认无（语义见 ICreatureExtension.SuppressionTargets）。</summary>
+        public virtual IEnumerable<CreatureModel> SuppressionTargets => new CreatureModel[0];
 
         public virtual SkillTypeInfo[] SkillSets { get; } = { Attachment, Insight, Instinct, Repression };
 
