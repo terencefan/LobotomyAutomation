@@ -15,7 +15,8 @@
                 var record = CenterBrain.FindLastRecord(_creature);
                 if (record != null && record.Skill.rwbpType == RwbpType.P)
                 {
-                    message = "Foo";
+                    // 上次已是本能：野兽已入虚弱态，再压迫即被处决（gonnaDie）
+                    message = Message(Angela.Creature.BeautyBeast, agent, skill);
                     return false;
                 }
             }
