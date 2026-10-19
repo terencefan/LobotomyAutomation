@@ -16,6 +16,8 @@ namespace AutoInority.Localization
 
         public abstract string Automation_Conv_PostureSuppress { get; }
 
+        public abstract string Automation_Conv_PostureTraining { get; }
+
         public abstract string Automation_Log_DebugOff { get; }
 
         public abstract string Automation_Log_DebugOn { get; }

@@ -1,9 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-
-using AutoInority.Command;
-using AutoInority.Extentions;
-
 namespace AutoInority.Posture
 {
     /// <summary>
@@ -21,35 +15,6 @@ namespace AutoInority.Posture
 
         public virtual void OnExit()
         {
-        }
-
-        /// <summary>战斗目标：出逃（AutoSuppress 放行，仅低风险）+ 全部考验。</summary>
-        internal static IEnumerable<CreatureModel> GetFightables()
-        {
-            foreach (var creature in CreatureManager.instance.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
-            {
-                if (creature.GetExtension().AutoSuppress)
-                {
-                    yield return creature;
-                }
-            }
-            foreach (var creature in OrdealManager.instance.GetOrdealCreatureList())
-            {
-                yield return creature;
-            }
-        }
-
-        /// <summary>应急反射：紧急收容物与战斗目标的扫描入队，两姿态共用（自旧 Main 平移）。</summary>
-        protected static void EnqueueThreats()
-        {
-            foreach (var creature in CreatureManager.instance.GetCreatureList().FilterUrgent())
-            {
-                Automaton.Instance.Enqueue(new ManageCreatureCommand(creature));
-            }
-            foreach (var creature in GetFightables())
-            {
-                Automaton.Instance.Enqueue(new SuppressCommand(creature));
-            }
         }
     }
 }

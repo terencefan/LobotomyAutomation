@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Reflection;
 
 using AutoInority.Command;
+using AutoInority.Extentions;
 using AutoInority.Posture;
 
 using UnityEngine;
@@ -11,7 +12,8 @@ using Xunit;
 namespace AutoInority.Test
 {
     /// <summary>
-    /// 姿态调度骨架：B 键切换状态机、两姿态 OnTick 的 seed 语义、Main 排空不回炉。
+    /// 姿态调度骨架：B 键三态循环、三姿态 OnTick 的 seed 语义、应急反射公共基座、
+    /// Main 排空不回炉。
     /// 桥接注入三个管理器单例（Bare + 列表字段）与桥接收容物（urgent/escape），
     /// Automaton.Instance 为跨用例共享单例（Collection 串行，队列/集合状态每用例自清）。
     /// </summary>
@@ -88,6 +90,49 @@ namespace AutoInority.Test
             }
         }
 
+        /// <summary>未满级员工：MaxStat 链离线要求 MissionManager bare + 空任务列表（跨类共享静态，
+        /// TrainableTypesTest cctor 已注，此处置空防用例顺序）。</summary>
+        private static AgentModel TrainableAgent()
+        {
+            InjectMissionManager();
+            var agent = GameBridge.CanWorkAgent();
+            // primaryStat + _statBufList 双注（YouMustBeHappyExtTest 先例）：
+            // TotalStats→maxHp→GetMaxHpBuf 遍历 _statBufList，漏注即 NRE
+            GameBridge.Set(agent, "primaryStat", new WorkerPrimaryStat { hp = 10, mental = 10, work = 10, battle = 10 });
+            GameBridge.Set(agent, "primaryStatExp", new WorkerPrimaryStatExp());
+            GameBridge.Set(agent, "_statBufList", new List<UnitStatBuf>());
+            return agent;
+        }
+
+        private static AgentModel MaxedAgent()
+        {
+            InjectMissionManager();
+            var agent = GameBridge.CanWorkAgent();
+            GameBridge.Set(agent, "primaryStat", new WorkerPrimaryStat { hp = 130, mental = 130, work = 130, battle = 130 });
+            GameBridge.Set(agent, "primaryStatExp", new WorkerPrimaryStatExp());
+            GameBridge.Set(agent, "_statBufList", new List<UnitStatBuf>());
+            agent.hp = agent.maxHp;
+            agent.mental = agent.maxMental;
+            return agent;
+        }
+
+        private static void InjectMissionManager()
+        {
+            var existing = typeof(MissionManager)
+                .GetField("_instance", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)
+                .GetValue(null);
+            if (existing != null)
+            {
+                return;
+            }
+            var missionManager = GameBridge.Bare<MissionManager>();
+            typeof(MissionManager)
+                .GetField("_instance", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)
+                .SetValue(null, missionManager);
+            GameBridge.Set(missionManager, "clearedMissions", new List<Mission>());
+            GameBridge.Set(missionManager, "closedMissions", new List<Mission>());
+        }
+
         private static int QueueCount()
         {
             var queue = (PriorityQueue<ICommand>)GameBridge.Get(Automaton.Instance, "_commandQueue");
@@ -123,20 +168,40 @@ namespace AutoInority.Test
             // 姿态切换不清生产状态：开发目标保留，切回自动恢复
             Assert.Contains(creature, Automaton.Instance.ExploitingCreatures);
 
-            Automaton.Instance.TogglePosture();
-            Assert.Equal(before, Automaton.Instance.CurrentPostureEnum);
+            ForcePosture(before);
             ResetProductionState();
+        }
+
+        [Fact]
+        public void TogglePostureCyclesThroughThreeStates()
+        {
+            InjectManagers();
+            var start = Automaton.Instance.CurrentPostureEnum;
+            try
+            {
+                ForcePosture(PostureEnum.PRODUCTION);
+                Automaton.Instance.TogglePosture();
+                Assert.Equal(PostureEnum.TRAINING, Automaton.Instance.CurrentPostureEnum);
+                Automaton.Instance.TogglePosture();
+                Assert.Equal(PostureEnum.SUPPRESS, Automaton.Instance.CurrentPostureEnum);
+                Automaton.Instance.TogglePosture();
+                Assert.Equal(PostureEnum.PRODUCTION, Automaton.Instance.CurrentPostureEnum); // B×3 回原点
+            }
+            finally
+            {
+                ForcePosture(start);
+            }
         }
 
         [Fact]
         public void SwitchPostureAnnouncesThroughSystemLog()
         {
             InjectManagers();
+            ForcePosture(PostureEnum.PRODUCTION); // 先就位：切换播报不能落进捕获窗
             var captured = new List<object[]>();
             Notice.instance.Observe("AddSystemLog", param => captured.Add(param));
 
-            var before = Automaton.Instance.CurrentPostureEnum;
-            Automaton.Instance.SwitchPosture(before);
+            Automaton.Instance.SwitchPosture(PostureEnum.PRODUCTION);
             Assert.Empty(captured); // 同姿态切换幂等，无播报
 
             // 切英语跑一遍三语解析，再恢复简中（ShyLook 系用例断言中文文案，语言不能带出去）
@@ -146,12 +211,12 @@ namespace AutoInority.Test
             try
             {
                 GameBridge.Set(globalGameManager, "_language", SystemLanguage.English);
-                var englishSnapshot = captured.Count;
-                Automaton.Instance.SwitchPosture(before == PostureEnum.PRODUCTION ? PostureEnum.SUPPRESS : PostureEnum.PRODUCTION);
+                Automaton.Instance.SwitchPosture(PostureEnum.SUPPRESS);
                 Assert.Equal("The capable move in, the rest fall back to safety. Do not worry, today's loss report will not carry any new names.", captured[captured.Count - 1][0]);
                 GameBridge.Set(globalGameManager, "_language", SystemLanguage.ChineseSimplified);
-                Automaton.Instance.SwitchPosture(before);
-                Assert.True(captured.Count >= englishSnapshot + 2);
+                // 训练姿态文案键独立于生产/镇压，中文断言钉住
+                Automaton.Instance.SwitchPosture(PostureEnum.TRAINING);
+                Assert.Equal("设施里成长最慢的那几位，今天由我亲自安排课程。请相信，合适的位置比盲目的努力更能改变一个人。", captured[captured.Count - 1][0]);
             }
             finally
             {
@@ -220,11 +285,10 @@ namespace AutoInority.Test
         }
 
         [Fact]
-        public void SuppressedPostureEnqueuesSuppressCommandForFightables()
+        public void BaseEnqueuesSuppressCommandForFightables()
         {
             InjectManagers();
             DrainQueue();
-            ForcePosture(PostureEnum.SUPPRESS);
 
             var escapee = BridgedCreature(CreatureState.ESCAPE, overloaded: false);
             var creatureManager = (CreatureManager)typeof(CreatureManager)
@@ -232,9 +296,70 @@ namespace AutoInority.Test
                 .GetValue(null);
             GameBridge.Set(creatureManager, "creatureList", new List<CreatureModel> { escapee });
 
-            Automaton.Instance.CurrentPosture.OnTick();
-            // 镇压姿态对战斗目标（低风险出逃）仍然入队镇压
+            // 威胁扫描是三姿态公共基座：与当前姿态无关，出逃低风险目标入队镇压
+            Automaton.Instance.EnqueueThreats();
             Assert.Equal(1, QueueCount());
+        }
+
+        [Fact]
+        public void ThreatBaseWorksWithAnyPosture()
+        {
+            InjectManagers();
+            DrainQueue();
+
+            var urgent = BridgedCreature(CreatureState.WAIT, overloaded: true);
+            var escapee = BridgedCreature(CreatureState.ESCAPE, overloaded: false);
+            var creatureManager = (CreatureManager)typeof(CreatureManager)
+                .GetField("_instance", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)
+                .GetValue(null);
+            GameBridge.Set(creatureManager, "creatureList", new List<CreatureModel> { urgent, escapee });
+
+            // 基座断言（核心）：三姿态任一下应急反射都产出威胁命令
+            foreach (var posture in new[] { PostureEnum.PRODUCTION, PostureEnum.TRAINING, PostureEnum.SUPPRESS })
+            {
+                DrainQueue();
+                ForcePosture(posture);
+                Automaton.Instance.EnqueueThreats();
+                Assert.Equal(2, QueueCount()); // urgent→ManageCreatureCommand + escapee→SuppressCommand
+            }
+        }
+
+        [Fact]
+        public void TrainingPostureSeedsTrainCommandsForTrainableAgents()
+        {
+            InjectManagers();
+            DrainQueue();
+            ForcePosture(PostureEnum.TRAINING);
+
+            var trainable = TrainableAgent();
+            var agentManager = (AgentManager)typeof(AgentManager)
+                .GetField("_instance", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)
+                .GetValue(null);
+            GameBridge.Set(agentManager, "agentList", new List<AgentModel> { trainable });
+
+            // IsAvailable 门：hp/mental >= max*0.9——bare 员工当前数值默认 0，须设满
+            trainable.hp = trainable.maxHp;
+            trainable.mental = trainable.maxMental;
+
+            Automaton.Instance.CurrentPosture.OnTick();
+            Assert.Equal(1, QueueCount());
+        }
+
+        [Fact]
+        public void TrainingPostureSkipsMaxedAgents()
+        {
+            InjectManagers();
+            DrainQueue();
+            ForcePosture(PostureEnum.TRAINING);
+
+            var maxed = MaxedAgent();
+            var agentManager = (AgentManager)typeof(AgentManager)
+                .GetField("_instance", BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)
+                .GetValue(null);
+            GameBridge.Set(agentManager, "agentList", new List<AgentModel> { maxed });
+
+            Automaton.Instance.CurrentPosture.OnTick();
+            Assert.Equal(0, QueueCount()); // 全满级者无经验缺口，不入队
         }
 
         [Fact]

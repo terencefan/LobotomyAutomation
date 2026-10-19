@@ -25,6 +25,8 @@
             public static string PostureProduction => Language.Automation_Conv_PostureProduction;
 
             public static string PostureSuppress => Language.Automation_Conv_PostureSuppress;
+
+            public static string PostureTraining => Language.Automation_Conv_PostureTraining;
         }
 
         public class Creature

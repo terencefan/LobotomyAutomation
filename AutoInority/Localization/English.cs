@@ -14,6 +14,8 @@ namespace AutoInority.Localization
 
         public override string Automation_Conv_PostureSuppress => "The capable move in, the rest fall back to safety. Do not worry, today's loss report will not carry any new names.";
 
+        public override string Automation_Conv_PostureTraining => "The slowest learners in this facility will receive my personal curriculum today. Rest assured, the right position changes a person far more than effort ever will.";
+
         public override string Automation_Log_DebugOff => "Debug logging disabled.";
 
         public override string Automation_Log_DebugOn => "Debug logging enabled.";

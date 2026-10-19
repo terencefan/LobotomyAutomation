@@ -4,6 +4,8 @@
     {
         DEFAULT,
 
+        TRAIN_AGENT,
+
         MANAGE_CREATURE_1,
 
         MANAGE_CREATURE_2,
