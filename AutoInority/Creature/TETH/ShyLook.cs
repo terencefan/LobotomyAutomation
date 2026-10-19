@@ -72,7 +72,7 @@
         /// 看能力：冻结脸修正后的真实置信度严格大于 CreatureEscapeConfidence 及格线可硬上，
         /// 不过线弹回待机。animScript 在 OnViewInit 前为 null，视为不宜开工。
         /// </summary>
-        public override bool ViableAtDoor(AgentModel agent, SkillTypeInfo skill, out string message)
+        protected override bool DoorCheck(AgentModel agent, SkillTypeInfo skill, out string message)
         {
             var face = FaceTypeAtDoor();
             if (face == null || (face.Value > ShyFace.Plain && ConfidenceAtDoor(agent, skill) <= CreatureEscapeConfidence))

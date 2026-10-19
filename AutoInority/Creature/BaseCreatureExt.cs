@@ -21,6 +21,9 @@ namespace AutoInority.Creature
 
         public virtual bool IsUrgent => false;
 
+        /// <summary>语义见 ICreatureExtension.AcceptsHeartAgent；默认拒绝。</summary>
+        public virtual bool AcceptsHeartAgent => false;
+
         public virtual SkillTypeInfo[] SkillSets { get; } = { Attachment, Insight, Instinct, Repression };
 
         protected float CreatureEscapeConfidence => AutomationConfig.CreatureEscapeConfidence;
@@ -45,10 +48,41 @@ namespace AutoInority.Creature
         }
 
         /// <summary>
-        /// 门检默认放行：无门口特殊风险的异想体无需处理，覆写以启用门口弹回。
+        /// 门检总入口（非虚）：全量门口规则与 creature 门检的组合，覆写无法绕过前者。
+        /// 心之归属地兜底先行：游戏并不阻止手工把带心员工派往他处，只点燃 5~10s 引信
+        /// （LittleWitchBuf.FixedUpdate），走完即员工死亡、女巫之子出笼；CanWorkWith
+        /// 只约束自动化派工，手工误派唯有此线可拦。
         /// </summary>
-        public virtual bool ViableAtDoor(AgentModel agent, SkillTypeInfo skill, out string message)
+        public bool ViableAtDoor(AgentModel agent, SkillTypeInfo skill, out string message)
         {
+            if (!RejectedByBufRules(agent, skill, out message))
+            {
+                return false;
+            }
+            return DoorCheck(agent, skill, out message);
+        }
+
+        /// <summary>
+        /// creature 门检默认放行：无门口特殊风险的异想体无需处理，覆写以启用门口弹回。
+        /// </summary>
+        protected virtual bool DoorCheck(AgentModel agent, SkillTypeInfo skill, out string message)
+        {
+            message = null;
+            return true;
+        }
+
+        /// <summary>
+        /// buf 危害排除表求值：命中且未豁免即拒绝并产出文案。派工闸（CanWorkWith）
+        /// 与门口兜底（ViableAtDoor）共用同一张 BufRules 表，判定只有一份。
+        /// </summary>
+        private bool RejectedByBufRules(AgentModel agent, SkillTypeInfo skill, out string message)
+        {
+            var rejection = BufExclusionRule.Evaluate(BufRules(agent));
+            if (rejection != null)
+            {
+                message = string.Format(rejection.Message, agent.Tag(), _creature.Tag(), skill.Tag());
+                return false;
+            }
             message = null;
             return true;
         }
@@ -63,10 +97,11 @@ namespace AutoInority.Creature
         {
             return new[]
             {
-                // 蕾蒂希娅的心：带心员工派往任何非蕾蒂希娅目标，5-10s 后死亡并生成蕾怪
+                // 蕾蒂希娅的心：带心员工派往任何非心之归属地目标，5-10s 后死亡并生成蕾怪；
+                // 豁免=AcceptsHeartAgent（数据在 creature，LaetitiaExt 放行）
                 new BufExclusionRule.Rule(
                     () => agent.HasUnitBuf(UnitBufType.LITTLEWITCH_HEART),
-                    () => Script is LittleWitch,
+                    () => AcceptsHeartAgent,
                     Angela.Creature.Laetitia),
                 // 精灵盛宴的祝福：游戏 FairyBuf 的击杀条件只看「派工在途」不看目标，
                 // 重派回精灵本体同样走在途死亡窗口，故无豁免，8s 内禁派任何工作
@@ -79,10 +114,8 @@ namespace AutoInority.Creature
 
         public virtual bool CanWorkWith(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            var rejection = BufExclusionRule.Evaluate(BufRules(agent));
-            if (rejection != null)
+            if (!RejectedByBufRules(agent, skill, out message))
             {
-                message = string.Format(rejection.Message, agent.Tag(), _creature.Tag(), skill.Tag());
                 return false;
             }
 
