@@ -9,7 +9,7 @@
         public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
         {
             var confidence = NormalConfidence(agent, skill);
-            if (QliphothCounter > 1 && confidence > Automaton.Instance.CounterDecreaseConfidence)
+            if (QliphothCounter > 1 && confidence > AutomationConfig.CounterDecreaseConfidence)
             {
                 return true;
             }

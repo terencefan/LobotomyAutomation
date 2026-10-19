@@ -82,18 +82,18 @@ namespace AutoInority.Test
         }
 
         [Fact]
-        public void AutomatonConfidenceDefaultsReadable()
+        public void AutomationConfigDefaultsReadable()
         {
             try
             {
-                Assert.Equal(0.99f, Automaton.Instance.DeadConfidence);
-                Automaton.Instance.DeadConfidence = 0.5f;
-                Assert.Equal(0.5f, Automaton.Instance.DeadConfidence);
+                Assert.Equal(0.99f, AutomationConfig.DeadConfidence);
+                AutomationConfig.DeadConfidence = 0.5f;
+                Assert.Equal(0.5f, AutomationConfig.DeadConfidence);
             }
             finally
             {
-                // 断言失败也不能把改过的置信度漏给后续用例
-                Automaton.Reset();
+                // 静态配置不随 Automaton.Reset 还原，断言失败也必须手动回默认
+                AutomationConfig.DeadConfidence = 0.99f;
             }
         }
 

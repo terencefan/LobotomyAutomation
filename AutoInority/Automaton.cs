@@ -42,12 +42,6 @@ namespace AutoInority
             }
         }
 
-        public float CounterDecreaseConfidence { get; set; } = 0.95f;
-
-        public float CreatureEscapeConfidence { get; set; } = 0.99f;
-
-        public float DeadConfidence { get; set; } = 0.99f;
-
         public Dictionary<AgentModel, RepeatWorkCommand> WorkingAgents { get; } = new Dictionary<AgentModel, RepeatWorkCommand>();
 
         private bool Running { get; set; } = true;

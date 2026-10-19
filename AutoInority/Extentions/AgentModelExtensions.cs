@@ -132,6 +132,13 @@ namespace AutoInority.Extentions
             var riskLevel = creature.GetRiskLevel();
             var weapon = agent.Equipment.weapon.metaInfo;
             var weaponGrade = (int)weapon.Grade;
+            // 武器伤害效能：异想体当前防御行对武器伤害类型乘数低于全局阈值
+            // （AutomationConfig.PressingEfficacyThreshold，默认 0.5 = RESISTANCE/IMMUNE）视为打不动——
+            // 属性等级再高也不派去镇压（R/W/B/P 之外的伤害类型恒 1.0 天然放行）
+            if (creature.defense.GetMultiplier(weapon.damageInfo.type) < AutomationConfig.PressingEfficacyThreshold)
+            {
+                return false;
+            }
             // 护甲此前误读为 weapon.metaInfo，两条护甲资格分支全部失真
             var armor = agent.Equipment.armor?.metaInfo;
             var armorGrade = armor != null ? (int)armor.Grade : 0;

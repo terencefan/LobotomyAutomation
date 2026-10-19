@@ -16,7 +16,7 @@
         {
             if (QliphothCounter > 1 || (IsFarming && AutoSuppress))
             {
-                return NormalConfidence(agent, skill) > Automaton.Instance.CounterDecreaseConfidence;
+                return NormalConfidence(agent, skill) > AutomationConfig.CounterDecreaseConfidence;
             }
             return IsOverloaded || GoodConfidence(agent, skill) > CreatureEscapeConfidence;
         }
