@@ -64,6 +64,8 @@
 
             public const string RedShoes = "我不认为安排{0}去对{1}进行{2}是一个好主意，很明显{0}还不如您自律。";
 
+            public const string Wellcheers = "{1}此刻的心情糟糕透了，现在安排{0}进去的话，恐怕就要为这杯饮料添上一位别样的客人了。等它平静下来吧。";
+
             public const string Sakura = "本次对{1}的工作将会导致数名设施内的职员对其着魔，不过我相信你应该已经准备好镇压了。";
 
             public const string Shark = "安排{0}对{1}进行{2}是非常不明智的行为，你是不是应该多思考一下。";
