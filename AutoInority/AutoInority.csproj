@@ -90,7 +90,7 @@
     <Compile Include="Creature\TETH\CrumblingArmorExt.cs" />
     <Compile Include="Creature\TETH\BeautyBeastExt.cs" />
     <Compile Include="Creature\TETH\BloodBathExt.cs" />
-    <Compile Include="Creature\TETH\LadyLookingAtWallExt.cs" />
+    <Compile Include="Creature\ZAYIN\LadyLookingAtWallExt.cs" />
     <Compile Include="Creature\TETH\LuminousBraceletExt.cs" />
     <Compile Include="Creature\TETH\MeatLanternExt.cs" />
     <Compile Include="Creature\TETH\Mhz_1_76Ext.cs" />

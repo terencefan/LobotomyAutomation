@@ -353,10 +353,6 @@ namespace AutoInority.Extentions
             {
                 return new VoidDreamExt(model);
             }
-            else if (model.script is LadyLookingAtWall)
-            {
-                return new LadyLookingAtWallExt(model);
-            }
             return new ExpectGoodAndNormalExt(model);
         }
 
@@ -486,6 +482,10 @@ namespace AutoInority.Extentions
             else if (model.script is Bald)
             {
                 return new BaldExt(model);
+            }
+            else if (model.script is LadyLookingAtWall)
+            {
+                return new LadyLookingAtWallExt(model);
             }
             return new ExpectGoodAndNormalExt(model);
         }
