@@ -202,7 +202,7 @@ namespace AutoInority.Creature
 
         // 复刻游戏 WorkerModel.TakeDamage 的装备修正层（armor -> weapon -> gifts，actor 传生物，与游戏一致）。
         // 装备 script 的 OnTakeDamage 可能带有真实副作用（反弹伤害、回血回精神、添加护盾 buff、写装备状态字段），
-        // 而评估会被 RepeatWorkCommand 每轮重派时重复触发，重复调用会污染游戏状态。
+        // 而派工评估会在调度中反复触发（每 tick 重建候选），重复调用会污染游戏状态。
         // 因此只放行反编译排查后确认的"纯函数型"实现（只修改 ref dmg，无任何状态副作用），其余一律跳过：
         //   - DeathAngelArmor: 纯函数（按当前防御/buf 重算伤害并在小伤害时归零）；但同时持有白夜武器「失乐园」时会额外 RecoverHP/RecoverMental，此时跳过
         //   - NamelessFetusGift: 纯函数（dmg.min/max 各乘 0.95）
