@@ -27,8 +27,6 @@ namespace AutoInority.Creature
             return null;
         }
 
-        public virtual bool WantsDispatch() => false;
-
         public IEnumerable<AgentModel> FindAgents()
         {
             var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && CanUse(x)).ToList();

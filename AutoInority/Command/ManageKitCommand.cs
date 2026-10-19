@@ -12,7 +12,7 @@ namespace AutoInority.Command
     {
         private readonly CreatureModel _kit;
 
-        public override bool IsCompleted => !_kit.isOverloaded && !_kit.GetKitExtension().WantsDispatch();
+        public override bool IsCompleted => !_kit.isOverloaded;
 
         public override bool IsApplicable => _kit.IsAvailable();
 

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 
+using AutoInority.Extentions;
+
 namespace AutoInority.Creature
 {
     internal class ShelterExt : ChannelKitExt
@@ -54,9 +56,30 @@ namespace AutoInority.Creature
             return worst < SevereBelow ? 0 : (worst < ModerateBelow ? 1 : 2);
         }
 
-        // 主动收治：避难所空闲且设施内有人带伤即要人——不等 isOverloaded（那与救人无关）
-        public override bool WantsDispatch()
-            => _kit.currentSkill == null && AgentManager.instance.GetAgentList().Any(IsPatient);
+        // 主动调度：Automaton 每帧驱动 OnFixedUpdate，避难所空闲且馆内有伤员
+        // 就直接收治，不经 isOverloaded→命令队列的绕路（那与救人无关，还会慢一拍）
+        public override void OnFixedUpdate()
+        {
+            base.OnFixedUpdate();
+            if (_kit.currentSkill != null)
+            {
+                return;
+            }
+            var agent = SelectAgent();
+            if (agent != null)
+            {
+                Admit(agent);
+            }
+        }
+
+        // 收治动作（测试可覆写：ManageKitCreature/room 裸对象不安全）
+        protected virtual void Admit(AgentModel agent)
+        {
+            agent.ManageKitCreature(_kit);
+            agent.counterAttackEnabled = false;
+            _kit.Unit.room.OnWorkAllocated(agent);
+            Angela.Log($"已安排{agent.Tag()}入住{_kit.Tag()}");
+        }
 
         private static bool IsPatient(AgentModel agent)
         {
