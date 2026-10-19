@@ -119,7 +119,8 @@ namespace AutoInority
                 }
                 else if (model.unconAction is Uncontrollable_Sakura)
                 {
-                    model.unconAction.OnClick();
+                    // 连点打满唤醒阈值（5 次），防员工在单点节奏下走到工作位触发献祭
+                    SakuraExt.ResolveAttract(model);
                 }
             }
         }
