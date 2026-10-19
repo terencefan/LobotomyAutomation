@@ -61,19 +61,19 @@ namespace AutoInority
         }
 
         // 种地管理面板的界面文案（非 Angela 台词，无性格要求）
-        public class FarmPanel
+        public class ExploitPanel
         {
-            public static string ByDepartment => Language.FarmPanel_ByDepartment;
+            public static string ByDepartment => Language.ExploitPanel_ByDepartment;
 
-            public static string ByRiskLevel => Language.FarmPanel_ByRiskLevel;
+            public static string ByRiskLevel => Language.ExploitPanel_ByRiskLevel;
 
-            public static string ClickHint => Language.FarmPanel_ClickHint;
+            public static string ClickHint => Language.ExploitPanel_ClickHint;
 
-            public static string Empty => Language.FarmPanel_Empty;
+            public static string Empty => Language.ExploitPanel_Empty;
 
-            public static string Escaped => Language.FarmPanel_Escaped;
+            public static string Escaped => Language.ExploitPanel_Escaped;
 
-            public static string Title => Language.FarmPanel_Title;
+            public static string Title => Language.ExploitPanel_Title;
         }
 
     }

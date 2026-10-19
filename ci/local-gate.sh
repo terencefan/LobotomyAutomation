@@ -21,4 +21,5 @@ if [ -z "$DIFF_COVERAGE" ]; then
 fi
 
 (cd AutoInority.Test && "$DOTNET_COVERAGE" collect "dotnet test" -f cobertura -o ../coverage.cobertura.xml)
+python3 ci/filter-coverage.py coverage.cobertura.xml
 exec "$DIFF_COVERAGE" coverage.cobertura.xml --compare-branch origin/main --fail-under 80

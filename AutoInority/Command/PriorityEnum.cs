@@ -14,15 +14,15 @@
 
         MANAGE_CREATURE_5,
 
-        FARM_CREATURE_1,
+        EXPLOIT_CREATURE_1,
 
-        FARM_CREATURE_2,
+        EXPLOIT_CREATURE_2,
 
-        FARM_CREATURE_3,
+        EXPLOIT_CREATURE_3,
 
-        FARM_CREATURE_4,
+        EXPLOIT_CREATURE_4,
 
-        FARM_CREATURE_5,
+        EXPLOIT_CREATURE_5,
 
         SUPRESS_CREATURE_1,
 

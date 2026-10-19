@@ -1,6 +1,6 @@
 # 游戏内 UI（UGUI 纯代码构建）
 
-AutoInority 的游戏内 UI 一律纯代码构建，无预制体、无外部素材。首例实现：`AutoInority/UI/FarmPanel.cs`（PR #86，O 键轮班管理面板）——做新 UI 先读它。
+AutoInority 的游戏内 UI 一律纯代码构建，无预制体、无外部素材。首例实现：`AutoInority/UI/ExploitPanel.cs`（PR #86，O 键轮班管理面板；2026-10-20 标识符 Farm*→Exploit*，文案「轮班」不变）——做新 UI 先读它。
 
 ## 设计语言（定稿，2026-10-19）
 

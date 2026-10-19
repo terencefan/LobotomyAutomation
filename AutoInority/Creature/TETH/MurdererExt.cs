@@ -10,7 +10,7 @@
 
         public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
         {
-            return IsOverloaded || IsFarming || NormalConfidence(agent, skill) > CreatureEscapeConfidence;
+            return IsOverloaded || IsExploiting || NormalConfidence(agent, skill) > CreatureEscapeConfidence;
         }
     }
 }

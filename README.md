@@ -11,11 +11,11 @@ Here are other mods that were published by me, which could be useful when using 
 
 1. **Angela will diss you when you made a wrong decision that will result in agents dying or creatures escaping**
    - Note that I haven't finished the translation works now, only Chinese has been supported.
-2. Press `T` when selecting a creature to toggle the farm mode: Angela keeps sending agents (preferring ones without the EGO gift) to work on the creature.
+2. Press `T` when selecting a creature to toggle the exploit mode: Angela keeps sending agents (preferring ones without the EGO gift) to work on the creature.
    - Press `T` again to toggle it off.
 3. Press `X` when selecting a creature to let Angela assign the best available agent for a **single** work session.
    - With no command window open, `X` performs a single training assignment instead.
-4. Press `O` to toggle the **Creature Management** panel: an in-game overlay listing all creatures, with a per-row switch to exploit (farm) each of them, groupable by department or risk level. Escaped creatures are greyed out.
+4. Press `O` to toggle the **Creature Management** panel: an in-game overlay listing all creatures, with a per-row switch to exploit each of them, groupable by department or risk level. Escaped creatures are greyed out.
 5. Press `P` to pause all automation works.
 6. Press `V` to clear all automation works.
 7. Automatically handle Qliphoth Meltdown events.

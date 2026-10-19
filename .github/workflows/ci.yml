@@ -27,6 +27,9 @@ jobs:
           cd AutoInority.Test
           ~/.dotnet/tools/dotnet-coverage collect "dotnet test" -f cobertura -o ../coverage.cobertura.xml
 
+      - name: Filter untestable layers out of coverage (UI/Localization blacklist)
+        run: python3 ci/filter-coverage.py coverage.cobertura.xml
+
       - name: Patch coverage gate
         run: |
           pip install diff-cover

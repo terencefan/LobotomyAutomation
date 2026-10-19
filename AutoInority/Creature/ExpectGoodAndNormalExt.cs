@@ -14,7 +14,7 @@
 
         public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
         {
-            if (QliphothCounter > 1 || (IsFarming && AutoSuppress))
+            if (QliphothCounter > 1 || (IsExploiting && AutoSuppress))
             {
                 return NormalConfidence(agent, skill) > AutomationConfig.CounterDecreaseConfidence;
             }

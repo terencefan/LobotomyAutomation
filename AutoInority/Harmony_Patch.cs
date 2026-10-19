@@ -161,9 +161,9 @@ namespace AutoInority
         private static readonly List<KeyBinding> _keyBindings = new List<KeyBinding>
         {
             new KeyBinding { Key = KeyCode.P,  OnDown = i => Invoke(Automaton.Instance.ToggleAutomation) },
-            new KeyBinding { Key = KeyCode.T,  OnDown = i => ToggleFarm() },
+            new KeyBinding { Key = KeyCode.T,  OnDown = i => ToggleExploit() },
             new KeyBinding { Key = KeyCode.X,  OnDown = i => AssignOrTrain() },
-            new KeyBinding { Key = KeyCode.O,  OnDown = i => Invoke(FarmPanel.Toggle) },
+            new KeyBinding { Key = KeyCode.O,  OnDown = i => Invoke(ExploitPanel.Toggle) },
             new KeyBinding { Key = KeyCode.Z,  OnDown = i => ToggleDebugLog() },
             new KeyBinding { Key = KeyCode.V,  OnDown = i => Invoke(Automaton.Instance.Clear) },
         };
@@ -179,12 +179,12 @@ namespace AutoInority
             }
         }
 
-        private static void ToggleFarm()
+        private static void ToggleExploit()
         {
             var currentWindow = CommandWindow.CommandWindow.CurrentWindow;
             if (currentWindow.enabled && currentWindow.IsEnabled && currentWindow.CurrentTarget is CreatureModel creature)
             {
-                Invoke(() => Automaton.Instance.ToggleFarming(creature));
+                Invoke(() => Automaton.Instance.ToggleExploiting(creature));
             }
         }
 

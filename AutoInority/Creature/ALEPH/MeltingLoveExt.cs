@@ -20,7 +20,7 @@
 
         public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
         {
-            return IsOverloaded || IsFarming;
+            return IsOverloaded || IsExploiting;
         }
     }
 }
