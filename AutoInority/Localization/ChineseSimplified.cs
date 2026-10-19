@@ -14,6 +14,8 @@ namespace AutoInority.Localization
 
         public override string Automation_Conv_PostureSuppress => "能压制威胁的职员上前，其余的撤到安全区域。放心，今天的损失报表不会出现新的名字。";
 
+        public override string Automation_Conv_PostureTraining => "设施里成长最慢的那几位，今天由我亲自安排课程。请相信，合适的位置比盲目的努力更能改变一个人。";
+
         public override string Automation_Log_DebugOff => "调试日志已关闭";
 
         public override string Automation_Log_DebugOn => "调试日志已开启";

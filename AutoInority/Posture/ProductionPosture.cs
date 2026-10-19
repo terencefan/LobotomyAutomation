@@ -4,7 +4,7 @@ namespace AutoInority.Posture
 {
     /// <summary>
     /// 生产姿态：开发目标每 tick 从 ExploitingCreatures 无状态重建种子
-    /// （替代旧 _repeatQueue 回炉续命），叠加应急反射。
+    /// （替代旧 _repeatQueue 回炉续命）。应急反射是三姿态公共基座（Main 统一扫描）。
     /// </summary>
     internal class ProductionPosture : PostureBase
     {
@@ -15,7 +15,6 @@ namespace AutoInority.Posture
             {
                 automaton.Enqueue(new ExploitCommand(creature));
             }
-            EnqueueThreats();
         }
     }
 }

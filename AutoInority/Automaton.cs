@@ -134,6 +134,9 @@ namespace AutoInority
                 kit.GetKitExtension().OnFixedUpdate();
             }
 
+            // 应急反射：三姿态公共基座——紧急收容物/出逃/考验与姿态无关，统一扫描
+            EnqueueThreats();
+
             // 姿态分发：各姿态自行扫描入队
             CurrentPosture.OnTick();
 
@@ -149,6 +152,40 @@ namespace AutoInority
                 {
                     command.Execute();
                 }
+            }
+        }
+
+        /// <summary>
+        /// 战斗目标：出逃（AutoSuppress 放行，仅低风险）+ 全部考验。
+        /// </summary>
+        internal static IEnumerable<CreatureModel> GetFightables()
+        {
+            foreach (var creature in CreatureManager.instance.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
+            {
+                if (creature.GetExtension().AutoSuppress)
+                {
+                    yield return creature;
+                }
+            }
+            foreach (var creature in OrdealManager.instance.GetOrdealCreatureList())
+            {
+                yield return creature;
+            }
+        }
+
+        /// <summary>
+        /// 应急反射：紧急收容物与战斗目标的扫描入队。三姿态公共基座——
+        /// 与姿态无关的威胁由 Main 统一扫描，任何姿态下紧急事都不晾着。
+        /// </summary>
+        internal void EnqueueThreats()
+        {
+            foreach (var creature in CreatureManager.instance.GetCreatureList().FilterUrgent())
+            {
+                Enqueue(new ManageCreatureCommand(creature));
+            }
+            foreach (var creature in GetFightables())
+            {
+                Enqueue(new SuppressCommand(creature));
             }
         }
 

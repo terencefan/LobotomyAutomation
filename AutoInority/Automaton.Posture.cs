@@ -9,6 +9,7 @@ namespace AutoInority
         private readonly Dictionary<PostureEnum, PostureBase> _postures = new Dictionary<PostureEnum, PostureBase>
         {
             { PostureEnum.PRODUCTION, new ProductionPosture() },
+            { PostureEnum.TRAINING, new TrainingPosture() },
             { PostureEnum.SUPPRESS, new SuppressPosture() },
         };
 
@@ -32,8 +33,23 @@ namespace AutoInority
             Angela.Announce(PostureMessage());
         }
 
-        public void TogglePosture() => SwitchPosture(CurrentPostureEnum == PostureEnum.PRODUCTION ? PostureEnum.SUPPRESS : PostureEnum.PRODUCTION);
+        public void TogglePosture()
+        {
+            var next = (PostureEnum)(((int)CurrentPostureEnum + 1) % _postures.Count);
+            SwitchPosture(next);
+        }
 
-        private string PostureMessage() => CurrentPostureEnum == PostureEnum.PRODUCTION ? Angela.Automaton.PostureProduction : Angela.Automaton.PostureSuppress;
+        private string PostureMessage()
+        {
+            switch (CurrentPostureEnum)
+            {
+                case PostureEnum.PRODUCTION:
+                    return Angela.Automaton.PostureProduction;
+                case PostureEnum.TRAINING:
+                    return Angela.Automaton.PostureTraining;
+                default:
+                    return Angela.Automaton.PostureSuppress;
+            }
+        }
     }
 }

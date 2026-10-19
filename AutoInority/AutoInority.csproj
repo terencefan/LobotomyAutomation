@@ -167,10 +167,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Automaton.Exploit.cs" />
+    <Compile Include="Command\TrainCommand.cs" />
     <Compile Include="Automaton.Posture.cs" />
     <Compile Include="Posture\PostureBase.cs" />
     <Compile Include="Posture\PostureEnum.cs" />
     <Compile Include="Posture\ProductionPosture.cs" />
+    <Compile Include="Posture\TrainingPosture.cs" />
     <Compile Include="Posture\SuppressPosture.cs" />
     <Compile Include="UI\ExploitPanel.cs" />
     <None Include="packages.config" />
