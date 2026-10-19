@@ -279,6 +279,11 @@ namespace AutoInority.Creature
             return gift != null;
         }
 
+        // 与游戏 UseSkill.ProcessWorkTick（反编译 L536-601）的成功率公式逐项对照：
+        // workProb 属性等级查表 / GetObserveBonusProb / OnBonusWorkProb / agent.workProb
+        // / 装备与 buf 特设加成 / TranformWorkProb / 0.95 封顶 / GetRedusedWorkProbByCounter
+        // 与 ProbReductionValue 二选一 / 部门死人惩罚 −0.5 —— 全部对齐；仅多 max(0) 下限
+        // （保守化）。游戏侧若给公式加料而此处漏跟，置信度即系统性失真——改动时同步。
         protected virtual float CalculateWorkSuccessProb(AgentModel agent, SkillTypeInfo skill)
         {
             Log.Debug(_creature.metaInfo.name);

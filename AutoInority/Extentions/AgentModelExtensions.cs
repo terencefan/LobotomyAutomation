@@ -151,6 +151,10 @@ namespace AutoInority.Extentions
                 && !agent.HasUnitBuf(UnitBufType.DEATH_ANGEL_BETRAYER);
         }
 
+        // 宏员工硬排除：Shift/Ctrl/Alt 重复工作队列绑定的员工不进管理/farm 候选池，
+        // 防止派工在宏的 IDLE 间隙把人抢走打断循环
+        public static bool IsMacroBound(this AgentModel agent) => Automaton.Instance.WorkingAgents.ContainsKey(agent);
+
         public static bool IsCapableOfPressing(this AgentModel agent, CreatureModel creature)
         {
             var riskLevel = creature.GetRiskLevel();
