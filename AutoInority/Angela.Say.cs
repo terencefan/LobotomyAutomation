@@ -21,6 +21,10 @@
             public static string Off => Language.Automation_Conv_Off;
 
             public static string On => Language.Automation_Conv_On;
+
+            public static string PostureProduction => Language.Automation_Conv_PostureProduction;
+
+            public static string PostureSuppress => Language.Automation_Conv_PostureSuppress;
         }
 
         public class Creature

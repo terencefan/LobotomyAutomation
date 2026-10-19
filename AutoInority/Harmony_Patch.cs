@@ -162,6 +162,7 @@ namespace AutoInority
         {
             new KeyBinding { Key = KeyCode.P,  OnDown = i => Invoke(Automaton.Instance.ToggleAutomation) },
             new KeyBinding { Key = KeyCode.T,  OnDown = i => ToggleExploit() },
+            new KeyBinding { Key = KeyCode.B,  OnDown = i => Invoke(Automaton.Instance.TogglePosture) },
             new KeyBinding { Key = KeyCode.X,  OnDown = i => AssignOrTrain() },
             new KeyBinding { Key = KeyCode.O,  OnDown = i => Invoke(ExploitPanel.Toggle) },
             new KeyBinding { Key = KeyCode.Z,  OnDown = i => ToggleDebugLog() },

@@ -14,6 +14,8 @@
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
+    <!-- Bridges/AngelaConversationUI.cs 与真游戏类型同名遮蔽（CS0436），缘由见该文件头注释 -->
+    <NoWarn>$(NoWarn);CS0436</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -31,10 +33,11 @@
 
   <!--
     挂载真游戏 DLL（lib/ 九件套入库，仓库自带完整物料）：通配链入主工程源码，
-    编译期符号全部对齐真实游戏 API（无手写游戏 stub）。
-    Exclude：Properties（AssemblyInfo/资源生成器冲突）。Graph.xml 以 LogicalName 嵌入
-    （Graph.cs 按清单名 "AutoInority.Graph.xml" 读取，与主工程 RootNamespace 对齐）。
-    运行时桥接（跳构造器分配 + 反射注字段 + 单例注入）见 Bridges/GameBridge.cs。
+    编译期符号全部对齐真实游戏 API（唯一例外：Bridges/AngelaConversationUI.cs 源码
+    遮蔽，缘由见该文件头注释）。Exclude：Properties（AssemblyInfo/资源生成器冲突）。
+    Graph.xml 以 LogicalName 嵌入（Graph.cs 按清单名 "AutoInority.Graph.xml" 读取，
+    与主工程 RootNamespace 对齐）。运行时桥接（跳构造器分配 + 反射注字段 + 单例注入）
+    见 Bridges/GameBridge.cs。
   -->
   <ItemGroup>
     <Compile Include="..\AutoInority\**\*.cs" Exclude="..\AutoInority\Properties\**" />
