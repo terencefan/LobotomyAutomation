@@ -21,7 +21,7 @@ namespace AutoInority.Creature
             }
             else if (skill.rwbpType == RwbpType.P)
             {
-                if (IsFarming && agent.HasReachedExpLimit(RwbpType.B, out _) && agent.HasReachedExpLimit(RwbpType.P, out _) && !agent.HasEquipment(GIFT))
+                if (IsExploiting && agent.HasReachedExpLimit(RwbpType.B, out _) && agent.HasReachedExpLimit(RwbpType.P, out _) && !agent.HasEquipment(GIFT))
                 {
                     return base.CanWorkWith(agent, skill, out message);
                 }

@@ -44,7 +44,7 @@
     <Compile Include="Candidate.cs" />
     <Compile Include="CenterBrain.cs" />
     <Compile Include="Command\BaseCommand.cs" />
-    <Compile Include="Command\FarmCommand.cs" />
+    <Compile Include="Command\ExploitCommand.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\ManageCreatureCommand.cs" />
     <Compile Include="Command\ManageKitCommand.cs" />
@@ -165,8 +165,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Automaton.Farm.cs" />
-    <Compile Include="UI\FarmPanel.cs" />
+    <Compile Include="Automaton.Exploit.cs" />
+    <Compile Include="UI\ExploitPanel.cs" />
     <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>

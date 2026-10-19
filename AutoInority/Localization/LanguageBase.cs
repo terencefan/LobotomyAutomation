@@ -16,9 +16,9 @@ namespace AutoInority.Localization
 
         public abstract string Automation_Log_DebugOn { get; }
 
-        public abstract string Automation_Log_FarmOff { get; }
+        public abstract string Automation_Log_ExploitOff { get; }
 
-        public abstract string Automation_Log_FarmOn { get; }
+        public abstract string Automation_Log_ExploitOn { get; }
 
         #endregion Automation
 
@@ -28,20 +28,20 @@ namespace AutoInority.Localization
 
         #endregion Agent
 
-        #region FarmPanel
+        #region ExploitPanel
 
-        public abstract string FarmPanel_ByDepartment { get; }
+        public abstract string ExploitPanel_ByDepartment { get; }
 
-        public abstract string FarmPanel_ByRiskLevel { get; }
+        public abstract string ExploitPanel_ByRiskLevel { get; }
 
-        public abstract string FarmPanel_ClickHint { get; }
+        public abstract string ExploitPanel_ClickHint { get; }
 
-        public abstract string FarmPanel_Empty { get; }
+        public abstract string ExploitPanel_Empty { get; }
 
-        public abstract string FarmPanel_Escaped { get; }
+        public abstract string ExploitPanel_Escaped { get; }
 
-        public abstract string FarmPanel_Title { get; }
+        public abstract string ExploitPanel_Title { get; }
 
-        #endregion FarmPanel
+        #endregion ExploitPanel
     }
 }

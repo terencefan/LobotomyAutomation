@@ -41,7 +41,7 @@ namespace AutoInority.Extentions
             return value;
         }
 
-        public static IEnumerable<AgentModel> FilterFarm(this IEnumerable<AgentModel> agents, CreatureModel creature)
+        public static IEnumerable<AgentModel> FilterExploit(this IEnumerable<AgentModel> agents, CreatureModel creature)
         {
             if (creature.GetExtension().TryGetEGOGift(out var gift))
             {

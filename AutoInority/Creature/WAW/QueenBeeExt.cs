@@ -10,7 +10,7 @@
 
         public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
         {
-            if (IsFarming && NormalConfidence(agent, skill) > CreatureEscapeConfidence)
+            if (IsExploiting && NormalConfidence(agent, skill) > CreatureEscapeConfidence)
             {
                 return true;
             }

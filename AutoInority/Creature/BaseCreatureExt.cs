@@ -36,7 +36,7 @@ namespace AutoInority.Creature
 
         protected float DeadConfidence => AutomationConfig.DeadConfidence;
 
-        protected bool IsFarming => Automaton.Instance.FarmingCreatures.Contains(_creature);
+        protected bool IsExploiting => Automaton.Instance.ExploitingCreatures.Contains(_creature);
 
         protected bool IsOverloaded => _creature.isOverloaded;
 

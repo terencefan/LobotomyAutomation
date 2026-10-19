@@ -14,22 +14,22 @@ namespace AutoInority.Localization
 
         public override string Automation_Log_DebugOn => "调试日志已开启";
 
-        public override string Automation_Log_FarmOn => "已开始对{0}的自动化工作";
+        public override string Automation_Log_ExploitOn => "已开始对{0}的自动化工作";
 
-        public override string Automation_Log_FarmOff => "已结束对{0}的自动化工作";
+        public override string Automation_Log_ExploitOff => "已结束对{0}的自动化工作";
 
         public override string Agent_Log_GotEGOGift => "{0}获得了饰品：{1}";
 
-        public override string FarmPanel_ByDepartment => "按部门";
+        public override string ExploitPanel_ByDepartment => "按部门";
 
-        public override string FarmPanel_ByRiskLevel => "按等级";
+        public override string ExploitPanel_ByRiskLevel => "按等级";
 
-        public override string FarmPanel_ClickHint => "点击开关以开发异想体";
+        public override string ExploitPanel_ClickHint => "点击开关以开发异想体";
 
-        public override string FarmPanel_Empty => "当前没有轮班中的异想体";
+        public override string ExploitPanel_Empty => "当前没有轮班中的异想体";
 
-        public override string FarmPanel_Escaped => "出逃中";
+        public override string ExploitPanel_Escaped => "出逃中";
 
-        public override string FarmPanel_Title => "异想体管理";
+        public override string ExploitPanel_Title => "异想体管理";
     }
 }

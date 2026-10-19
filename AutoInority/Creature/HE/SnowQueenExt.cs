@@ -22,7 +22,7 @@ namespace AutoInority.Creature
                 {
                     return new SkillTypeInfo[] { Instinct };
                 }
-                else if (IsFarming)
+                else if (IsExploiting)
                 {
                     return new SkillTypeInfo[] { Repression };
                 }
@@ -55,7 +55,7 @@ namespace AutoInority.Creature
                     return false;
                 }
             }
-            else if (IsFarming) // a tricky way to get her buff.
+            else if (IsExploiting) // a tricky way to get her buff.
             {
                 message = "";
                 return skill.rwbpType == RwbpType.P;

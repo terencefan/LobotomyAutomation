@@ -14,7 +14,7 @@ namespace AutoInority
 
         public float Distance { get; private set; }
 
-        public double FarmConfidence { get; private set; }
+        public double ExploitConfidence { get; private set; }
 
         public bool HasAnotherGift { get; private set; }
 
@@ -39,10 +39,10 @@ namespace AutoInority
             var ext = creature.GetExtension();
             var confidence = ext.GetConfidence(agent, skill);
             ManageConfidence = confidence * (1 - 0.002 * Distance) * ext.ConfidenceMultiplifier(agent, skill);
-            FarmConfidence = confidence * (1 - 0.001 * Distance) * (HasReachedExpLimit ? 0.8 : 1) * (HasGift || HasAnotherGift ? 0.5 : 1) * ext.ConfidenceMultiplifier(agent, skill);
+            ExploitConfidence = confidence * (1 - 0.001 * Distance) * (HasReachedExpLimit ? 0.8 : 1) * (HasGift || HasAnotherGift ? 0.5 : 1) * ext.ConfidenceMultiplifier(agent, skill);
         }
 
-        public static int FarmComparer(Candidate x, Candidate y) => y.FarmConfidence.CompareTo(x.FarmConfidence);
+        public static int ExploitComparer(Candidate x, Candidate y) => y.ExploitConfidence.CompareTo(x.ExploitConfidence);
 
         public static int ManageComparer(Candidate x, Candidate y)
         {
@@ -101,6 +101,6 @@ namespace AutoInority
 
         public bool IsAvailable() => Agent.IsAvailable() && Creature.IsAvailable();
 
-        public override string ToString() => $"{Agent.name} ({FarmConfidence}, {ManageConfidence}), Distance: {Distance}, HasGift: {HasGift}, HasAnotherGift: {HasAnotherGift}, Exp: {HasReachedExpLimit}";
+        public override string ToString() => $"{Agent.name} ({ExploitConfidence}, {ManageConfidence}), Distance: {Distance}, HasGift: {HasGift}, HasAnotherGift: {HasAnotherGift}, Exp: {HasReachedExpLimit}";
     }
 }

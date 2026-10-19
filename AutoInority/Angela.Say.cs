@@ -14,9 +14,9 @@
 
             public static string DebugOn => Language.Automation_Log_DebugOn;
 
-            public static string FarmOff => Language.Automation_Log_FarmOff;
+            public static string ExploitOff => Language.Automation_Log_ExploitOff;
 
-            public static string FarmOn => Language.Automation_Log_FarmOn;
+            public static string ExploitOn => Language.Automation_Log_ExploitOn;
 
             public static string Off => Language.Automation_Conv_Off;
 

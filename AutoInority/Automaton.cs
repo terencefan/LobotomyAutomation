@@ -85,12 +85,12 @@ namespace AutoInority
         }
 
         /// <summary>
-        /// Clear all farmings.
+        /// Clear all exploitations.
         /// </summary>
         public void Clear()
         {
-            FarmingCreatures.ToList().ForEach(x => TurnOffFarm(x.Unit.room));
-            FarmingCreatures.Clear();
+            ExploitingCreatures.ToList().ForEach(x => TurnOffExploit(x.Unit.room));
+            ExploitingCreatures.Clear();
         }
 
         public void HandleUncontrollable()
