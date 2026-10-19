@@ -131,6 +131,8 @@ namespace AutoInority
                 return;
             }
 
+            Graph.Poll(); // 距离表激活位指纹轮询：日切换/开部门后重算，指纹不变零成本
+
             while (_repeatQueue.Count > 0)
             {
                 Enqueue(_repeatQueue.Dequeue());
