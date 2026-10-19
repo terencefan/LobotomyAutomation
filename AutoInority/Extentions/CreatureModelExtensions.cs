@@ -218,7 +218,7 @@ namespace AutoInority.Extentions
             var script = model.script;
             if (script is BigTreeSap)
             {
-                return new NeverUseKitExt(model);
+                return new BigTreeSapExt(model);
             }
             else if (script is DesireHeart)
             {
