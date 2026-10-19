@@ -82,9 +82,9 @@ namespace AutoInority
                 return byLevel;
             }
             var byExploit = y.ExploitConfidence.CompareTo(x.ExploitConfidence);
-            if (byFarm != 0)
+            if (byExploit != 0)
             {
-                return byFarm;
+                return byExploit;
             }
             return x.Distance.CompareTo(y.Distance);
         }

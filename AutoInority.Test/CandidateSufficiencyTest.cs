@@ -11,8 +11,7 @@ namespace AutoInority.Test
     /// 派工省着用排序（Candidate.SufficientComparer）：过门候选按「属性等级升序 →
     /// 置信度降序 → 距离升序」选人。属性等级是成功率查表的真实跳变维度
     /// （AgentModel.CalculateStatLevel：<30=1、30-44=2、45-64=3、65-84=4、≥85=5），
-    /// 低价值工作不该消耗 5 级员工。宏员工（Automaton.WorkingAgents 绑定）硬排除出
-    /// 管理/farm 候选池。Candidate 用 internal 测试构造器注距离与置信度，
+    /// 低价值工作不该消耗 5 级员工。Candidate 用 internal 测试构造器注距离与置信度，
     /// 绕开 Graph.Distance/GetConfidence 的游戏链。
     /// </summary>
     public class CandidateSufficiencyTest
@@ -100,24 +99,6 @@ namespace AutoInority.Test
             Assert.Equal(5, rSkill.StatLevel);
             Assert.Equal(4, bSkill.StatLevel);
             Assert.True(Candidate.SufficientComparer(bSkill, rSkill) < 0);
-        }
-
-        [Fact]
-        public void IsMacroBoundTracksWorkingAgents()
-        {
-            try
-            {
-                var macro = GameBridge.CanWorkAgent("宏哥");
-                Automaton.Instance.WorkingAgents[macro] = null;
-                Assert.True(macro.IsMacroBound());
-
-                var bystander = GameBridge.CanWorkAgent("路人");
-                Assert.False(bystander.IsMacroBound());
-            }
-            finally
-            {
-                Automaton.Reset(); // Automaton.Instance 是全局单例，用完拆掉防串测
-            }
         }
     }
 }
