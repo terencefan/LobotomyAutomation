@@ -19,6 +19,14 @@ namespace AutoInority.Creature
         {
         }
 
+        // 持有期间物+神累计伤害 >60（_gainedDamage）立即自爆并 30R 溅射
+        // （ResearcherNote.cs L200-216）：只交给 HP 与精神均 >=80% 的职员，
+        // 把吃满 60 伤害的余量拉到最长
+        public override bool CanUse(AgentModel agent)
+        {
+            return agent.hp >= agent.maxHp * 0.8f && agent.mental >= agent.maxMental * 0.8f;
+        }
+
         public override bool CanReturn(AgentModel agent)
         {
             var elapsed = (float)_equipElapsedTime.GetValue(Script.kitEvent);
