@@ -24,6 +24,8 @@ namespace AutoInority.Localization
 
         public abstract string Automation_Log_FarmOn { get; }
 
+        public abstract string Automation_Log_Retreat { get; }
+
         #endregion Automation
 
         #region Agent

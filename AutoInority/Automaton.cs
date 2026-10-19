@@ -4,6 +4,7 @@ using System.Linq;
 using AutoInority.Command;
 using AutoInority.Creature;
 using AutoInority.Extentions;
+using AutoInority.Posture;
 
 namespace AutoInority
 {
@@ -81,7 +82,17 @@ namespace AutoInority
                 case AgentAIState.SUPPRESS_OBJECT:
                     if (agent.hp < 0.3f * agent.maxHp || agent.mental < 0.3f * agent.maxMental)
                     {
-                        // TODO move to sefira
+                        // 镇压姿态：战中撤退撤往安全部门；其他姿态原地待命（TODO move to sefira）
+                        if (CurrentPostureEnum == PostureEnum.SUPPRESS)
+                        {
+                            var passage = Command.RetreatCommand.FindSafePassage();
+                            if (passage != null)
+                            {
+                                agent.ResetWaitingPassage();
+                                Command.RetreatCommand.RetreatToSafety(agent, passage);
+                                return;
+                            }
+                        }
                         agent.ResetWaitingPassage();
                     }
                     return;

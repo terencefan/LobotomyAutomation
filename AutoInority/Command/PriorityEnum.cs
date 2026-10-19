@@ -57,5 +57,7 @@
         MANAGE_CREATURE_4_URGENT,
 
         MANAGE_CREATURE_5_URGENT,
+
+        RETREAT_AGENT,
     }
 }
