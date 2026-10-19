@@ -210,6 +210,10 @@ namespace AutoInority.Extentions
             {
                 return new WoodsmanExt(model);
             }
+            else if (model.script is ScytheClock)
+            {
+                return new ScytheClockExt(model);
+            }
             return new ExpectGoodAndNormalExt(model);
         }
 

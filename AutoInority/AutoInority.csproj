@@ -75,6 +75,7 @@
     <Compile Include="Creature\HE\RedShoesExt.cs" />
     <Compile Include="Creature\HE\RudolphExt.cs" />
     <Compile Include="Creature\HE\ScarecrowExt.cs" />
+    <Compile Include="Creature\HE\ScytheClockExt.cs" />
     <Compile Include="Creature\HE\SchadenfreudeExt.cs" />
     <Compile Include="Creature\HE\ShelterExt.cs" />
     <Compile Include="Creature\HE\SingingMachineExt.cs" />
