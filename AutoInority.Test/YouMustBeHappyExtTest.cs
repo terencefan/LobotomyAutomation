@@ -13,6 +13,8 @@ namespace AutoInority.Test
     /// Dead 动画），自动化放行到 5 次（计数每日清零且不分派发者）。停点：buff 量 =
     /// elapsed²/6（凸性），CanStop 须「elapsed ≥ √(6·v*) 且符号为 YES」，v* = 使
     /// Σ min(v+3, gap) ≤ 199 的最大 v（≥200 进日结死亡名单；+3 覆盖 YES 等待期增长）。
+    /// 另设硬顶：elapsed 越过 √(6·(v_hard−1)) 哨位即无条件停（不看符号）——卡顿等
+    /// 极端下落 NO 吃小负 buf 也好过 YES 结算 ≥200；缺口总和 ≤199 者永不过载、无硬顶。
     /// gap = 100 − (有效stat − 旧buf值) 镜像结算时点（OnReleaseWork 先剥旧 buf 再算
     /// clamp）。buff 替换制（ONLY_ONE）下旧值 ≥ 新掷保底则拒派省次数，负 buff 放行救援。
     /// </summary>
@@ -110,14 +112,51 @@ namespace AutoInority.Test
         }
 
         [Fact]
+        public void HardCapWhiteboard()
+        {
+            // Σ min(v,90)=4v ≤ 199 → v_hard=49
+            Assert.Equal(49, YouMustBeHappyExt.HardCapValue(new[] { 90, 90, 90, 90 }));
+        }
+
+        [Fact]
+        public void HardCapMixed()
+        {
+            // 3min(v,90)+min(v,10) ≤ 199 → 3×63+10=199 贴线 → v_hard=63
+            Assert.Equal(63, YouMustBeHappyExt.HardCapValue(new[] { 90, 90, 90, 10 }));
+        }
+
+        [Fact]
+        public void HardCapNoneWhenTotalGapSmall()
+        {
+            // Σgap=20 < 200：无论多久都不过载，无硬顶
+            Assert.Equal(int.MaxValue, YouMustBeHappyExt.HardCapValue(new[] { 5, 5, 5, 5 }));
+        }
+
+        [Fact]
+        public void CanStopHardCapBypassesSign()
+        {
+            // 白板 v_hard=49，哨位 t=√(6×48)≈16.97s：哨位后 NO 相位也停（吃小负 buf
+            // 好过 YES 结算 ≥200 融毁）；哨位前 NO 照旧等翻转
+            var agent = StatAgent(10, 10, 10, 10);
+            var script = ScriptWithUsage(null, 0);
+            var ext = Ext(script, agent);
+            GameBridge.Set(script, "_succeedUsing", false);
+            GameBridge.Set(script, "_elapsedUsingTime", 16.9f);
+            Assert.False(ext.CanStop());
+            GameBridge.Set(script, "_elapsedUsingTime", 17f);
+            Assert.True(ext.CanStop());
+        }
+
+        [Fact]
         public void CanStopRequiresYes()
         {
             var agent = StatAgent(10, 10, 10, 10);
             var script = ScriptWithUsage(null, 0);
             var ext = Ext(script, agent);
-            GameBridge.Set(script, "_elapsedUsingTime", 30f);
+            GameBridge.Set(script, "_elapsedUsingTime", 10f);
             GameBridge.Set(script, "_succeedUsing", false);
             Assert.False(ext.CanStop());
+            GameBridge.Set(script, "_elapsedUsingTime", 30f);
             GameBridge.Set(script, "_succeedUsing", true);
             Assert.True(ext.CanStop());
         }
