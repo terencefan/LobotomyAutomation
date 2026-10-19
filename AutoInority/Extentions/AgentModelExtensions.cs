@@ -196,5 +196,17 @@ namespace AutoInority.Extentions
                    + Math.Min(WorkerPrimaryStat.MaxStatB(), (int)(agent.primaryStat.work + agent.primaryStatExp.work))
                    + Math.Min(WorkerPrimaryStat.MaxStatP(), (int)(agent.primaryStat.battle + agent.primaryStatExp.battle));
         }
+
+        // 镇压伤害无模型可算：研究员笔记持有者不进镇压池（持有期物+神累计 >60
+        // 自爆并 30R 溅射友军，ResearcherNote.cs L200-216）
+        public static bool IsHoldingResearcherNote(this AgentModel agent)
+        {
+            if (agent.Equipment == null)
+            {
+                return false;
+            }
+            var kit = agent.Equipment.kitCreature;
+            return kit != null && kit.script is ResearcherNote;
+        }
     }
 }

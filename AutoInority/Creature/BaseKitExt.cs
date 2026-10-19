@@ -20,7 +20,8 @@ namespace AutoInority.Creature
 
         public IEnumerable<AgentModel> FindAgents()
         {
-            var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && CanUse(x)).ToList();
+            // 已持 kit 者不进取件池：游戏 SetKitCreature 对已持有者直接 LogError，白跑一趟
+            var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && x.Equipment.kitCreature == null && CanUse(x)).ToList();
             agents.Sort(AgentComparer);
             return agents;
         }

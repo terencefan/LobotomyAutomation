@@ -27,7 +27,8 @@ namespace AutoInority.Command
 
         public override bool Execute()
         {
-            var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && x.currentSefiraEnum == _creature.sefira.sefiraEnum && x.IsCapableOfPressing(_creature));
+            // 笔记持有者除外：镇压伤害无模型，持有期物+神累计 >60 自爆线会失控
+            var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && !x.IsHoldingResearcherNote() && x.currentSefiraEnum == _creature.sefira.sefiraEnum && x.IsCapableOfPressing(_creature));
             foreach (var agent in agents)
             {
                 agent.Suppress(_creature);

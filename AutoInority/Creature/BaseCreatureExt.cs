@@ -178,6 +178,22 @@ namespace AutoInority.Creature
             var minDamage = damageInfo.min * multiplier;
             var maxDamage = damageInfo.max * multiplier;
 
+            // 研究员笔记持有者的第二血池：物+神累计伤害 >60 自爆（ResearcherNoteExt），
+            // 同一套 Survive 数学再过一遍预算池；B 伤害物/神双计，由预算判定内部折半。
+            if (damageInfo.type == RwbpType.P)
+            {
+                var pMin = minDamage * agent.maxHp / 100f;
+                var pMax = maxDamage * agent.maxHp / 100f;
+                if (!ResearcherNoteExt.CheckBudgetSurvive(agent, pMin, pMax, workSuccessProb, maxCubeCount, damageInfo.type))
+                {
+                    return false;
+                }
+            }
+            else if (!ResearcherNoteExt.CheckBudgetSurvive(agent, minDamage, maxDamage, workSuccessProb, maxCubeCount, damageInfo.type))
+            {
+                return false;
+            }
+
             switch (damageInfo.type)
             {
                 case RwbpType.R:
