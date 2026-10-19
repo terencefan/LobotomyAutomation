@@ -57,7 +57,6 @@
 | Scarecrow | 100050 | HE | 索求智慧的稻草人 | 尋求智慧的稻草人 | F-01-87 索求智慧的稻草人 |
 | Lumberjack | 100051 | HE | 热心的樵夫 | 熱心的樵夫 | F-05-32 热心的樵夫 |
 | Porccu | 100057 | HE | 棘刺公交 | 荊棘魔女 | O-02-98 棘刺公交 |
-| ScytheClock | 100101 | HE | Price of Silence（原文如此） | 沉默的代價 | O-05-65-H 沉默的代价 |
 | SnowQueen | 100102 | HE | 冰雪女皇 | 冰雪女王 | F-01-37 冰雪女皇 |
 | Freischutz | 100103 | HE | 魔弹射手 | 魔彈射手 | F-01-69 魔弹射手 |
 | MachineDawn | 200001 | HE | 绿色的黎明 | 綠色黎明 | 绿色的黎明 疑问 |
@@ -70,7 +69,6 @@
 | OutterGodNoon |  | HE | 紫罗兰的正午 | 녹빛 여명 | 紫罗兰的正午 请给我们爱！！！ |
 | MagicalGirl | 100004 | WAW | 魔法少女 | 魔法少女 | O-01-04 憎恶女王 |
 | Bigbird | 100008 | WAW | 大鸟 | 大鳥 | O-02-40 大鸟 |
-| OrangeTree | 100010 | WAW | My Sweet Orange Tree（原文如此） | 我親愛的柳橙樹 | O-01-04-W 我的酸酸橙子树 |
 | SnowWhite | 100023 | WAW | 白雪公主的苹果 | 白雪公主的蘋果 | F-04-42 白雪公主的苹果 |
 | QueenBee | 100026 | WAW | 蜂后 | 蜂后 | T-04-50 蜂后 |
 | Alriune | 100029 | WAW | 爱娜温 | 艾露內 | T-04-53 爱娜温 |
@@ -108,9 +106,19 @@
 | MachineMidnight | 200004 | ALEPH | 绿色的午夜 | 綠色午夜 | 绿色的午夜 终末螺旋 |
 | BugMidnight | 200016 | ALEPH | 琥珀色的午夜 | 綠色午夜 | 琥珀色的午夜 永恒的盛宴 |
 
+## 原版被砍异想体
+
+**数据源（2026-10-20 全量 stat 审计）**：原版 `resources.assets` 的 `xml/creatureStats/*_stat` TextAsset 逐条核对，供给结构对照 `CreatureGenerateInfo`（方法、排除项与 kit/笔误案例见 basemod.md 名册分层节）；两只简中都未翻译，BaseMod 的 stat txt 是原版残根的忠实搬运。实机均不可工作（工作概率全 0、心情恒 NONE）。
+
+| script 类名 | 游戏 id | 等级 | 简体（游戏 cn） | 繁体 | wiki 页面名 | 被砍形态 |
+|---|---|---|---|---|---|---|
+| ScytheClock | 100101 | HE | Price of Silence（原文如此） | 沉默的代價 | O-05-65-H 沉默的代价 | r5/r6 到货表残留、`all`/图鉴除名；stat 仅 `<qliphoth>0</qliphoth>`；类代码半成品（`KillOnce(float)`/`FEELING_UP_AMOUNT` 未接线死代码） |
+| OrangeTree | 100010 | WAW | My Sweet Orange Tree（原文如此） | 我親愛的柳橙樹 | O-01-04-W 我的酸酸橙子树 | r/`all`/图鉴三处供给全无；stat 槽 = `<script>DummyCreature</script>` + `MagicalGirlAnim` 占位假数据 |
+
 ## 备注
 
 - 13 个考验小怪（id 200xxx：Bug/Circus/Machine/OutterGod 的 dawn/noon/dusk/midnight 变体）在 cn 文件里部分未汉化（原文如此标注行）；wiki 页面名 =「颜色时段 + 副标题」格式
 - `MachineNoon` 游戏文件名英文 "The noon of green"，对应 wiki「绿色的正午 理解的过程」为推断（该文件未汉化）
 - `世界树(Yggdrasil)`、`粉红「小分队」(PinkCorps)` 在 wiki 无独立页面
+- **名册来源分层（2026-10-20 原版供给表验证）**：`all`（82）与图鉴含全部 100101+/300xxx 争议 id，原版唯一开关 = creditCreatures 7 只（`dlcCreatureOn` DLC 门控）；**原版被砍异想体只有两只**，专表见上文；阳 = `workType=kit` equip 工具非残根；秃子 stat 资产名小写 `bald_stat` 笔误（详见 basemod.md 名册分层节）
 - 再生成：解析上述 XML 的 `<info id>` 与首个 `<name openLevel="\d">` 节点，按 id 排序；wiki 核验用 `zh/api.php?action=query&titles=<名>&redirects=1`（需 User-Agent，默认 python UA 会 403）
