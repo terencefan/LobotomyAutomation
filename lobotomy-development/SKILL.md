@@ -18,7 +18,7 @@ description: 脑叶公司（Lobotomy Corp）mod 开发参考手册：游戏原�
 | 资料/横切 | 文件 | 内容 |
 |---|---|---|
 | 中文 wiki | `wiki.md` | fandom 资料源（api.php 用法）、译名/数据权威规则、术语对照表（工作类型↔RwbpType 代码已验证）、编号规则 |
-| 异想体译名 | `creatures-zh.md` | 全量 101 条：script 类名↔游戏 id↔简体↔繁体↔wiki 页面名（含编号） |
+| 异想体译名 | `creatures-zh.md` | 全量 101 条（正册 99 + 原版被砍专表 2）：script 类名↔游戏 id↔简体↔繁体↔wiki 页面名（含编号） |
 
 | 游戏实体 | 文件 | 内容 |
 |---|---|---|
@@ -58,3 +58,4 @@ description: 脑叶公司（Lobotomy Corp）mod 开发参考手册：游戏原�
 4. 改任何游戏公式（工作概率、伤害、计数器）前，先读对应 reference 条目的"已验证"结论，不要凭感觉建模。
 5. **中文译名/文案表述以 wiki 为准，数值/机制以代码为准**（裁决规则见 wiki.md）；新异想体支持先在 creatures-zh.md 入表。
 5. 反编译树是平铺结构，没有命名空间目录；类名即文件名。
+6. **判断「这异想体能不能派工/机制是否可达」先查 stat 完整性**再下断言（实机查 `Managed/BaseMod/BaseCreatures/*_stat.txt`，源头查原版 `resources.assets` 的 `xml/creatureStats/*_stat` TextAsset，抠法见 basemod.md）——个别条目在**原版本体就是残根**（全量审计后被砍半成品仅两只：沉默的代价——stat 仅 qliphoth、类代码半成品、到货表残留；柳橙树——stat 槽是 DummyCreature 占位假数据、供给三处全无）；「进了到货表/图鉴」「类在原版程序集」都不是启用证据，原版供给结构与 DLC 开关见 basemod.md 名册分层节
