@@ -23,9 +23,9 @@ namespace AutoInority.Creature
 
         public virtual SkillTypeInfo[] SkillSets { get; } = { Attachment, Insight, Instinct, Repression };
 
-        protected float CreatureEscapeConfidence => Automaton.Instance.CreatureEscapeConfidence;
+        protected float CreatureEscapeConfidence => AutomationConfig.CreatureEscapeConfidence;
 
-        protected float DeadConfidence => Automaton.Instance.DeadConfidence;
+        protected float DeadConfidence => AutomationConfig.DeadConfidence;
 
         protected bool IsFarming => Automaton.Instance.FarmingCreatures.Contains(_creature);
 
@@ -125,13 +125,13 @@ namespace AutoInority.Creature
                 case RwbpType.R:
                 case RwbpType.B:
                 case RwbpType.N:
-                    return Confidence.Survive(agent.hp, minDamage, maxDamage, workSuccessProb, maxCubeCount) > Automaton.Instance.DeadConfidence;
+                    return Confidence.Survive(agent.hp, minDamage, maxDamage, workSuccessProb, maxCubeCount) > AutomationConfig.DeadConfidence;
                 case RwbpType.W:
-                    return Confidence.Survive(MentalFix(agent.mental), minDamage, maxDamage, workSuccessProb, maxCubeCount) > Automaton.Instance.DeadConfidence;
+                    return Confidence.Survive(MentalFix(agent.mental), minDamage, maxDamage, workSuccessProb, maxCubeCount) > AutomationConfig.DeadConfidence;
                 case RwbpType.P:
                     minDamage *= agent.maxHp / 100f;
                     maxDamage *= agent.maxHp / 100f;
-                    return Confidence.Survive(agent.hp, minDamage, maxDamage, workSuccessProb, maxCubeCount) > Automaton.Instance.DeadConfidence;
+                    return Confidence.Survive(agent.hp, minDamage, maxDamage, workSuccessProb, maxCubeCount) > AutomationConfig.DeadConfidence;
             }
             return false;
         }
