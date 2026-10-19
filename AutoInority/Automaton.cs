@@ -21,7 +21,7 @@ namespace AutoInority
         {
             get
             {
-                // 考验在场或存在过载收容物都视为紧急，暂停宏与种地（原实现误用 &&，仅两者同时发生才暂停）。
+                // 考验在场或存在过载收容物都视为紧急，暂停种地（原实现误用 &&，仅两者同时发生才暂停）。
                 if (OrdealManager.instance.GetOrdealCreatureList().Where(x => x.state != CreatureState.SUPPRESSED).Any())
                 {
                     return true;
@@ -41,8 +41,6 @@ namespace AutoInority
                 return _instance;
             }
         }
-
-        public Dictionary<AgentModel, RepeatWorkCommand> WorkingAgents { get; } = new Dictionary<AgentModel, RepeatWorkCommand>();
 
         private bool Running { get; set; } = true;
 
@@ -87,12 +85,10 @@ namespace AutoInority
         }
 
         /// <summary>
-        /// Clear all macros.
+        /// Clear all farmings.
         /// </summary>
         public void Clear()
         {
-            WorkingAgents.ToList().ForEach(x => x.Key.ClearAutomationBuf());
-            WorkingAgents.Clear();
             FarmingCreatures.ToList().ForEach(x => TurnOffFarm(x.Unit.room));
             FarmingCreatures.Clear();
         }
@@ -180,33 +176,6 @@ namespace AutoInority
                     _repeatQueue.Enqueue(command); // check on next cycle
                 }
             }
-        }
-
-        public void Register(AgentModel agent, CreatureModel creature, SkillTypeInfo skill, bool forGift = false, bool forExp = false)
-        {
-            if (WorkingAgents.TryGetValue(agent, out var command))
-            {
-                agent.ClearAutomationBuf();
-            }
-            else
-            {
-                command = new RepeatWorkCommand(agent);
-                WorkingAgents[agent] = command;
-            }
-            command.Update(creature, skill, forGift, forExp);
-            Enqueue(command);
-            agent.AddUnitBuf(new AutomatonBuf(creature));
-            Notice.instance.Send("AddSystemLog", $"{agent.Tag()}将会自动对{creature.Tag()}进行{skill.Tag()}");
-        }
-
-        /// <summary>
-        /// Remove the macro
-        /// </summary>
-        /// <param name="agent"></param>
-        public void Remove(AgentModel agent)
-        {
-            WorkingAgents.Remove(agent);
-            agent.ClearAutomationBuf();
         }
 
         /// <summary>

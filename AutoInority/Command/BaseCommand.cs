@@ -13,7 +13,5 @@
         public abstract bool Execute();
 
         public abstract PriorityEnum Priority();
-
-        public int RepeatAfter() => 60;
     }
 }

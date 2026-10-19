@@ -41,15 +41,6 @@ namespace AutoInority.Extentions
             return value;
         }
 
-        public static void ClearAutomationBuf(this AgentModel agent)
-        {
-            var items = agent.GetUnitBufList().Where(buf => buf is AutomatonBuf).ToList();
-            foreach (var item in items)
-            {
-                agent.RemoveUnitBuf(item);
-            }
-        }
-
         public static IEnumerable<AgentModel> FilterFarm(this IEnumerable<AgentModel> agents, CreatureModel creature)
         {
             if (creature.GetExtension().TryGetEGOGift(out var gift))

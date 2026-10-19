@@ -6,13 +6,6 @@
         {
             public static string GotEGOGift => Language.Agent_Log_GotEGOGift;
 
-            public static string HasEGOGift => Language.Agent_Conv_HasEGOGift;
-
-            public static string NoEgoGift => Language.Agent_Conv_NoEGOGift;
-
-            public static string ReachMaxExp => Language.Agent_Log_ReachMaxExp;
-
-            public static string SlotLocked => Language.Agent_Conv_SlotLocked;
         }
 
         public class Automaton

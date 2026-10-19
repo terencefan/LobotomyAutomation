@@ -1,4 +1,4 @@
-# LobotomyAutomation
+﻿# LobotomyAutomation
 [简体中文](./README-zh-CN.md)
 
 Here are other mods that were published by me, which could be useful when using this mod (but not required)
@@ -11,20 +11,16 @@ Here are other mods that were published by me, which could be useful when using 
 
 1. **Angela will diss you when you made a wrong decision that will result in agents dying or creatures escaping**
    - Note that I haven't finished the translation works now, only Chinese has been supported.
-2. Press `Shift + click` to repeat the work.
-3. Press `Ctrl + click` to repeat the work until the agent gets the EGO gift.
-4. Press `Alt + click` to repeat the work until the agent gets max EXP of that work type.
-5. Press `T` when selecting a creature to toggle the farm mode: Angela keeps sending agents (preferring ones without the EGO gift) to work on the creature.
+2. Press `T` when selecting a creature to toggle the farm mode: Angela keeps sending agents (preferring ones without the EGO gift) to work on the creature.
    - Press `T` again to toggle it off.
-6. Press `X` when selecting a creature to let Angela assign the best available agent for a **single** work session.
+3. Press `X` when selecting a creature to let Angela assign the best available agent for a **single** work session.
    - With no command window open, `X` performs a single training assignment instead.
-7. Press `O` to toggle the **Creature Management** panel: an in-game overlay listing all creatures, with a per-row switch to exploit (farm) each of them, groupable by department or risk level. Escaped creatures are greyed out.
-8. Press `Shift` when selecting agents to cancel their automation works.
-9. Press `P` to pause all automation works.
-10. Press `V` to clear all automation works.
-11. Automatically handle Qliphoth Meltdown events.
-12. Automatically suppress `Dawn` and `Noon` ordeal creatures.
-13. **ICU mode for the Shelter**: wounded idle agents are automatically admitted to the Shelter to channel its regeneration (invulnerable while inside) — severe cases triaged first, nearest within the same tier — and discharged as soon as they are fully healed. Sessions always stop at 28s, never reaching the counter-clearing window that opens at 30s.
+4. Press `O` to toggle the **Creature Management** panel: an in-game overlay listing all creatures, with a per-row switch to exploit (farm) each of them, groupable by department or risk level. Escaped creatures are greyed out.
+5. Press `P` to pause all automation works.
+6. Press `V` to clear all automation works.
+7. Automatically handle Qliphoth Meltdown events.
+8. Automatically suppress `Dawn` and `Noon` ordeal creatures.
+9. **ICU mode for the Shelter**: wounded idle agents are automatically admitted to the Shelter to channel its regeneration (invulnerable while inside) — severe cases triaged first, nearest within the same tier — and discharged as soon as they are fully healed. Sessions always stop at 28s, never reaching the counter-clearing window that opens at 30s.
 
 ## Supported anomoly creatures
 

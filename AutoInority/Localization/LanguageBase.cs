@@ -24,15 +24,7 @@ namespace AutoInority.Localization
 
         #region Agent
 
-        public abstract string Agent_Conv_HasEGOGift { get; }
-
-        public abstract string Agent_Conv_NoEGOGift { get; }
-
-        public abstract string Agent_Conv_SlotLocked { get; }
-
         public abstract string Agent_Log_GotEGOGift { get; }
-
-        public abstract string Agent_Log_ReachMaxExp { get; }
 
         #endregion Agent
 

@@ -10,8 +10,6 @@ namespace AutoInority.Command
 
         bool Execute();
 
-        int RepeatAfter();
-
         PriorityEnum Priority();
     }
 }

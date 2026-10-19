@@ -161,7 +161,6 @@ namespace AutoInority
         private static readonly List<KeyBinding> _keyBindings = new List<KeyBinding>
         {
             new KeyBinding { Key = KeyCode.P,  OnDown = i => Invoke(Automaton.Instance.ToggleAutomation) },
-            new KeyBinding { Key = KeyCode.LeftShift, OnDown = i => i.GetSelectedAgents().ForEach(x => Automaton.Instance.Remove(x)) },
             new KeyBinding { Key = KeyCode.T,  OnDown = i => ToggleFarm() },
             new KeyBinding { Key = KeyCode.X,  OnDown = i => AssignOrTrain() },
             new KeyBinding { Key = KeyCode.O,  OnDown = i => Invoke(FarmPanel.Toggle) },
@@ -333,37 +332,6 @@ namespace AutoInority
                 Angela.Say(message);
             }
 
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                Invoke(() => Automaton.Instance.Register(actor, creature, skill));
-            }
-            else if (Input.GetKey(KeyCode.LeftControl))
-            {
-                if (actor.HasGift(creature, out var gift))
-                {
-                    message = string.Format(Angela.Agent.HasEGOGift, actor.name, gift.Name);
-                    Angela.Say(message);
-                    return;
-                }
-                else if (gift == null)
-                {
-                    message = string.Format(Angela.Agent.NoEgoGift, creature.metaInfo.name);
-                    Angela.Say(message);
-                    return;
-                }
-                else if (actor.IsRegionLocked(gift))
-                {
-                    var regionName = UnitEGOgiftSpace.GetRegionName(gift);
-                    message = string.Format(Angela.Agent.SlotLocked, actor.name, regionName);
-                    Angela.Say(message);
-                    return;
-                }
-                Automaton.Instance.Register(actor, creature, skill, forGift: true);
-            }
-            else if (Input.GetKey(KeyCode.LeftAlt))
-            {
-                Automaton.Instance.Register(actor, creature, skill, forExp: true);
-            }
         }
 
         private void PatchPostfix(HarmonyInstance instance, Type type, string method, string patch, BindingFlags flags = FlagsAll)
