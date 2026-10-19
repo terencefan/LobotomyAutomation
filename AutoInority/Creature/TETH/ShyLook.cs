@@ -47,21 +47,30 @@
         {
         }
 
+        /// <summary>
+        /// 派工口径：Plain 基线成功率（游戏 _defaultFaceType：伤害 1.0x、成功率 ±0）。
+        /// 基类链经 script.OnBonusWorkProb() 混入当前脸修正（表情 3-5s 随机重掷），
+        /// 此处剥除——派工置信度/排序需要与脸无关的稳定口径；门口口径见 ProbAtDoor。
+        /// </summary>
         protected override float CalculateWorkSuccessProb(AgentModel agent, SkillTypeInfo skill)
         {
-            return 0.2f;
+            return base.CalculateWorkSuccessProb(agent, skill) - Shy.OnBonusWorkProb() / 100f;
         }
 
+        /// <summary>
+        /// 派工口径：Plain 基线伤害倍率 1.0x，供 CheckSurvive 稳定估算；
+        /// 实际伤害由游戏在结算时按冻结脸自行取值（ShyThing.GetDamageMultiplierInWork）。
+        /// </summary>
         protected override float GetDamageMultiplierInWork(AgentModel agent, SkillTypeInfo skill)
         {
-            return 2f;
+            return 1f;
         }
 
         /// <summary>
         /// 门检：表情 3-5s 随机变换，派工路上照常变换，员工抵达工作位开工前一瞬复检；
         /// 平淡及更好（伤害 ≤1.0x、成功率 ≥±0）放行；低落/崩溃（1.5x/2.0x、-30/-50）
-        /// 看能力：普通期望置信度严格大于 CreatureEscapeConfidence 及格线可硬上，不过线弹回待机。
-        /// animScript 在 OnViewInit 前为 null，视为不宜开工。
+        /// 看能力：冻结脸修正后的真实置信度严格大于 CreatureEscapeConfidence 及格线可硬上，
+        /// 不过线弹回待机。animScript 在 OnViewInit 前为 null，视为不宜开工。
         /// </summary>
         public override bool ViableAtDoor(AgentModel agent, SkillTypeInfo skill, out string message)
         {
@@ -76,14 +85,22 @@
         }
 
         /// <summary>
-        /// 门口员工置信度（坏脸硬上的依据，与 ExpectNormalExt 等 CheckWorkConfidence 家族同口径）。
-        /// 虚缝：NormalConfidence 的计算链级联游戏工作概率管道（buf/装备等，bare 不可驱动），
-        /// 离线测试以子类覆写注入编程值。
+        /// 门口真实置信度（坏脸硬上的依据）：与派工口径配对——派工剥脸看中性期望，
+        /// 门口把冻结脸修正算回来，在概率层重卷积（置信度对 prob 非线性，不得在置信度上加减）。
+        /// 与 ExpectNormalExt 等 CheckWorkConfidence 家族同及格线（CreatureEscapeConfidence）。
+        /// 虚缝：prob 来源离线不可驱动，测试子类覆写 ProbAtDoor 注入编程值以驱动本体。
         /// </summary>
         protected virtual float ConfidenceAtDoor(AgentModel agent, SkillTypeInfo skill)
         {
-            return NormalConfidence(agent, skill);
+            return Confidence.InRange(_creature.MaxCube(), ProbAtDoor(agent, skill), _creature.NormalBound() + 1);
         }
+
+        /// <summary>
+        /// 门口真实成功率：基类真实链——经 script.OnBonusWorkProb() 混入冻结脸修正、
+        /// 含观察/装备/buf 加成、0.95 封顶（镜像游戏 UseSkill 管道）。
+        /// 虚缝：链级联游戏工作概率管道（bare 不可驱动），离线测试以子类覆写注入编程值。
+        /// </summary>
+        protected virtual float ProbAtDoor(AgentModel agent, SkillTypeInfo skill) => base.CalculateWorkSuccessProb(agent, skill);
 
         /// <summary>
         /// 门口表情：animScript 未就绪（OnViewInit 前）返回 null，视为不宜开工。
