@@ -152,9 +152,9 @@ namespace AutoInority.Test
         [Fact]
         public void SelectAgentNearWinsWithinBucket()
         {
-            // 同桶（均 <60% 重伤档）就近：50% 在门口压过 30% 在远端
-            var far = Candidate(30, 100, 100, 100);
-            var near = Candidate(50, 100, 100, 100);
+            // 同桶（均 <40% 重伤档）就近：35% 在门口压过 20% 在远端
+            var far = Candidate(20, 100, 100, 100);
+            var near = Candidate(35, 100, 100, 100);
             SetAgents(far, near);
             var ext = new RoutedShelterExt(agent => ReferenceEquals(agent, far) ? 10f : 1f);
             Assert.Same(near, ext.SelectAgent());
