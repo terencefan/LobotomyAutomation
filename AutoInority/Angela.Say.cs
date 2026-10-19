@@ -66,7 +66,6 @@
 
             public const string Wellcheers = "{1}此刻的心情糟糕透了，现在安排{0}进去的话，恐怕就要为这杯饮料添上一位别样的客人了。等它平静下来吧。";
 
-            public const string Sakura = "本次对{1}的工作将会导致数名设施内的职员对其着魔，不过我相信你应该已经准备好镇压了。";
 
             public const string SingingMachineStarved = "{1}已经饿空了，下一个进门的职员会被直接塞进机器。我不认为{0}适合充当这份唱片，这一项工作就到此为止吧。";
 
