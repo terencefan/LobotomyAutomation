@@ -6,7 +6,7 @@ namespace AutoInority.Creature
 {
     internal class YouMustBeHappyExt : ChannelKitExt
     {
-        private const int MaxAutoUses = 4;
+        private const int MaxAutoUses = 5;
 
         /// <summary>YES 等待期（至多一个翻转周期）内 elapsed²/6 的增长余量。</summary>
         private const int SafetyMargin = 3;
@@ -47,7 +47,7 @@ namespace AutoInority.Creature
         public override bool CanUse(AgentModel agent)
         {
             // 同一员工第 6 次使用即失控死亡（OnReleaseWork usedCount>=6 → LoseControl+Dead）；
-            // 自动化最多用 4 次，第 5 次留给主管手动，留一次余量
+            // 计数每日清零且不分派发者，自动化放行到 5 次、第 6 次绝不经自动化之手
             if (!UsageWithinLimit(agent))
             {
                 return false;
