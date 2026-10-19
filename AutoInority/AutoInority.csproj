@@ -50,6 +50,7 @@
     <Compile Include="Command\ManageKitCommand.cs" />
     <Compile Include="Command\PriorityEnum.cs" />
     <Compile Include="Command\RepeatWorkCommand.cs" />
+    <Compile Include="Command\RetreatCommand.cs" />
     <Compile Include="Command\SuppressCommand.cs" />
     <Compile Include="Creature\ALEPH\SmilingBodyMountainExt.cs" />
     <Compile Include="Creature\ALEPH\CensoredExt.cs" />

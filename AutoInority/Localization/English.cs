@@ -22,6 +22,8 @@ namespace AutoInority.Localization
 
         public override string Automation_Log_FarmOff => "Farming with {0} ended.";
 
+        public override string Automation_Log_Retreat => "{0} is retreating to a safe area.";
+
         public override string Agent_Conv_HasEGOGift => "I think {0} already have the EGO gift: {1}, the task is meaningless.";
 
         public override string Agent_Conv_SlotLocked => "I think {0} has locked his {1} equipment slot, he will never get the EGO gift under this condition.";
