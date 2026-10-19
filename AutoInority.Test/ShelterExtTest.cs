@@ -141,9 +141,9 @@ namespace AutoInority.Test
         [Fact]
         public void SelectAgentSevereBeatsNearerModerate()
         {
-            // 跨桶绝对优先：40% 重伤（远端，dist 100）压过 70% 中伤（门口，dist 1）
-            var severe = Candidate(40, 100, 100, 100);
-            var moderate = Candidate(70, 100, 100, 100);
+            // 跨桶绝对优先：30% 重伤（远端，dist 100）压过 65% 中伤（门口，dist 1）
+            var severe = Candidate(30, 100, 100, 100);
+            var moderate = Candidate(65, 100, 100, 100);
             SetAgents(severe, moderate);
             var ext = new RoutedShelterExt(agent => ReferenceEquals(agent, severe) ? 100f : 1f);
             Assert.Same(severe, ext.SelectAgent());
