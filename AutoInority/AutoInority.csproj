@@ -82,6 +82,7 @@
     <Compile Include="Creature\HE\WoodsmanExt.cs" />
     <Compile Include="Creature\ICreatureExtension.cs" />
     <Compile Include="Creature\ICreatureKitExtension.cs" />
+    <Compile Include="Creature\BufExclusionRule.cs" />
     <Compile Include="Creature\BaseKitExt.cs" />
     <Compile Include="Creature\NeverUseKitExt.cs" />
     <Compile Include="Creature\TETH\BehaviorExt.cs" />
