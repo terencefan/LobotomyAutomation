@@ -26,12 +26,19 @@ namespace AutoInority
 
         public static void Info(string file, string message)
         {
-            File.AppendAllText($"{Application.dataPath}/BaseMods/{file}.txt", message + "\n");
+            try
+            {
+                File.AppendAllText($"{Application.dataPath}/BaseMods/{file}.txt", message + "\n");
+            }
+            catch (System.Exception)
+            {
+                // best-effort：日志写失败（目录丢失/磁盘满/非 Unity 宿主）不得炸调用方
+            }
         }
 
         private static void Error(string message)
         {
-            File.AppendAllText(Application.dataPath + "/BaseMods/Error.txt", message + "\n");
+            Info("Error", message);
         }
     }
 }
