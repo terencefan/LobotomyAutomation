@@ -27,11 +27,8 @@ namespace AutoInority
         public SkillTypeInfo Skill { get; private set; }
 
         public Candidate(AgentModel agent, CreatureModel creature, SkillTypeInfo skill)
+            : this(agent, creature, skill, Graph.Distance(agent, creature), 0.0, 0.0)
         {
-            Agent = agent;
-            Creature = creature;
-            Skill = skill;
-            Distance = Graph.Distance(agent, creature);
             HasGift = agent.HasGift(creature, out var gift);
             HasAnotherGift = agent.HasAnotherGift(gift);
             HasReachedExpLimit = agent.HasReachedExpLimit(skill.rwbpType, out _);
@@ -44,11 +41,70 @@ namespace AutoInority
 
         public static int ExploitComparer(Candidate x, Candidate y) => y.ExploitConfidence.CompareTo(x.ExploitConfidence);
 
-        public static int ManageComparer(Candidate x, Candidate y)
+        // 测试构造器：距离与置信度直接注入，绕开 Graph.Distance/GetConfidence 的游戏链
+        internal Candidate(AgentModel agent, CreatureModel creature, SkillTypeInfo skill, float distance, double manageConfidence, double exploitConfidence)
         {
-            var mx = x.ManageConfidence + x.Creature.GetRiskLevel();
-            var my = y.ManageConfidence + y.Creature.GetRiskLevel();
-            return my.CompareTo(mx);
+            Agent = agent;
+            Creature = creature;
+            Skill = skill;
+            Distance = distance;
+            ManageConfidence = manageConfidence;
+            ExploitConfidence = exploitConfidence;
+            StatLevel = StatLevelOf(agent, skill.rwbpType);
+        }
+
+        /// <summary>工作对应的主属性等级（1-5；65+ 为 4 级、85+ 为 5 级，成功率查表跳变点）。</summary>
+        public int StatLevel { get; }
+
+        /// <summary>派工置信度的省着用排序：先用低属性等级的（过阈即止），
+        /// 同级挑更稳的，再就近——高属性员工留给 WAW/ALEPH 等高门槛目标。</summary>
+        public static int SufficientComparer(Candidate x, Candidate y)
+        {
+            var byLevel = x.StatLevel.CompareTo(y.StatLevel);
+            if (byLevel != 0)
+            {
+                return byLevel;
+            }
+            var byConfidence = y.ManageConfidence.CompareTo(x.ManageConfidence);
+            if (byConfidence != 0)
+            {
+                return byConfidence;
+            }
+            return x.Distance.CompareTo(y.Distance);
+        }
+
+        // exploit 同构：同级里礼物效率（ExploitConfidence）优先
+        public static int ExploitSufficientComparer(Candidate x, Candidate y)
+        {
+            var byLevel = x.StatLevel.CompareTo(y.StatLevel);
+            if (byLevel != 0)
+            {
+                return byLevel;
+            }
+            var byExploit = y.ExploitConfidence.CompareTo(x.ExploitConfidence);
+            if (byExploit != 0)
+            {
+                return byExploit;
+            }
+            return x.Distance.CompareTo(y.Distance);
+        }
+
+        /// <summary>工作类型 → 主属性等级（R 勇气/W 谨慎/B 自律/P 正义；N 无属性恒 1 级）。</summary>
+        internal static int StatLevelOf(AgentModel agent, RwbpType type)
+        {
+            switch (type)
+            {
+                case RwbpType.R:
+                    return agent.Rstat;
+                case RwbpType.W:
+                    return agent.Wstat;
+                case RwbpType.B:
+                    return agent.Bstat;
+                case RwbpType.P:
+                    return agent.Pstat;
+                default:
+                    return 1;
+            }
         }
 
         public static List<Candidate> Suggest(IEnumerable<AgentModel> agents, IEnumerable<CreatureModel> creatures, HashSet<RwbpType> types = null)

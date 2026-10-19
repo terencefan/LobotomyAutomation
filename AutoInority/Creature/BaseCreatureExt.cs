@@ -156,9 +156,15 @@ namespace AutoInority.Creature
             return true;
         }
 
+        /// <summary>
+        /// 两步评估：①确定性预筛——成功率被查表/减益压到 0 的（员工，工作）对必败
+        /// （本能全等级 0% 表、部门死人惩罚 −0.5、融毁减益清零），一次查表即出局，
+        /// 不进置信度数学；②概率门——心情线置信 + 存活卷积。
+        /// </summary>
         public bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
         {
-            return CheckWorkConfidence(agent, skill) && CheckSurvive(agent, skill);
+            return CalculateWorkSuccessProb(agent, skill) > 0
+                && CheckWorkConfidence(agent, skill) && CheckSurvive(agent, skill);
         }
 
         public bool CheckSurvive(AgentModel agent, SkillTypeInfo skill)
@@ -279,6 +285,11 @@ namespace AutoInority.Creature
             return gift != null;
         }
 
+        // 与游戏 UseSkill.ProcessWorkTick（反编译 L536-601）的成功率公式逐项对照：
+        // workProb 属性等级查表 / GetObserveBonusProb / OnBonusWorkProb / agent.workProb
+        // / 装备与 buf 特设加成 / TranformWorkProb / 0.95 封顶 / GetRedusedWorkProbByCounter
+        // 与 ProbReductionValue 二选一 / 部门死人惩罚 −0.5 —— 全部对齐；仅多 max(0) 下限
+        // （保守化）。游戏侧若给公式加料而此处漏跟，置信度即系统性失真——改动时同步。
         protected virtual float CalculateWorkSuccessProb(AgentModel agent, SkillTypeInfo skill)
         {
             Log.Debug(_creature.metaInfo.name);

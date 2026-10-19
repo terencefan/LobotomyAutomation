@@ -151,6 +151,7 @@ namespace AutoInority.Extentions
                 && !agent.HasUnitBuf(UnitBufType.DEATH_ANGEL_BETRAYER);
         }
 
+
         public static bool IsCapableOfPressing(this AgentModel agent, CreatureModel creature)
         {
             var riskLevel = creature.GetRiskLevel();
