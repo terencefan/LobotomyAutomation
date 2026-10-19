@@ -59,13 +59,6 @@ namespace AutoInority.Command
             }
         }
 
-        protected int DistanceComparer(AgentModel x, AgentModel y)
-        {
-            var d1 = Graph.Distance(x, _creature);
-            var d2 = Graph.Distance(y, _creature);
-            return d1.CompareTo(d2);
-        }
-
         private bool Equals(SuppressCommand other) => other != null && Equals(_creature, other._creature);
     }
 }
