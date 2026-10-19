@@ -56,7 +56,6 @@ jobs:
             -r:lib/0Harmony.dll -r:lib/Assembly-CSharp.dll \
             -r:lib/UnityEngine.dll -r:lib/UnityEngine.CoreModule.dll -r:lib/UnityEngine.AnimationModule.dll -r:lib/UnityEngine.ImageConversionModule.dll -r:lib/UnityEngine.TextRenderingModule.dll -r:lib/UnityEngine.UIModule.dll \
             -r:lib/UnityEngine.UI.dll \
-            -res:Graph.xml,AutoInority.Graph.xml \
             -out:/tmp/inority_Automation_MOD.dll \
             $(grep -o 'Include="[^"]*\.cs"' AutoInority.csproj | sed 's/Include="//;s/"$//' | tr '\\' '/')
           echo "net35 build OK"
