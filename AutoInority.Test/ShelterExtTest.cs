@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reflection;
 
 using AutoInority.Creature;
 using AutoInority.Extentions;
@@ -83,6 +84,74 @@ namespace AutoInority.Test
         public void HurtAgentKeepsChanneling()
         {
             Assert.False(ExtWith(5f, hp: 100, maxHp: 100, mental: 40, maxMental: 100).CanStop());
+        }
+
+        private static AgentModel Candidate(int hp, int maxHp, int mental, int maxMental)
+        {
+            var agent = GameBridge.CanWorkAgent("伤员");
+            var stat = GameBridge.Bare<WorkerPrimaryStat>();
+            GameBridge.Set(stat, "hp", maxHp);
+            GameBridge.Set(stat, "mental", maxMental);
+            GameBridge.Set(agent, "primaryStat", stat);
+            GameBridge.Set(agent, "hp", hp);
+            GameBridge.Set(agent, "mental", mental);
+            GameBridge.Set(agent, "_statBufList", new List<UnitStatBuf>());
+            return agent;
+        }
+
+        /// <summary>AgentManager.instance 惰性构造会级联 Init()，直接注入裸单例绕开。</summary>
+        private static ShelterExt ExtWithAgents(float elapsed, params AgentModel[] agents)
+        {
+            var manager = GameBridge.Bare<AgentManager>();
+            GameBridge.Set(manager, "agentList", new List<AgentModel>(agents));
+            typeof(AgentManager).GetField("_instance", BindingFlags.NonPublic | BindingFlags.Static)
+                .SetValue(null, manager);
+            var kit = GameBridge.Bare<CreatureModel>();
+            return new ShelterExt(kit);
+        }
+
+        [Theory]
+        [InlineData(100, 100, 100, 100, false)]
+        [InlineData(40, 100, 100, 100, true)]
+        [InlineData(100, 100, 40, 100, true)]
+        public void CanUseGateAdmitsOnlyWounded(int hp, int maxHp, int mental, int maxMental, bool expected)
+        {
+            var ext = ExtWithAgents(0f);
+            Assert.Equal(expected, ext.CanUse(Candidate(hp, maxHp, mental, maxMental)));
+        }
+
+        [Fact]
+        public void SelectAgentPicksMostWounded()
+        {
+            var healthy = Candidate(100, 100, 100, 100);
+            var light = Candidate(50, 100, 100, 100);
+            var severe = Candidate(30, 100, 100, 100);
+            var ext = ExtWithAgents(0f, healthy, light, severe);
+            Assert.Same(severe, ext.SelectAgent());
+        }
+
+        [Fact]
+        public void SelectAgentNullWhenAllHealthy()
+        {
+            var ext = ExtWithAgents(0f, Candidate(100, 100, 100, 100));
+            Assert.Null(ext.SelectAgent());
+        }
+
+        [Fact]
+        public void WantsDispatchNeedsFreeKitAndPatient()
+        {
+            var wounded = Candidate(40, 100, 100, 100);
+            Assert.True(ExtWithAgents(0f, wounded).WantsDispatch());
+            Assert.False(ExtWithAgents(0f, Candidate(100, 100, 100, 100)).WantsDispatch());
+        }
+
+        [Fact]
+        public void WantsDispatchFalseWhenKitBusy()
+        {
+            // 忙线（currentSkill 非空）即不再要人：在治的出院后下一帧重新触发
+            var kit = GameBridge.Bare<CreatureModel>();
+            GameBridge.Set(kit, "_currentSkill", GameBridge.Bare<UseSkill>());
+            Assert.False(new ShelterExt(kit).WantsDispatch());
         }
     }
 }
