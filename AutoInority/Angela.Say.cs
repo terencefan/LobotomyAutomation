@@ -68,6 +68,8 @@
 
             public const string Sakura = "本次对{1}的工作将会导致数名设施内的职员对其着魔，不过我相信你应该已经准备好镇压了。";
 
+            public const string SingingMachineStarved = "{1}已经饿空了，下一个进门的职员会被直接塞进机器。我不认为{0}适合充当这份唱片，这一项工作就到此为止吧。";
+
             public const string Shark = "安排{0}对{1}进行{2}是非常不明智的行为，你是不是应该多思考一下。";
 
             public const string SiningMachine = "我相信{0}在结束工作后就会跳进{1}中，这将会是公司的一笔重大财务损失。";
