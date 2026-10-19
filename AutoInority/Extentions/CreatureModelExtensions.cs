@@ -262,7 +262,7 @@ namespace AutoInority.Extentions
             }
             else if (script is ResetMirror)
             {
-                // TODO
+                return new ResetMirrorExt(model);
             }
             else if (script is ReverseClock)
             {
