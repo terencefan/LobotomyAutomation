@@ -2,6 +2,8 @@
 {
     internal class WoodsmanExt : ExpectNormalExt
     {
+        public override SkillTypeInfo[] SkillSets { get; } = new SkillTypeInfo[] { Attachment };
+
         public WoodsmanExt(CreatureModel creature) : base(creature)
         {
         }
@@ -18,7 +20,7 @@
 
         public override bool CheckWorkConfidence(AgentModel agent, SkillTypeInfo skill)
         {
-            if (agent.prudenceLevel > 2)
+            if (agent.temperanceLevel > 2)
             {
                 return IsOverloaded;
             }
