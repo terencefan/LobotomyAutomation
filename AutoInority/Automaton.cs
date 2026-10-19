@@ -13,10 +13,6 @@ namespace AutoInority
 
         private readonly PriorityQueue<ICommand> _commandQueue = new PriorityQueue<ICommand>();
 
-        private readonly HashSet<ICommand> _commands = new HashSet<ICommand>();
-
-        private readonly Queue<ICommand> _repeatQueue = new Queue<ICommand>();
-
         public static bool InEmergency
         {
             get
@@ -137,11 +133,7 @@ namespace AutoInority
                 return;
             }
 
-            while (_repeatQueue.Count > 0)
-            {
-                Enqueue(_repeatQueue.Dequeue());
-            }
-
+            // 共用前奏：kit 维护，两姿态都跑
             foreach (var kit in CreatureManager.instance.GetCreatureList().Where(x => x.IsKit()))
             {
                 if (kit.isOverloaded)
@@ -151,38 +143,20 @@ namespace AutoInority
                 kit.GetKitExtension().OnFixedUpdate();
             }
 
-            foreach (var creature in CreatureManager.instance.GetCreatureList().FilterUrgent())
-            {
-                Enqueue(new ManageCreatureCommand(creature));
-            }
+            // 姿态分发：各姿态自行扫描入队
+            CurrentPosture.OnTick();
 
-            foreach (var creature in CreatureManager.instance.GetCreatureList().Where(x => x.state == CreatureState.ESCAPE))
-            {
-                if (creature.GetExtension().AutoSuppress)
-                {
-                    Enqueue(new SuppressCommand(creature));
-                }
-            }
-
-            foreach (var creature in OrdealManager.instance.GetOrdealCreatureList())
-            {
-                Enqueue(new SuppressCommand(creature));
-            }
-
+            // 共用执行段：排空即丢弃，无回炉；等值命令下一 tick 由姿态重扫重建
             while (_commandQueue.Count() > 0)
             {
                 var command = _commandQueue.Dequeue();
                 if (command.IsCompleted)
                 {
-                    _commands.Remove(command);
+                    continue;
                 }
-                else if (command.IsApplicable && command.Execute())
+                if (command.IsApplicable)
                 {
-                    _repeatQueue.Enqueue(command); // TODO wait 3+ cycles
-                }
-                else
-                {
-                    _repeatQueue.Enqueue(command); // check on next cycle
+                    command.Execute();
                 }
             }
         }
@@ -199,7 +173,6 @@ namespace AutoInority
                 WorkingAgents[agent] = command;
             }
             command.Update(creature, skill, forGift, forExp);
-            Enqueue(command);
             agent.AddUnitBuf(new AutomatonBuf(creature));
             Notice.instance.Send("AddSystemLog", $"{agent.Tag()}将会自动对{creature.Tag()}进行{skill.Tag()}");
         }
@@ -226,19 +199,9 @@ namespace AutoInority
 
         private string AutomationMessage() => Running ? Angela.Automaton.On : Angela.Automaton.Off;
 
-        private void Enqueue(ICommand command)
+        internal void Enqueue(ICommand command)
         {
-            if (_commands.Contains(command))
-            {
-                return;
-            }
             _commandQueue.Enqueue(command);
-        }
-
-        private void HandleKitEvents(CreatureModel kit)
-        {
-            var ext = kit.GetKitExtension();
-            ext.OnFixedUpdate();
         }
     }
 }

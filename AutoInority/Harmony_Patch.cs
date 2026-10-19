@@ -161,6 +161,7 @@ namespace AutoInority
         private static readonly List<KeyBinding> _keyBindings = new List<KeyBinding>
         {
             new KeyBinding { Key = KeyCode.P,  OnDown = i => Invoke(Automaton.Instance.ToggleAutomation) },
+            new KeyBinding { Key = KeyCode.B,  OnDown = i => Invoke(Automaton.Instance.TogglePosture) },
             new KeyBinding { Key = KeyCode.LeftShift, OnDown = i => i.GetSelectedAgents().ForEach(x => Automaton.Instance.Remove(x)) },
             new KeyBinding { Key = KeyCode.T,  OnDown = i => ToggleFarm() },
             new KeyBinding { Key = KeyCode.X,  OnDown = i => AssignOrTrain() },
