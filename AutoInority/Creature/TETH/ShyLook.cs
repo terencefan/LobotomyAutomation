@@ -27,14 +27,24 @@
         /// </summary>
         public override bool ViableAtDoor(AgentModel agent, SkillTypeInfo skill, out string message)
         {
-            if (Shy.animScript == null || ShyLookPolicy.ShouldBounce(Shy.animScript.GetFaceType()))
+            var face = FaceTypeAtDoor();
+            if (face == null || ShyLookPolicy.ShouldBounce(face.Value))
             {
-                var face = Shy.animScript != null ? Shy.animScript.GetFaceType().ToString() : "æªç¥";
-                message = string.Format(Angela.CreatureLog.ShyLookBounce, agent.Tag(), _creature.Tag(), face);
+                message = string.Format(Angela.CreatureLog.ShyLookBounce, agent.Tag(), _creature.Tag(), face?.ToString() ?? "未知");
                 return false;
             }
             message = null;
             return true;
+        }
+
+        /// <summary>
+        /// 门口表情：animScript 未就绪（OnViewInit 前）返回 null，视为不宜开工。
+        /// 虚缝：GetFaceType 绑 Unity Animator（引擎 native），离线测试以子类覆写注入编程值。
+        /// </summary>
+        protected virtual int? FaceTypeAtDoor()
+        {
+            var anim = Shy.animScript;
+            return anim != null ? anim.GetFaceType() : (int?)null;
         }
     }
 }

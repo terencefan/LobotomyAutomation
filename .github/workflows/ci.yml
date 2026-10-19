@@ -7,9 +7,8 @@ on:
 
 jobs:
   # 测试 + 新增代码覆盖率门禁。
-  # 可测面 = source-link 进测试项目的纯逻辑文件（Confidence.cs/Log.cs）；
-  # 游戏耦合层（异想体扩展/Automaton/Command）不在测试编译范围，
-  # 不出现在覆盖率报告里，diff-cover 天然不检查——门禁自动只作用于能测的文件。
+  # 测试工程挂载真游戏 DLL（lib/ 九件套入库，仓库自带完整物料），通配链入产品源码，
+  # 全量测试覆盖游戏耦合层；覆盖率报告只含实际编译的文件，diff-cover 天然只检查能测的文件。
   test:
     name: Test + patch coverage gate (80%)
     runs-on: ubuntu-latest
@@ -22,12 +21,6 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Generate UnityEngine.CoreModule stub
-        run: |
-          mkdir -p AutoInority/lib
-          dotnet build ci/stubs/UnityEngine.CoreModule.csproj -c Release
-          cp ci/stubs/bin/Release/net8.0/UnityEngine.CoreModule.dll AutoInority/lib/
-
       - name: Run tests with coverage
         run: |
           dotnet tool install -g dotnet-coverage
@@ -39,29 +32,14 @@ jobs:
           pip install diff-cover
           diff-cover coverage.cobertura.xml --compare-branch origin/main --fail-under 80
 
-  # net35 编译检查（等价本地 pre-commit 的 mcs 验证）。
-  # lib/ 里的 DLL 被铁律禁止入库，而本仓库是 public，release 也不能放游戏程序集——
-  # 物料走私有仓库：自建私有 repo（如 lobotomy-ci-libs）发一个 release，
-  # 资产 lib.zip（根目录平铺 lib/ 的 9 个 DLL，v2 起新增 UnityEngine.dll/TextRenderingModule/UIModule/UI——面板 UGUI 需要），并添加仓库 secret LIBS_TOKEN（PAT，read 权限）。
-  # 未配置时本作业优雅跳过；配置后每次 PR 验证 net35 API 漂移。
+  # net35 编译检查（等价本地 pre-commit 的 mcs 验证）。lib/ 九件套 DLL 入库，checkout 即可用。
   build-net35:
     name: mcs net35 build check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch lib bundle from private repo
-        id: libs
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.LIBS_TOKEN }}
-        run: |
-          gh release download v1 --repo ${{ vars.LIBS_REPO }} --pattern 'lib.zip' --output lib.zip
-          unzip -q lib.zip -d AutoInority/lib
-          ls AutoInority/lib
-
       - name: Install mono and net35 reference assemblies
-        if: steps.libs.outcome == 'success'
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq mono-devel
@@ -70,10 +48,9 @@ jobs:
           unzip -q /tmp/net35.zip 'build/.NETFramework/v3.5/*' -d "$HOME/net35"
 
       - name: Compile with mcs
-        if: steps.libs.outcome == 'success'
         run: |
           R="$HOME/net35/build/.NETFramework/v3.5"
-          cd AutoInority/AutoInority
+          cd AutoInority
           mcs -noconfig -nostdlib -target:library -optimize+ -langversion:latest \
             -r:"$R/mscorlib.dll" -r:"$R/System.dll" -r:"$R/System.Core.dll" -r:"$R/System.Xml.dll" \
             -r:lib/0Harmony.dll -r:lib/Assembly-CSharp.dll \
