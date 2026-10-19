@@ -10,6 +10,12 @@ namespace AutoInority.Creature
         // 28s 收手（同 TheresiaExt 留结算边际），或持有者满血满精神提前收工
         private const float StopAt = 28f;
 
+        // 分诊档界：maxHp 即属性值量级，<40% 处于单发致死区才叫重伤；
+        // 75%~100% 属擦伤（部门中心被动回复可覆盖），压低中伤档避免排序过激
+        private const float SevereBelow = 0.4f;
+
+        private const float ModerateBelow = 0.75f;
+
         public ShelterExt(CreatureModel kit) : base(kit)
         {
         }
@@ -41,11 +47,11 @@ namespace AutoInority.Creature
                 .FirstOrDefault();
         }
 
-        // 分诊三档：两维中更差的比值 <60% 重伤、<90% 中伤、其余轻伤
+        // 分诊三档：两维中更差的比值 <40% 重伤、<75% 中伤、其余轻伤
         private static int Triage(AgentModel agent)
         {
             var worst = Math.Min(agent.hp / agent.maxHp, agent.mental / agent.maxMental);
-            return worst < 0.6f ? 0 : (worst < 0.9f ? 1 : 2);
+            return worst < SevereBelow ? 0 : (worst < ModerateBelow ? 1 : 2);
         }
 
         // 主动收治：避难所空闲且设施内有人带伤即要人——不等 isOverloaded（那与救人无关）
