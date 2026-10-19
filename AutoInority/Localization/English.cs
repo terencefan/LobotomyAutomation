@@ -6,9 +6,13 @@ namespace AutoInority.Localization
     {
         public override SystemLanguage Language => SystemLanguage.English;
 
-        public override string Automation_Conv_On => "Leave it to me. Your judgment needs rest — the indefinite kind.";
+        public override string Automation_Conv_On => "Leave it to me. Your judgment needs rest, the indefinite kind.";
 
         public override string Automation_Conv_Off => "As you wish, Manager. You have always been the one cleaning up, after all.";
+
+        public override string Automation_Conv_PostureProduction => "Day-to-day assignments are mine again, Manager. Even now, the mistake column in my work record remains empty.";
+
+        public override string Automation_Conv_PostureSuppress => "The capable move in, the rest fall back to safety. Do not worry, today's loss report will not carry any new names.";
 
         public override string Automation_Log_DebugOff => "Debug logging disabled.";
 
