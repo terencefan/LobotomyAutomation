@@ -31,13 +31,21 @@ namespace AutoInority.Creature
             => agent.hp < agent.maxHp || agent.mental < agent.maxMental;
 
         // IsAvailable 的 90% 线会把重伤员挡在候选池外，收治必须绕开它：
-        // 只取空闲带伤者，最重伤优先（两维中更差的比值定序）
+        // 只取空闲带伤者；重伤绝对优先（三档分诊），同档内就近
         public override AgentModel SelectAgent()
         {
             return AgentManager.instance.GetAgentList()
                 .Where(IsPatient)
-                .OrderBy(agent => Math.Min(agent.hp / agent.maxHp, agent.mental / agent.maxMental))
+                .OrderBy(Triage)
+                .ThenBy(Distance)
                 .FirstOrDefault();
+        }
+
+        // 分诊三档：两维中更差的比值 <60% 重伤、<90% 中伤、其余轻伤
+        private static int Triage(AgentModel agent)
+        {
+            var worst = Math.Min(agent.hp / agent.maxHp, agent.mental / agent.maxMental);
+            return worst < 0.6f ? 0 : (worst < 0.9f ? 1 : 2);
         }
 
         // 主动收治：避难所空闲且设施内有人带伤即要人——不等 isOverloaded（那与救人无关）

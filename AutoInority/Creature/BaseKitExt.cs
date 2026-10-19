@@ -54,11 +54,12 @@ namespace AutoInority.Creature
         {
         }
 
+        /// <summary>员工到本 kit 的距离（测试可覆写注入假值，Graph.Distance 裸对象不安全）。</summary>
+        protected virtual float Distance(AgentModel agent) => Graph.Distance(agent, _kit);
+
         protected int AgentComparer(AgentModel x, AgentModel y)
         {
-            var d1 = Graph.Distance(x, _kit);
-            var d2 = Graph.Distance(y, _kit);
-            return d1.CompareTo(d2);
+            return Distance(x).CompareTo(Distance(y));
         }
     }
 }
