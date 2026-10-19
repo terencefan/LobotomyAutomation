@@ -156,9 +156,15 @@ namespace AutoInority.Creature
             return true;
         }
 
+        /// <summary>
+        /// 两步评估：①确定性预筛——成功率被查表/减益压到 0 的（员工，工作）对必败
+        /// （本能全等级 0% 表、部门死人惩罚 −0.5、融毁减益清零），一次查表即出局，
+        /// 不进置信度数学；②概率门——心情线置信 + 存活卷积。
+        /// </summary>
         public bool CheckConfidence(AgentModel agent, SkillTypeInfo skill)
         {
-            return CheckWorkConfidence(agent, skill) && CheckSurvive(agent, skill);
+            return CalculateWorkSuccessProb(agent, skill) > 0
+                && CheckWorkConfidence(agent, skill) && CheckSurvive(agent, skill);
         }
 
         public bool CheckSurvive(AgentModel agent, SkillTypeInfo skill)

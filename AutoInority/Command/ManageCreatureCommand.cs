@@ -25,7 +25,6 @@ namespace AutoInority.Command
 
         public override bool Execute()
         {
-            var ext = _creature.GetExtension();
             // 宏员工硬排除：不把重复工作队列里的人抽走
             var agents = AgentManager.instance.GetAgentList().Where(x => x.IsAvailable() && !x.IsMacroBound());
             var candidates = Candidate.Suggest(agents, new[] { _creature });
