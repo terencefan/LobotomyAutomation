@@ -10,11 +10,11 @@ namespace AutoInority.Test
     /// <summary>
     /// 你必须要幸福：使用次数护栏 + 按四维缺口定制的最优停点（YouMustHappy.cs）。
     /// 护栏：同一员工第 6 次使用即失控死亡（OnReleaseWork usedCount>=6 → LoseControl+
-    /// Dead 动画），自动化最多用 4 次。停点：buff 量 = elapsed²/6（凸性），CanStop 须
-    /// 「elapsed ≥ √(6·v*) 且符号为 YES」，v* = 使 Σ min(v+3, gap) ≤ 199 的最大 v
-    /// （≥200 进日结死亡名单；+3 覆盖 YES 等待期增长）。gap = 100 − (有效stat − 旧buf值)
-    /// 镜像结算时点（OnReleaseWork 先剥旧 buf 再算 clamp）。buff 替换制（ONLY_ONE）下
-    /// 旧值 ≥ 新掷保底则拒派省次数，负 buff 放行救援。
+    /// Dead 动画），自动化放行到 5 次（计数每日清零且不分派发者）。停点：buff 量 =
+    /// elapsed²/6（凸性），CanStop 须「elapsed ≥ √(6·v*) 且符号为 YES」，v* = 使
+    /// Σ min(v+3, gap) ≤ 199 的最大 v（≥200 进日结死亡名单；+3 覆盖 YES 等待期增长）。
+    /// gap = 100 − (有效stat − 旧buf值) 镜像结算时点（OnReleaseWork 先剥旧 buf 再算
+    /// clamp）。buff 替换制（ONLY_ONE）下旧值 ≥ 新掷保底则拒派省次数，负 buff 放行救援。
     /// </summary>
     [Collection("GameBridge")]
     public class YouMustBeHappyExtTest
@@ -207,10 +207,17 @@ namespace AutoInority.Test
         }
 
         [Fact]
-        public void CanUseRejectsFourthUse()
+        public void CanUseAcceptsFourthUse()
         {
             var agent = GameBridge.CanWorkAgent();
-            Assert.False(Ext(ScriptWithUsage(agent, 4)).CanUse(agent));
+            Assert.True(Ext(ScriptWithUsage(agent, 4)).CanUse(agent));
+        }
+
+        [Fact]
+        public void CanUseRejectsFifthUse()
+        {
+            var agent = GameBridge.CanWorkAgent();
+            Assert.False(Ext(ScriptWithUsage(agent, 5)).CanUse(agent));
         }
 
         [Fact]
