@@ -80,6 +80,39 @@ namespace AutoInority.Test
             return agent;
         }
 
+        /// <summary>
+        /// 桥接异想体：bare CreatureModel 注 script（泛型定脚本类型）/metaInfo/
+        /// feelingStateCubeBounds/计数器/过载。name 与 riskLevel 走 dataTable 真数据
+        /// 管道（未知 key 触发 Debug.LogError icall，先例 LadyLookingAtWallTest）；
+        /// cubeBounds 传游戏真数据三元 upperBounds（NormalBound/GoodBound/MaxCube），
+        /// 如魔弹射手 Freischutz_stat.txt 的 6/11/18。
+        /// </summary>
+        internal static CreatureModel Creature<TScript>(string name, string riskLevel, int[] cubeBounds, int counter, bool overloaded = false)
+        {
+            var creature = Bare<CreatureModel>();
+            Set(creature, "script", Bare<TScript>());
+            Set(creature, "isOverloaded", overloaded);
+            Set(creature, "_qliphothCounter", counter);
+            var metaInfo = Bare<CreatureTypeInfo>();
+            var dataTable = new CreatureTypeInfo.CreatureDataTable();
+            dataTable.dictionary["name"] = DataList("name", name);
+            dataTable.dictionary["riskLevel"] = DataList("riskLevel", riskLevel);
+            Set(metaInfo, "dataTable", dataTable);
+            metaInfo.feelingStateCubeBounds = new FeelingStateCubeBounds { upperBounds = cubeBounds };
+            Set(creature, "metaInfo", metaInfo);
+            return creature;
+        }
+
+        private static CreatureTypeInfo.CreatureDataList DataList(string itemName, string data)
+        {
+            var list = new CreatureTypeInfo.CreatureDataList { itemName = itemName };
+            Set(list, "list", new List<CreatureTypeInfo.CreatureData>
+            {
+                new CreatureTypeInfo.CreatureData { data = data, openLevel = 0 },
+            });
+            return list;
+        }
+
         private static FieldInfo Field(Type type, string field)
         {
             for (var t = type; t != null; t = t.BaseType)
