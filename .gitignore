@@ -3,5 +3,5 @@
 bin/
 obj/
 packages/
-lib/
 lobotomy-development
+coverage.cobertura.xml
