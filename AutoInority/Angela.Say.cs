@@ -62,6 +62,10 @@
 
             public const string OneSinConfession = "白夜尚未被镇压，此刻对{1}的任何工作只要满箱就会替您完成赎罪————白夜会被处决，而「失乐园」将永远与您无缘。我很惊讶您竟然想用这种方式蒙混过关。";
 
+            public const string PlagueDoctor = "{1}的祝福名单已经写到第十一位，再添上一笔就是完整的十二位。白夜的降临仪式，我并不打算陪您验证，这一项工作就到此为止吧。";
+
+            public const string PlagueDoctorApostle = "您难道没有发现{0}已经是{1}的使徒了吗？让羔羊自己走回祭坛，您这样的主管真是令我失望。";
+
             public const string RedShoes = "我不认为安排{0}去对{1}进行{2}是一个好主意，很明显{0}还不如您自律。";
 
             public const string Sakura = "本次对{1}的工作将会导致数名设施内的职员对其着魔，不过我相信你应该已经准备好镇压了。";

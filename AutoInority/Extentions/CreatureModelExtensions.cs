@@ -473,7 +473,7 @@ namespace AutoInority.Extentions
             }
             else if (model.script is PlagueDoctor)
             {
-                // TODO
+                return new PlagueDoctorExt(model);
             }
             else if (model.script is Wellcheers)
             {
