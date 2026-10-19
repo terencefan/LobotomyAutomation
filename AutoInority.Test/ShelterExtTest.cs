@@ -125,17 +125,25 @@ namespace AutoInority.Test
             Assert.Equal(expected, ext.CanUse(Candidate(hp, maxHp, mental, maxMental)));
         }
 
-        /// <summary>Graph.Distance 裸对象不安全，注假距离驱动分诊排序。</summary>
-        private sealed class RoutedShelterExt : ShelterExt
+        /// <summary>Graph.Distance/ManageKitCreature/room 裸对象不安全：注假距离驱动
+        /// 分诊排序，Admit 只记录调用。</summary>
+        private sealed class RecordingShelterExt : ShelterExt
         {
+            public readonly List<AgentModel> Admitted = new List<AgentModel>();
+
             private readonly Func<AgentModel, float> _distance;
 
-            public RoutedShelterExt(Func<AgentModel, float> distance) : base(GameBridge.Bare<CreatureModel>())
+            public RecordingShelterExt(CreatureModel kit, Func<AgentModel, float> distance = null) : base(kit)
             {
-                _distance = distance;
+                _distance = distance ?? (_ => 0f);
             }
 
             protected override float Distance(AgentModel agent) => _distance(agent);
+
+            protected override void Admit(AgentModel agent)
+            {
+                Admitted.Add(agent);
+            }
         }
 
         [Fact]
@@ -145,7 +153,7 @@ namespace AutoInority.Test
             var severe = Candidate(30, 100, 100, 100);
             var moderate = Candidate(65, 100, 100, 100);
             SetAgents(severe, moderate);
-            var ext = new RoutedShelterExt(agent => ReferenceEquals(agent, severe) ? 100f : 1f);
+            var ext = new RecordingShelterExt(GameBridge.Bare<CreatureModel>(), agent => ReferenceEquals(agent, severe) ? 100f : 1f);
             Assert.Same(severe, ext.SelectAgent());
         }
 
@@ -156,7 +164,7 @@ namespace AutoInority.Test
             var far = Candidate(20, 100, 100, 100);
             var near = Candidate(35, 100, 100, 100);
             SetAgents(far, near);
-            var ext = new RoutedShelterExt(agent => ReferenceEquals(agent, far) ? 10f : 1f);
+            var ext = new RecordingShelterExt(GameBridge.Bare<CreatureModel>(), agent => ReferenceEquals(agent, far) ? 10f : 1f);
             Assert.Same(near, ext.SelectAgent());
         }
 
@@ -168,20 +176,38 @@ namespace AutoInority.Test
         }
 
         [Fact]
-        public void WantsDispatchNeedsFreeKitAndPatient()
+        public void OnFixedUpdateAdmitsWoundedDirectly()
         {
+            // 主动调度：空闲 + 馆内有伤员，当帧直接收治（不经命令队列）
             var wounded = Candidate(40, 100, 100, 100);
-            Assert.True(ExtWithAgents(wounded).WantsDispatch());
-            Assert.False(ExtWithAgents(Candidate(100, 100, 100, 100)).WantsDispatch());
+            SetAgents(wounded);
+            var ext = new RecordingShelterExt(GameBridge.Bare<CreatureModel>());
+            ext.OnFixedUpdate();
+            Assert.Same(wounded, Assert.Single(ext.Admitted));
         }
 
         [Fact]
-        public void WantsDispatchFalseWhenKitBusy()
+        public void OnFixedUpdateSkipsHealthy()
         {
-            // 忙线（currentSkill 非空）即不再要人：在治的出院后下一帧重新触发
+            SetAgents(Candidate(100, 100, 100, 100));
+            var ext = new RecordingShelterExt(GameBridge.Bare<CreatureModel>());
+            ext.OnFixedUpdate();
+            Assert.Empty(ext.Admitted);
+        }
+
+        [Fact]
+        public void OnFixedUpdateSkipsWhenBusy()
+        {
+            // 忙线（currentSkill 非空）不收治：在治的出院后下一帧重新触发
+            var skill = GameBridge.Bare<UseSkill>();
+            GameBridge.Set(skill, "_elapsedTime", 5f);
+            GameBridge.Set(skill, "agent", Candidate(40, 100, 100, 100));
             var kit = GameBridge.Bare<CreatureModel>();
-            GameBridge.Set(kit, "_currentSkill", GameBridge.Bare<UseSkill>());
-            Assert.False(new ShelterExt(kit).WantsDispatch());
+            GameBridge.Set(kit, "_currentSkill", skill);
+            SetAgents(Candidate(60, 100, 100, 100));
+            var ext = new RecordingShelterExt(kit);
+            ext.OnFixedUpdate();
+            Assert.Empty(ext.Admitted);
         }
     }
 }
