@@ -17,7 +17,12 @@ namespace AutoInority.Creature
 
         protected readonly CreatureModel _creature;
 
-        public virtual bool AutoSuppress => _creature.GetRiskLevel() < (int)RiskLevel.WAW;
+        /// <summary>
+        /// 是否自动镇压出逃体：等级线（WAW 以下默认镇压）与游戏镇压试可性
+        /// （CreatureBase.IsAutoSuppressable，如空虚之梦羊形态/肉食灯笼/惩戒鸟返回 false）
+        /// 的合取。消费点每帧活查，形态翻转（羊→鸡）即时感知。
+        /// </summary>
+        public virtual bool AutoSuppress => _creature.GetRiskLevel() < (int)RiskLevel.WAW && (_creature.script?.IsAutoSuppressable() ?? true);
 
         public virtual bool IsUrgent => false;
 
