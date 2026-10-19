@@ -11,6 +11,9 @@ namespace AutoInority.Creature
         /// <summary>YES 等待期（至多一个翻转周期）内 elapsed²/6 的增长余量。</summary>
         private const int SafetyMargin = 3;
 
+        /// <summary>硬顶哨位比死线提前的缓冲：一帧内 v 增长 &lt;1，取 1 已含余量。</summary>
+        private const int HardBuffer = 1;
+
         /// <summary>游戏判 ≥200 进日结死亡名单，故上限取 199。</summary>
         private const int DeathLine = 199;
 
@@ -28,20 +31,27 @@ namespace AutoInority.Creature
         /// buff 量 = elapsed²/6（凸性），停早了白跑一趟；须等达到按员工四维缺口
         /// 算出的目标时长、且当前符号为 YES 才停。游戏翻转只在自身 update 里发生，
         /// CancelWork 同步结算——检查时的 YES 即结算符号，无竞态。
+        /// 唯一例外是硬顶：逼近融毁死线（Σ min(v, gap) ≥ 200）时无条件停——
+        /// 极端情况下落 NO 吃小负 buf，也好过 YES 结算进日结死亡名单。
         /// </summary>
         public override bool CanStop()
         {
+            var skill = _kit.currentSkill;
+            if (skill == null || skill.agent == null)
+            {
+                return (bool)_succeedUsing.GetValue(Script);
+            }
+            var gaps = StatGaps(skill.agent);
+            var elapsed = (float)_elapsedUsingTime.GetValue(Script);
+            if (elapsed >= (float)Math.Sqrt(6f * (HardCapValue(gaps) - HardBuffer)))
+            {
+                return true;
+            }
             if (!(bool)_succeedUsing.GetValue(Script))
             {
                 return false;
             }
-            var skill = _kit.currentSkill;
-            if (skill == null || skill.agent == null)
-            {
-                return true;
-            }
-            var elapsed = (float)_elapsedUsingTime.GetValue(Script);
-            return elapsed >= (float)Math.Sqrt(6f * TargetBuff(StatGaps(skill.agent)));
+            return elapsed >= (float)Math.Sqrt(6f * TargetBuff(gaps));
         }
 
         public override bool CanUse(AgentModel agent)
@@ -96,6 +106,31 @@ namespace AutoInority.Creature
                 }
             }
             return best;
+        }
+
+        /// <summary>
+        /// 融毁死线对应的 buf 值：最大 v 使 Σ min(v, gap) ≤ 199。缺口总和 ≤199 时
+        /// 无论多久都不过载，返回 int.MaxValue（无硬顶）；存在硬顶时必 ≥49
+        /// （Σ min(49, gap) ≤ 196 恒成立）。
+        /// </summary>
+        internal static int HardCapValue(int[] gaps)
+        {
+            var maxGap = 0;
+            foreach (var g in gaps)
+            {
+                if (g > maxGap)
+                {
+                    maxGap = g;
+                }
+            }
+            for (var v = 1; v <= maxGap; v++)
+            {
+                if (SumCapped(v, gaps) > DeathLine)
+                {
+                    return v - 1;
+                }
+            }
+            return int.MaxValue;
         }
 
         internal static int SumCapped(int v, int[] gaps)
