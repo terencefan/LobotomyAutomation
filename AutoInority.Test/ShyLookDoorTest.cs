@@ -7,28 +7,40 @@ using Xunit;
 namespace AutoInority.Test
 {
     /// <summary>
-    /// 门检真值表（实例级）：害羞表情 0-4 中 2/3/4 弹回、0/1 放行、animScript 未就绪
-    /// 视为弹回且文案记「未知」；另钉 BaseCreatureExt.ViableAtDoor 默认放行基线。
-    /// FaceTypeAtDoor 为产品虚缝（GetFaceType 绑 Unity Animator icall，无法离线驱动），
-    /// 测试子类注入编程值，ViableAtDoor 本体走真实现。
-    /// 文案断言同时覆盖 mojibake 回归（「未知」须为正确 UTF-8）。
+    /// 门检真值表（实例级）：害羞平淡及更好放行（平淡无危害加成，按普通计算）、
+    /// 低落/崩溃看能力——普通期望置信度严格大于及格线（CreatureEscapeConfidence 缺省
+    /// 0.99，与 CheckWorkConfidence 家族同口径）硬上，否则弹回；animScript 未就绪视为
+    /// 弹回且文案记「未知」；另钉 BaseCreatureExt.ViableAtDoor 默认放行基线。
+    /// FaceTypeAtDoor/ConfidenceAtDoor 为产品虚缝（GetFaceType 绑 Unity Animator icall、
+    /// NormalConfidence 计算链级联游戏工作概率管道，均无法离线驱动），测试子类注入编程值，
+    /// ViableAtDoor 本体走真实现。
+    /// 文案断言同时覆盖 mojibake 回归（「未知」须为正确 UTF-8）与表情中文名，
+    /// 另直测 FaceName 全分支（含越界落数字）。
     /// </summary>
     [Collection("GameBridge")] // 共享 SkillTypeList 全局单例，跨类串行
     public class ShyLookDoorTest
     {
+        // 及格线用 Automaton.CreatureEscapeConfidence 的缺省 0.99
+        private const float Gate = 0.99f;
+
         private sealed class ScriptedShyLook : ShyLook
         {
-            private readonly int? _face;
+            private readonly ShyLook.ShyFace? _face;
 
-            internal ScriptedShyLook(CreatureModel creature, int? face) : base(creature)
+            private readonly float _confidence;
+
+            internal ScriptedShyLook(CreatureModel creature, ShyLook.ShyFace? face, float confidence) : base(creature)
             {
                 _face = face;
+                _confidence = confidence;
             }
 
-            protected override int? FaceTypeAtDoor() => _face;
+            protected override ShyLook.ShyFace? FaceTypeAtDoor() => _face;
+
+            protected override float ConfidenceAtDoor(AgentModel agent, SkillTypeInfo skill) => _confidence;
         }
 
-        private static ShyLook Look(int? face)
+        private static ShyLook Look(ShyLook.ShyFace? face, float confidence = 0f)
         {
             var creature = GameBridge.Bare<CreatureModel>();
             GameBridge.Set(creature, "script", GameBridge.Bare<ShyThing>());
@@ -44,7 +56,7 @@ namespace AutoInority.Test
             dataTable.dictionary["name"] = nameList;
             GameBridge.Set(metaInfo, "dataTable", dataTable);
             GameBridge.Set(creature, "metaInfo", metaInfo);
-            return new ScriptedShyLook(creature, face);
+            return new ScriptedShyLook(creature, face, confidence);
         }
 
         private static bool Check(ShyLook look, out string message)
@@ -56,29 +68,54 @@ namespace AutoInority.Test
         }
 
         [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        public void CalmFacesPassThrough(int face)
+        [InlineData((int)ShyLook.ShyFace.Beaming)]
+        [InlineData((int)ShyLook.ShyFace.Cheerful)]
+        [InlineData((int)ShyLook.ShyFace.Plain)] // 平淡无危害加成，按普通放行
+        public void CalmFacesPassThrough(int faceValue)
         {
+            // xUnit1000 要求测试类 public，而 ShyFace 是产品 internal 嵌套类型，
+            // 故签名以 int 过境、体内还原枚举
+            var face = (ShyLook.ShyFace)faceValue;
             GameBridge.InjectSkillTypes();
             Assert.True(Check(Look(face), out var message));
             Assert.Null(message);
         }
 
         [Theory]
-        [InlineData(2)]
-        [InlineData(3)]
-        [InlineData(4)]
-        public void StressedFacesBounce(int face)
+        [InlineData((int)ShyLook.ShyFace.Sullen)]
+        [InlineData((int)ShyLook.ShyFace.Distraught)]
+        public void StressedFacesBounce(int faceValue)
         {
+            var face = (ShyLook.ShyFace)faceValue;
             GameBridge.InjectSkillTypes();
             Assert.False(Check(Look(face), out var message));
             Assert.NotNull(message);
-            // {0}{1}{2} 三个占位按位闭环：员工名/收容物名/表情号
+            // {0}{1}{2} 三个占位按位闭环：员工名/收容物名/表情中文名
             Assert.Contains("小红", message);
             Assert.Contains("害羞男孩", message);
-            Assert.Contains(face.ToString(), message);
+            Assert.Contains(ShyLook.FaceName(face), message);
             Assert.EndsWith("已弹回", message);
+        }
+
+        [Theory]
+        [InlineData((int)ShyLook.ShyFace.Sullen)]
+        [InlineData((int)ShyLook.ShyFace.Distraught)]
+        public void StressedFacesCapableAgentPushesThrough(int faceValue)
+        {
+            var face = (ShyLook.ShyFace)faceValue;
+            GameBridge.InjectSkillTypes();
+            // 坏脸但置信度严格大于及格线：能者硬上，不弹
+            Assert.True(Check(Look(face, 0.995f), out var message));
+            Assert.Null(message);
+        }
+
+        [Fact]
+        public void StressedFacesAtGateStillBounce()
+        {
+            // 及格线语义与 CheckWorkConfidence 家族一致：严格大于才过，等于及格线仍弹
+            GameBridge.InjectSkillTypes();
+            Assert.False(Check(Look(ShyLook.ShyFace.Sullen, Gate), out var message));
+            Assert.NotNull(message);
         }
 
         [Fact]
@@ -90,6 +127,18 @@ namespace AutoInority.Test
             Assert.Contains("未知", message);
             Assert.Contains("小红", message);
             Assert.EndsWith("已弹回", message);
+        }
+
+        [Fact]
+        public void FaceNameCoversAllMembers()
+        {
+            Assert.Equal("大笑", ShyLook.FaceName(ShyLook.ShyFace.Beaming));
+            Assert.Equal("微笑", ShyLook.FaceName(ShyLook.ShyFace.Cheerful));
+            Assert.Equal("平淡", ShyLook.FaceName(ShyLook.ShyFace.Plain));
+            Assert.Equal("低落", ShyLook.FaceName(ShyLook.ShyFace.Sullen));
+            Assert.Equal("崩溃", ShyLook.FaceName(ShyLook.ShyFace.Distraught));
+            // 越界值（游戏版本变更等）落数字显示
+            Assert.Equal("9", ShyLook.FaceName((ShyLook.ShyFace)9));
         }
 
         private sealed class PlainLook : BaseCreatureExt
