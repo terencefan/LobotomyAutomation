@@ -189,6 +189,9 @@ namespace AutoInority
             }
         }
 
+        /// <summary>总开关当前态（控制条等 UI 读取；翻转走 ToggleAutomation）。</summary>
+        public bool IsRunning => Running;
+
         /// <summary>
         /// Toggle the running status of the Automaton.
         /// </summary>

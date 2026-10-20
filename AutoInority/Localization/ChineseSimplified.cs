@@ -16,6 +16,19 @@ namespace AutoInority.Localization
 
         public override string Automation_Conv_PostureTraining => "设施里成长最慢的那几位，今天由我亲自安排课程。请相信，合适的位置比盲目的努力更能改变一个人。";
 
+        // 控制条短标签（非 Angela 台词，无性格要求）
+        public override string ControlBar_AutomationOn => "自动化：开";
+
+        public override string ControlBar_AutomationOff => "自动化：关";
+
+        public override string ControlBar_PostureProduction => "生产";
+
+        public override string ControlBar_PostureTraining => "训练";
+
+        public override string ControlBar_PostureSuppress => "镇压";
+
+        public override string ControlBar_Overview => "总览";
+
         public override string Automation_Log_DebugOff => "调试日志已关闭";
 
         public override string Automation_Log_DebugOn => "调试日志已开启";

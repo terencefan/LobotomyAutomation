@@ -76,5 +76,21 @@ namespace AutoInority
             public static string Title => Language.ExploitPanel_Title;
         }
 
+        // 控制条短标签（非 Angela 台词，无性格要求）
+        public class ControlBar
+        {
+            public static string AutomationOff => Language.ControlBar_AutomationOff;
+
+            public static string AutomationOn => Language.ControlBar_AutomationOn;
+
+            public static string Overview => Language.ControlBar_Overview;
+
+            public static string PostureProduction => Language.ControlBar_PostureProduction;
+
+            public static string PostureSuppress => Language.ControlBar_PostureSuppress;
+
+            public static string PostureTraining => Language.ControlBar_PostureTraining;
+        }
+
     }
 }
