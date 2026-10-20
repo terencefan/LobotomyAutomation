@@ -50,6 +50,33 @@ AutoInority 的游戏内 UI 一律纯代码构建，无预制体、无外部素�
 - **raycastTarget 纪律**：只有吃点击的 Image（行底/标题栏/按钮）保留 raycast，其余（文字/头像）全部 `raycastTarget = false`，否则挡住父级行点击。
 - **Text 防换行**：`horizontalOverflow = HorizontalWrapMode.Overflow`。
 
+## 白天 HUD 布局（level2 场景实测，2026-10-20）
+
+数据来源：UnityPy 解析 `LobotomyCorp_Data/level2`（BuildSettings 场景表 index 2 = Main，白天工作场景；`globalgamemanagers` 可查全表）。venv `~/.venvs/unitypy`。解析要点：
+- GameObject→组件列表→Transform/RectTransform 的 `read_typetree()` 可读；**MonoBehaviour 多数读不出来**（`ValueError: Expected to read N bytes`，老 Unity typetree 缺损）——Image 的颜色/贴图拿不到，要配方就走反编译代码，别硬读。
+- MonoScript 类名映射需另 `load("resources.assets")`；**跨文件不可合并 load**（各文件 path_id 独立空间，合并必撞）。
+- UnityPy 的 `env.objects` 按 path_id 索引要先建 `{o.path_id: o}` 字典，不能拿 list 下标当 path_id 用。
+
+结构（白天 HUD 根 = `InGameUI`，Transform，窗口集合；每窗自带全屏 Canvas，pos=(0,1000)，size≈3505×1972，少数 1600×900）：
+
+```
+InGameUI
+├─ CreatureInfoWindow / AgentInfoWindow / MissionUI / WorkerCommandWindow
+├─ OverlayWindow / CreatureObservation / RouletteWindow
+├─ BulletWindow          子弹条（选中职员后对异想体开枪）
+│   └─ ActiveControl(全屏 stretch) → Pivot a=(0,0) pos=(0,-490) size=606×82
+│       → 底边≈屏高 23.1%、顶边≈27.2%，水平居中
+│       Frame(629×104，比内容大一圈的外框) + LeftLine/RightLine(12×76 端饰线)
+│       └─ CurrentBulletState 计数 + BulletSelectLayout 8 槽
+│         Slot_1_Hp/2_Mp/3_R/4_W/5_B/6_P/7_Slow/8_Execute（61×76）
+└─ RabbitProtocolWindow  兔子协议（召唤兔子小队）
+    ├─ RabbitProtocolInput pos=(381,-487) size=133×116（入口按钮：
+    │   底边 22.4%/顶边 28.3%，中心偏右 x≈+11%）
+    └─ ProtocolUI（全屏对话框：SefiraSlot×10 部门选单 + Confirm/Close + Manual）
+```
+
+**AutoInority 控制条锚点依据**：兔/弹条带占屏高 22–28%，ControlBar 取 anchor=(0.5, 0.30)、pivot=(0.5, 0) 悬其上方。**原生命令条配方**（控制条已复刻）：半透明黑底 + 左右端竖饰线（3px，`uiTextDefColor` α0.55）+ 各向外扩 3px 的九宫格线框（α0.30）——对应 LeftLine/RightLine + Frame 大一圈两个母题；绿色只留给状态高亮。
+
 ## UGUI 程序集链（大坑）
 
 `Image/Text/Button/EventTrigger` 在 `UnityEngine.UI.dll`，而它是对 **monolithic facade** 编译的，mcs 必须补全传递闭包，缺一报 CS0006/CS0012/CS1070：
