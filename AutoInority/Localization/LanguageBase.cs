@@ -18,6 +18,18 @@ namespace AutoInority.Localization
 
         public abstract string Automation_Conv_PostureTraining { get; }
 
+        public abstract string ControlBar_AutomationOn { get; }
+
+        public abstract string ControlBar_AutomationOff { get; }
+
+        public abstract string ControlBar_PostureProduction { get; }
+
+        public abstract string ControlBar_PostureTraining { get; }
+
+        public abstract string ControlBar_PostureSuppress { get; }
+
+        public abstract string ControlBar_Overview { get; }
+
         public abstract string Automation_Log_DebugOff { get; }
 
         public abstract string Automation_Log_DebugOn { get; }

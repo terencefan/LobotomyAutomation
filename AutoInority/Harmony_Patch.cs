@@ -178,6 +178,7 @@ namespace AutoInority
                     Invoke(() => binding.OnDown(__instance));
                 }
             }
+            UI.ControlBar.EnsureCreated(); // 常驻控制条：幂等，GlobalGameManager 就绪后首帧建
         }
 
         private static void ToggleExploit()

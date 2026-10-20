@@ -16,6 +16,18 @@ namespace AutoInority.Localization
 
         public override string Automation_Conv_PostureTraining => "The slowest learners in this facility will receive my personal curriculum today. Rest assured, the right position changes a person far more than effort ever will.";
 
+        public override string ControlBar_AutomationOn => "Auto: ON";
+
+        public override string ControlBar_AutomationOff => "Auto: OFF";
+
+        public override string ControlBar_PostureProduction => "Production";
+
+        public override string ControlBar_PostureTraining => "Training";
+
+        public override string ControlBar_PostureSuppress => "Suppress";
+
+        public override string ControlBar_Overview => "Overview";
+
         public override string Automation_Log_DebugOff => "Debug logging disabled.";
 
         public override string Automation_Log_DebugOn => "Debug logging enabled.";

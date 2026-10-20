@@ -174,7 +174,9 @@
     <Compile Include="Posture\ProductionPosture.cs" />
     <Compile Include="Posture\TrainingPosture.cs" />
     <Compile Include="Posture\SuppressPosture.cs" />
+    <Compile Include="UI\ControlBar.cs" />
     <Compile Include="UI\ExploitPanel.cs" />
+    <Compile Include="UI\UIFactory.cs" />
     <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>
