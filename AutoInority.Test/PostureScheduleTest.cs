@@ -31,7 +31,7 @@ namespace AutoInority.Test
         /// GlobalGameManager 供 Angela.Language 三语解析；AngelaConversationUI 为测试替身
         /// （真身 AddAngelaMessage 体内 icall 无法离线 JIT，见 Bridges/AngelaConversationUI.cs），
         /// 气泡 no-op，Announce 的 Log 半边照发走 Notice 管道。</summary>
-        private static void InjectManagers()
+        internal static void InjectManagers()
         {
             var creatureManager = GameBridge.Bare<CreatureManager>();
             SetStatic(typeof(CreatureManager), "_instance", creatureManager);
@@ -57,7 +57,7 @@ namespace AutoInority.Test
         /// metaInfo 注 creatureWorkType 与 riskLevel 数据行（走游戏真数据管道），
         /// state/<feelingState> 为自动属性BackingField、_unit→room 链供 IsAvailable 反射。
         /// </summary>
-        private static CreatureModel BridgedCreature(CreatureState state, bool overloaded)
+        internal static CreatureModel BridgedCreature(CreatureState state, bool overloaded)
         {
             var creature = GameBridge.Bare<CreatureModel>();
             GameBridge.Set(creature, "script", GameBridge.Bare<CreatureBase>());
