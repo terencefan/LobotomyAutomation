@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+# Pre-commit: two guards, then compile.
+# 1) EOL/BOM phase guard: a staged text file must keep its HEAD byte phase
+#    (CRLF vs LF, BOM presence). Phase flips once caused full-file diff noise:
+#    every rebase conflicted on the whole file and the patch-coverage gate
+#    drowned (60% < 80%). Old files inherit their own HEAD phase; new files
+#    infer the phase from a same-extension sibling at HEAD, walking up dirs.
+#    Offending staged files are normalized in place and re-added automatically.
+# 2) Compile check (net35 via mono mcs), below.
+# Both check the WORKING TREE. Compile skips silently if the toolchain is
+# not installed on this machine; the phase guard only needs git+python3.
+# Installed via: git config core.hooksPath hooks   (run once after clone)
+
+if command -v python3 >/dev/null 2>&1; then
+    python3 - <<'PYEOF'
+import os
+import subprocess
+import sys
+
+TEXT_EXTS = ('.cs', '.csproj', '.xml', '.resx')
+
+def git(*args, binary=False):
+    r = subprocess.run(['git', *args], capture_output=True)
+    if r.returncode != 0:
+        return None
+    return r.stdout if binary else r.stdout.decode('utf-8', 'replace')
+
+def phase(blob):
+    """(eol, bom) of a blob; CRLF wins if the file has any CRLF line."""
+    if blob is None:
+        return None
+    bom = blob.startswith(b'\xef\xbb\xbf')
+    eol = '\r\n' if b'\r\n' in blob else '\n'
+    return eol, bom
+
+def sibling_phase(path):
+    """Phase of the nearest same-extension file at HEAD, walking up dirs."""
+    ext = os.path.splitext(path)[1]
+    d = os.path.dirname(path)
+    while True:
+        names = git('ls-tree', '-r', '--name-only', 'HEAD', '--', d or '.')
+        if names:
+            for name in names.splitlines():
+                if name.endswith(ext):
+                    return phase(git('show', f'HEAD:{name}', binary=True))
+        if not d:
+            return None
+        d = os.path.dirname(d)
+
+def normalize(blob, eol, bom):
+    body = blob[3:] if blob.startswith(b'\xef\xbb\xbf') else blob
+    body = body.replace(b'\r\n', b'\n')
+    if eol == '\r\n':
+        body = body.replace(b'\n', b'\r\n')
+    return (b'\xef\xbb\xbf' if bom else b'') + body
+
+if git('rev-parse', '-q', '--verify', 'HEAD') is None:
+    sys.exit(0)  # initial commit: nothing to compare against
+
+fixed = []
+for path in (git('diff', '--cached', '--name-only', '--diff-filter=AM') or '').splitlines():
+    if not path.endswith(TEXT_EXTS):
+        continue
+    staged = git('show', f':{path}', binary=True)
+    if staged is None:
+        continue
+    want = phase(git('show', f'HEAD:{path}', binary=True)) or sibling_phase(path)
+    if want is None:
+        want = ('\n', False)  # no precedent anywhere: stay neutral LF
+    fixed_blob = normalize(staged, *want)
+    if fixed_blob != staged:
+        with open(path, 'wb') as f:
+            f.write(fixed_blob)
+        subprocess.run(['git', 'add', '--', path], check=True)
+        fixed.append(path)
+
+for path in fixed:
+    print(f'pre-commit: EOL/BOM normalized to HEAD phase: {path}', file=sys.stderr)
+PYEOF
+fi
+
+REF="$HOME/.local/share/net35-refasm/build/.NETFramework/v3.5"
+if ! command -v mcs >/dev/null 2>&1 || [ ! -f "$REF/mscorlib.dll" ]; then
+    echo "pre-commit: mcs / net35 reference assemblies missing, compile check skipped" >&2
+    exit 0
+fi
+OUT="$(mktemp -d)" || exit 1
+trap 'rm -rf "$OUT"' EXIT
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || { cd "$(dirname "$0")/../.." && pwd; })"
+cd "$ROOT/AutoInority" || exit 1
+mcs -noconfig -nostdlib -target:library -optimize+ -langversion:latest \
+    -r:"$REF/mscorlib.dll" -r:"$REF/System.dll" -r:"$REF/System.Core.dll" -r:"$REF/System.Xml.dll" \
+    -r:lib/0Harmony.dll -r:lib/Assembly-CSharp.dll \
+    -r:lib/UnityEngine.dll -r:lib/UnityEngine.CoreModule.dll -r:lib/UnityEngine.AnimationModule.dll -r:lib/UnityEngine.ImageConversionModule.dll -r:lib/UnityEngine.TextRenderingModule.dll -r:lib/UnityEngine.UIModule.dll \
+    -r:lib/UnityEngine.UI.dll \
+    -out:"$OUT/check.dll" \
+    $(grep -o 'Include="[^"]*\.cs"' AutoInority.csproj | sed 's/Include="//;s/"$//' | tr '\\' '/') \
+    > "$OUT/build.log" 2>&1
+status=$?
+grep -E "error" "$OUT/build.log" | sed 's/^/pre-commit: /' >&2
+if [ "$status" -ne 0 ]; then
+    echo "pre-commit: compile FAILED, commit blocked (full log: $OUT/build.log)" >&2
+    exit 1
+fi
+echo "pre-commit: compile OK"
+exit 0

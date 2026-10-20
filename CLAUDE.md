@@ -38,7 +38,7 @@ mcs -noconfig -nostdlib -target:library -optimize+ -langversion:latest \
   $(grep -o 'Include="[^"]*\.cs"' AutoInority.csproj | sed 's/Include="//;s/"$//' | tr '\\' '/')
 ```
 
-- pre-commit 钩子自动跑 mcs 编译检查，编译挂会 block commit
+- pre-commit 钩子随仓库走（`hooks/pre-commit`），克隆后 `git config core.hooksPath hooks` 启用，两道守卫：①staged 文本文件（.cs/.csproj/.xml/.resx）EOL/BOM 相位守卫——改旧文件须保持其 HEAD 字节相位（CRLF/LF、BOM 有无），新文件沿同扩展名既有文件向上推断，违规自动归一并重加暂存不挡提交（相位翻转曾致全文件冲突 + 补丁覆盖率失真）②mcs 编译检查，编译挂 block commit
 
 ## 测试（离线实测，无游戏依赖）
 
