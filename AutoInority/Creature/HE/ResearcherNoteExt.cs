@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 
 using AutoInority;
 using AutoInority.Extentions;
@@ -10,11 +9,10 @@ namespace AutoInority.Creature
     {
         // 游戏自爆线：持有期间物+神累计实际损血（护甲结算后净值）>60 即死并 30R
         // 溅射（ResearcherNote.cs L200-216）。计数器只在取件时清零，回复不减免，
-        // B 伤害双计（WorkerModel.cs 黑伤同时进物/神两事件）——白嫖 +20 自律以
-        // 此预算为界
+        // B 伤害双计（WorkerModel.cs 黑伤同时进物/神两事件）
         private const float DamageLimit = 60f;
 
-        // 解锁且满 30s 后，预算余量低于此值才归还：余量尚足就继续持有干活
+        // 已解锁且满 30s 后，预算余量低于此值即自动归还：防手动持有的员工贴着自爆线继续干活
         private const float ReturnBelow = 20f;
 
         private readonly FieldInfo _creatureManaged = typeof(ResearcherNote.ResearcherNoteKit).GetField(
@@ -33,20 +31,17 @@ namespace AutoInority.Creature
         {
         }
 
-        // 持有期间物+神累计伤害 >60（_gainedDamage）立即自爆并 30R 溅射
-        // （ResearcherNote.cs L200-216）：只交给 HP 与精神均 >=80% 的职员，
-        // 把吃满 60 伤害的余量拉到最长
-        public override bool CanUse(AgentModel agent)
-        {
-            return agent.hp >= agent.maxHp * 0.8f && agent.mental >= agent.maxMental * 0.8f;
-        }
+        // 自动化永不主动取件：随身收益只有 +20 自律，抵不上持有期物+神累计 >60
+        // 自爆（并 30R 溅射友军）的风险。笔记只对玩家手动取件的员工生效，
+        // 本类其余逻辑（预算闸/归还调度/镇压排除）全部转为保护该手动持有者
+        public override bool CanUse(AgentModel agent) => false;
 
         public override bool CanReturn(AgentModel agent)
         {
             var elapsed = (float)_equipElapsedTime.GetValue(Script.kitEvent);
             var managed = (bool)_creatureManaged.GetValue(Script.kitEvent);
-            // 解锁且满 30s 后不急着还：预算余量充足就继续持有白嫖，见底才归还。
-            // 该判据单调（managed/elapsed 只增、预算只降），一旦可还永远可还
+            // 游戏安全归还条件（解锁+满 30s）满足后，预算余量见底即归还。
+            // 判据单调（managed/elapsed 只增、预算只降），一旦可还永远可还
             return managed && elapsed > 30 && DamageBudget(agent) < ReturnBelow;
         }
 
@@ -62,7 +57,8 @@ namespace AutoInority.Creature
             return DamageLimit - (float)_gainedDamage.GetValue(kit.script.kitEvent);
         }
 
-        // 伤害预算下的存活判定：预算池 = 60 − 已吃伤害，同一套 Survive 数学卷积；
+        // 伤害预算下的存活判定（被动保险：只对手动持有者收紧自动化派工）：
+        // 预算池 = 60 − 已吃伤害，同一套 Survive 数学卷积；
         // B 伤害物/神双计（WorkerModel.cs L477+L482 同一笔进两次），预算池折半
         internal static bool CheckBudgetSurvive(AgentModel agent, float minDamage, float maxDamage,
             double workSuccessProb, int maxCubeCount, RwbpType type)
@@ -87,22 +83,8 @@ namespace AutoInority.Creature
                 return;
             }
 
-            var managed = (bool)_creatureManaged.GetValue(Script.kitEvent);
-            if (!managed && agent.IsAvailable())
-            {
-                // 解锁工只挑 ZAYIN/TETH：持有期每一点伤害都吃预算，HE 起就太贵；
-                // 派工本身经 Candidate.Suggest → CheckSurvive，预算不安全的解锁工到不了手
-                var creatures = CreatureManager.instance.GetCreatureList().Where(x => x.IsAvailable() && x.IsCreature() && x.GetRiskLevel() <= 2);
-                var candidates = Candidate.Suggest(agent, creatures);
-                if (candidates.Any())
-                {
-                    candidates.Sort(Comparer);
-                    candidates.First().Apply();
-                }
-            }
-
             // 不走 EquipKitExt 缺省归还调度：其 IsAvailable（≥90% 血精）门槛会让
-            // 干活掉血的持有者归还永久停摆；且笔记 CanReturn 单调，无需取消分支
+            // 干活掉血的手动持有者归还永久停摆；且笔记 CanReturn 单调，无需取消分支
             if (CanReturn(agent))
             {
                 Return(agent);
@@ -115,7 +97,5 @@ namespace AutoInority.Creature
             Angela.Log($"已安排{agent.Tag()}归还{_kit.Tag()}");
             agent.ReturnKitCreature();
         }
-
-        private static int Comparer(Candidate x, Candidate y) => x.Distance.CompareTo(y.Distance);
     }
 }

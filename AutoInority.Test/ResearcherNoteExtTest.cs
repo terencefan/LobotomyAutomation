@@ -12,9 +12,10 @@ namespace AutoInority.Test
     /// 研究员笔记（ResearcherNote，kit 300002）：安全归还=持有 ≥30s 且完成指定工作
     /// （_equipElapsedTime>=30 && _creatureManaged，与游戏判定一致）；持有期间物+神
     /// 累计伤害 >60（_gainedDamage）立即自爆并 30R 溅射（ResearcherNote.cs L200-216）。
-    /// 伤害预算方案：CanUse 取件闸 ≥80%（浮点夹线取 75/85 避开 0.8f 噪声区）；
-    /// CheckSurvive 对持有者把 60 线当第二血池再过一遍 Survive 数学（B 双计折半）；
-    /// CanReturn 在解锁+30s 后以预算余量 <20 才归还（白嫖 +20 自律到见底为止）。
+    /// 自动化语义：永不主动取件（CanUse 恒 false——+20 自律收益不抵自爆风险）；
+    /// 全部逻辑转为被动保险——CheckSurvive 对持有者把 60 线当第二血池再过一遍
+    /// Survive 数学（B 双计折半），CanReturn 在解锁+30s 后预算余量 <20 即自动归还，
+    /// 保护玩家手动取件的持有者不吃自爆。
     /// </summary>
     [Collection("GameBridge")] // GetKitExtension 静态缓存，跨类串行
     public class ResearcherNoteExtTest
@@ -94,24 +95,12 @@ namespace AutoInority.Test
         }
 
         [Fact]
-        public void CanUseAcceptsHealthyAgent()
+        public void CanUseNeverTakesKit()
         {
-            // 85/100 与 90/100：均超 80% 线
+            // 自动化永不主动取件：满状态员工也不给，+20 自律收益不抵自爆风险
             var ext = new ResearcherNoteExt(Kit());
-            Assert.True(ext.CanUse(Agent(85, 100, 90, 100)));
-        }
-
-        [Fact]
-        public void CanUseRejectsWoundedAgent()
-        {
-            var ext = new ResearcherNoteExt(Kit());
+            Assert.False(ext.CanUse(Agent(100, 100, 100, 100)));
             Assert.False(ext.CanUse(Agent(75, 100, 95, 100)));
-        }
-
-        [Fact]
-        public void CanUseRejectsShakenAgent()
-        {
-            var ext = new ResearcherNoteExt(Kit());
             Assert.False(ext.CanUse(Agent(95, 100, 75, 100)));
         }
 
@@ -178,7 +167,7 @@ namespace AutoInority.Test
             Assert.True(ResearcherNoteExt.CheckBudgetSurvive(Agent(90, 100, 90, 100), 500f, 500f, 0.1f, 1, RwbpType.R));
         }
 
-        // —— 归还策略（白嫖到预算见底）——
+        // —— 归还保险（预算见底即还，保护手动持有者）——
 
         [Fact]
         public void CanReturnWaitsWhileBudgetHealthy()
@@ -187,7 +176,7 @@ namespace AutoInority.Test
             var ext = ExtWithState(30f, true, 35f, out kit);
             var holder = Holder(90, 100, 90, 100, kit);
 
-            // 解锁+满 30s，但预算余 30 ≥ 20：继续持有白嫖
+            // 解锁+满 30s，但预算余 30 ≥ 20：还不到归还线
             Assert.False(ext.CanReturn(holder));
         }
 
@@ -276,22 +265,21 @@ namespace AutoInority.Test
             Assert.Empty(recording.Returned);
         }
 
-        // —— 取件池互斥 ——
+        // —— 取件通道（CanUse 恒 false ⇒ 取件池恒空）——
 
         [Fact]
-        public void FindAgentsExcludesKitHolders()
+        public void FindAgentsNeverSuggestsTakers()
         {
-            // 已持 kit 者不进任何取件池：游戏 SetKitCreature 对已持有者 LogError 空跑
+            // 自动化不主动取件的端到端钉：即便有满状态空闲员工在场，
+            // FindAgents（ManageKitCommand/BaseKitExt.Handle 的取件来源）也无人可选。
+            // 内部同时走过 BaseKitExt 取件池的已持 kit 排除与 CanUse 恒 false 闸
             CreatureModel kit;
             var ext = ExtWithState(0f, false, 0f, out kit);
-            var holder = Holder(95, 100, 95, 100, kit);
-            var plain = Agent(95, 100, 95, 100);
+            var holder = Holder(100, 100, 100, 100, kit);
+            var plain = Agent(100, 100, 100, 100);
             SetAgents(holder, plain);
 
-            var found = ext.FindAgents();
-
-            var candidate = Assert.Single(found);
-            Assert.Same(plain, candidate);
+            Assert.Empty(ext.FindAgents());
         }
     }
 }
